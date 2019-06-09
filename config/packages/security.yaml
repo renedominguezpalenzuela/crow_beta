@@ -1,8 +1,9 @@
 security:
     encoders:
         App\Entity\User:
+#            algorithm: plain_text
             algorithm: bcrypt
-            cost: 13
+            cost: 12
     providers:
         db_provider:
             entity:
