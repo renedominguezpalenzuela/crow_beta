@@ -10,7 +10,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController {
 
     /**
-     * @Route("/login", name="login")
+     * @Route("/", name="login")
      */
     public function index(Request $request, AuthenticationUtils $utils) {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
