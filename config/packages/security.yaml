@@ -1,0 +1,37 @@
+security:
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
+            cost: 13
+    providers:
+        db_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+#            remember_me:
+#                secret: '%secret%'
+#                lifetime: 604800 # 1 week in seconds
+#                path: /admin
+
+            pattern: ^/*
+#            user_checker: App\Security\UserCheck
+            anonymous: true
+            form_login:
+                login_path: login
+                check_path: login
+#                csrf_token_generator: security.csrf.token_manager
+            logout:
+                path: logout
+                target: login
+            provider: db_provider
+            #logout_on_user_change: true
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: http }
+        - { path: ^/admin/*, roles: ROLE_ADMIN, requires_channel: https }

@@ -1,0 +1,54 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header card-header-primary">
+                    <h4 class="card-title">Login</h4>
+                    <p class="card-category">Welcome gamer</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ path('login') }}">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Username</label>
+                                    <input type="text" class="form-control" name="_username" id="username" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Contraseña</label>
+                                    <input type="password" class="form-control" name="_password" id="password">
+                                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" >
+                                    <input type="hidden" name="_target_path" value="/dashboard" />
+                                </div>
+                            </div>
+
+                        </div>
+                        <button type="submit" class="btn btn-primary">Go!</button>
+                        <a class="btn btn-info" href="{{ path('user_new') }}">Register</a>
+                        <div class="clearfix"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        {% if error %}
+            $.notify({
+                message: '{{ error.messageKey|trans(error.messageData, 'security') }}',
+            }, {
+                type: 'danger',
+                timer: 3000,
+                placement: {
+                    from: 'top',
+                    align: 'right'
+                }
+            });
+        {% endif %}
+    </script>
+{% endblock %}
