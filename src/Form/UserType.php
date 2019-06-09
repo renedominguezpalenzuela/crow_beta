@@ -5,6 +5,8 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,11 +16,16 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', null)
-            ->add('username', null)
-            ->add('password')
-            ->add('email', EmailType::class)
-            ->add('phone', TelType::class)
+            ->add('name', null, ['label_attr' => ['class' => 'bmd-label-floating']])
+            ->add('username', null, ['label_attr' => ['class' => 'bmd-label-floating']])
+            ->add('password', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'first_options' => array('label' => 'Password', 'required' => true, 'label_attr' => ['class' => 'bmd-label-floating']),
+                'second_options' => array('label' => 'Repeat password', 'required' => true, 'label_attr' => ['class' => 'bmd-label-floating']),
+                'invalid_message' => 'They are not the same password',
+            ])
+            ->add('email', EmailType::class, ['label_attr' => ['class' => 'bmd-label-floating']])
+            ->add('phone', TelType::class, ['label_attr' => ['class' => 'bmd-label-floating']])
             ->add('file', null, ['attr' => ['accept' => 'image/*']])
         ;
     }

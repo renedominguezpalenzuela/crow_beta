@@ -53,6 +53,7 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Assert\NotBlank()
      */
     private $phone;
     
@@ -72,14 +73,14 @@ class User implements UserInterface, \Serializable
     /**
      *
      * @var type 
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $role;
     
     /**
      *
      * @var type 
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $security;
 
@@ -202,6 +203,7 @@ class User implements UserInterface, \Serializable
     {
         $this->active = true;
         $this->security = sha1(md5(uniqid()));
+        $this->role = 'ROLE_USER';
     }
     
     public function setActive(bool $active): ?self

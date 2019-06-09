@@ -9,6 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
 /**
  * @Route("/user")
@@ -26,18 +29,27 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="user_new", methods={"GET","POST"})
+     * @Route("/new", name="user_new", methods="GET|POST")
      */
-    public function new(Request $request): Response
+    public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $em = $this->getDoctrine()->getManager();
+            $file = $form['file']->getData();
+            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
+
+            $file->move($this->getParameter('kernel.root_dir').'/../public/images/avatars', $filename);
+
+            $encoded = $encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($encoded);
+            $user->setPhoto($filename);
+
+            $em->persist($user);
+            $em->flush();
 
             return $this->redirectToRoute('user_index');
         }
