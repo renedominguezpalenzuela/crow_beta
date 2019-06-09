@@ -73,6 +73,7 @@
                                 </p>
                             </a>
                         </li>
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         <li class="nav-item dropdown">
                             <a class="nav-link" href="javscript:void(0)" id="navbarDropdownMenuLink"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -90,14 +91,20 @@
                                 <a class="dropdown-item" href="javascript:void(0)">Another One</a>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="javascript:void(0)">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="javscript:void(0)" id="navbarDropdownMenuLink"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons">person</i>
                                 <p class="d-lg-none d-md-block">
                                     Account
                                 </p>
                             </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{{ path('user_edit', {'id':app.user.id}) }}">Profile</a>
+                                <a class="dropdown-item" href="{{ path('logout') }}">Logout</a>
+                            </div>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -227,6 +234,41 @@
 <script src="{{ asset('assets/js/plugins/perfect-scrollbar.jquery.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/plugins/bootstrap-notify.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/material-dashboard.js?v=2.1.0') }}" type="text/javascript"></script>
+<script>
+    {#
+     Para los colores de las notificaciones desde el controlador es
+     *** 'info', 'danger', 'success', 'warning', 'primary'; ***
+     Por lo que es directamente a la clase de bootstrap y no personalizado
+     #}
+    $(document).ready(function(){
+        {% for tipo, mensajes in app.session.flashbag.all() %}
+        {% for mensaje in mensajes %}
+        $.notify({
+            message: '{{ mensaje }}'
+        }, {
+            type: '{{ tipo }}',
+            timer: 3000,
+            placement: {
+                from: 'top',
+                align: 'right'
+            }
+        });
+
+        {% endfor %}
+        {% endfor %}
+
+        var url = window.location;
+        var element = $('li a').filter(function () {
+            return this.href == url || url.href.indexOf(this.href) == 0;
+        }).addClass('active').parent();
+        if (element.is('li')) {
+            element.parent().parent().addClass('active');
+            element.parent().addClass('in');
+            element.addClass('active');
+            element.children().removeClass('active');
+        }
+    });
+</script>
 {% block js %}{% endblock %}
 </body>
 </html>

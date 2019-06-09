@@ -25,8 +25,6 @@ class UserType extends AbstractType
                 'invalid_message' => 'They are not the same password',
             ])
             ->add('email', EmailType::class, ['label_attr' => ['class' => 'bmd-label-floating']])
-            ->add('phone', TelType::class, ['label_attr' => ['class' => 'bmd-label-floating']])
-            ->add('file', null, ['attr' => ['accept' => 'image/*']])
         ;
     }
 

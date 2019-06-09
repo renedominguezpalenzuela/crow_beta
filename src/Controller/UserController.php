@@ -39,19 +39,21 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $file = $form['file']->getData();
-            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
+//            $file = $form['file']->getData();
+//            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
 
-            $file->move($this->getParameter('kernel.root_dir').'/../public/images/avatars', $filename);
+//            $file->move($this->getParameter('kernel.root_dir').'/../public/images/avatars', $filename);
 
             $encoded = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($encoded);
-            $user->setPhoto($filename);
+//            $user->setPhoto($filename);
 
             $em->persist($user);
             $em->flush();
 
-            return $this->redirectToRoute('user_index');
+            $this->addFlash('success', 'Welcome '.$user->getUsername().'!');
+
+            return $this->redirectToRoute('login');
         }
 
         return $this->render('user/new.html.twig', [
@@ -65,6 +67,9 @@ class UserController extends AbstractController
      */
     public function show(User $user): Response
     {
+        if($this->getUser() != $user){
+            throw $this->createNotFoundException();
+        }
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);
@@ -75,6 +80,10 @@ class UserController extends AbstractController
      */
     public function edit(Request $request, User $user): Response
     {
+        if($this->getUser() != $user){
+            throw $this->createNotFoundException();
+        }
+
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 

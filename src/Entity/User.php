@@ -7,10 +7,12 @@ use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @UniqueEntity(fields={"email","username"})
  */
 class User implements UserInterface, \Serializable 
 {
@@ -29,15 +31,14 @@ class User implements UserInterface, \Serializable
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=150)
-     *
-     * @var type
+     * @ORM\Column(type="string", length=150, nullable=true, unique=true)
      * @Assert\NotBlank()
+     * @var type
      */
     private $username;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank()
      */
     private $password;
@@ -45,30 +46,11 @@ class User implements UserInterface, \Serializable
     /**
      *
      * @var type 
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @ORM\Column(type="string", length=150, nullable=true, unique=true)
      * @Assert\Email()
+     * @Assert\NotBlank()
      */
     private $email;
-
-    /**
-     * @ORM\Column(type="string", length=10)
-     * @Assert\NotBlank()
-     */
-    private $phone;
-    
-    /**
-     *
-     * @var type 
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $photo;
-
-    /**
-     * @var
-     * @Assert\Image()
-     */
-    private $file;
 
     /**
      *
@@ -127,16 +109,6 @@ class User implements UserInterface, \Serializable
         return $this->email;
     }
 
-    public function getPhone(): ?string {
-        return $this->phone;
-    }
-
-    public function setPhone(string $phone): self {
-        $this->phone = $phone;
-
-        return $this;
-    }
-    
     public function getRoles() {
         return [
             'ROLE_ADMIN','ROLE_USER'
@@ -218,18 +190,6 @@ class User implements UserInterface, \Serializable
         return $this->active;
     }
 
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
-
-    public function setPhoto(string $photo): self
-    {
-        $this->photo = $photo;
-
-        return $this;
-    }
-
     public function getSecurity(): ?string
     {
         return $this->security;
@@ -240,22 +200,5 @@ class User implements UserInterface, \Serializable
         $this->security = $security;
 
         return $this;
-    }
-
-    /**
-     * @param mixed $file
-     */
-    public function setFile(UploadedFile $file): self
-    {
-        $this->file = $file;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFile()
-    {
-        return $this->file;
     }
 }
