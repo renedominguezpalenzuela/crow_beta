@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -25,6 +27,14 @@ class UserType extends AbstractType
                 'invalid_message' => 'They are not the same password',
             ])
             ->add('email', EmailType::class, ['label_attr' => ['class' => 'bmd-label-floating']])
+            ->add('kingdom', EntityType::class, [
+                'mapped' => false,
+                'class' => 'App\Entity\Kingdom',
+                'placeholder' => 'select',
+                'query_builder' => function (EntityRepository $er){
+                    return $er->createQueryBuilder('k');
+                }
+            ] )
         ;
     }
 
