@@ -27,12 +27,6 @@
         <div class="sidebar-wrapper">
             <ul class="nav">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <li class="nav-item" id="combo-kingdom">
-                        {{ render(controller(
-                            'App\\Controller\\DefaultController::comboKindom',
-                            { 'max': 3 }
-                        )) }}
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('dashboard_player_army') }}">
                             <p>Player's Army</p>
@@ -195,14 +189,22 @@
             element.addClass('active');
             element.children().removeClass('active');
         }
-
-        $('#form_kingdom').change(function(response){
-            let url = '{{ path('go_kingdom') }}'+'?&form_kingdom='+$('#form_kingdom').val();
-            window.location.href = url;
-        });
     });
-
-
+</script>
+<script>
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        $('.main-panel > .content').css('background-image', 'url("{{ asset('images/game/'~app.user.team.kingdom.image) }}")');
+    {% else %}
+    $('.main-panel > .content').css('background-image', 'url("{{ asset('images/game/warrio.jpg') }}")');
+    {% endif %}
+    $('.main-panel > .content').css('background-size', 'cover');
+    $('.main-panel > .content').css('min-height', 'calc(200vh - 123px');
+    $('.main-panel > .content').css('-webkit-filter', 'grayscale(60%)');
+    $('.main-panel > .content').css('filter', 'grayscale(60%)');
+    // $('.main-panel > .content').css('-webkit-filter', 'brightness(50%)');
+    // $('.main-panel > .content').css('filter', 'brightness(50%)');
+    // $('.main-panel > .content').css('-webkit-filter', 'blur(4px)');
+    // $('.main-panel > .content').css('filter', 'blur(4px)');
 </script>
 {% block js %}{% endblock %}
 </body>

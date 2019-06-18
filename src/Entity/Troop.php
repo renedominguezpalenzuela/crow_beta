@@ -214,4 +214,16 @@ class Troop
 
         return $this;
     }
+
+    public function getUnitTypeId(): ?int
+    {
+        return $this->unit_type_id;
+    }
+
+    public function setUnitTypeId(int $unit_type_id): self
+    {
+        $this->unit_type_id = $unit_type_id;
+
+        return $this;
+    }
 }

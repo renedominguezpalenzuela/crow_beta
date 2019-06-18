@@ -25,7 +25,7 @@ class Team
 
     /**
      * @var
-     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\OneToOne(targetEntity="User", inversedBy="team")
      */
     private $user;
 
