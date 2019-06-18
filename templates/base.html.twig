@@ -26,6 +26,12 @@
         <div class="sidebar-wrapper">
             <ul class="nav">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li class="nav-item" id="combo-kingdom">
+                        {{ render(controller(
+                            'App\\Controller\\DefaultController::comboKindom',
+                            { 'max': 3 }
+                        )) }}
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('dashboard_player_army') }}">
                             <p>Player's Army</p>
@@ -63,7 +69,7 @@
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top " id="navigation-example">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="javascript:void(0)">Dashboard</a>
+                    <a class="navbar-brand" href="{{ path('dashboard') }}">Dashboard</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
                         aria-expanded="false" aria-label="Toggle navigation" data-target="#navigation-example">
@@ -188,7 +194,14 @@
             element.addClass('active');
             element.children().removeClass('active');
         }
+
+        $('#form_kingdom').change(function(response){
+            let url = '{{ path('go_kingdom') }}'+'?&form_kingdom='+$('#form_kingdom').val();
+            window.location.href = url;
+        });
     });
+
+
 </script>
 {% block js %}{% endblock %}
 </body>

@@ -34,6 +34,9 @@ class UserController extends AbstractController
      */
     public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
+        if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
+            //...
+        }
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -59,6 +62,13 @@ class UserController extends AbstractController
             $team->setKingdom($kingdom);
             $team->setUser($user);
             $team->setGold('500000');
+
+            //verify if kingdom has leader and id_player_boss
+
+            if($kingdom->getIdKingdomBoss() == 0){
+                $kingdom->setIdKingdomBoss($user->getId());
+                $em->persist($kingdom);
+            }
             $em->persist($team);
             $em->flush();
 
