@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header-primary">Team</div>
+        <div class="card-body">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button class="btn">{{ button_label|default('Finish') }}</button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
