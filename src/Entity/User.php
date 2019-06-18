@@ -72,6 +72,12 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(type="boolean")
      */
     private $active;
+
+    /**
+     * @var
+     * @ORM\OneToOne(targetEntity="Team", mappedBy="user")
+     */
+    private $team;
     
     public function getId(): ?int {
         return $this->id;
@@ -198,6 +204,24 @@ class User implements UserInterface, \Serializable
     public function setSecurity(string $security): self
     {
         $this->security = $security;
+
+        return $this;
+    }
+
+    public function getTeam(): ?Team
+    {
+        return $this->team;
+    }
+
+    public function setTeam(?Team $team): self
+    {
+        $this->team = $team;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = $team === null ? null : $this;
+        if ($newUser !== $team->getUser()) {
+            $team->setUser($newUser);
+        }
 
         return $this;
     }

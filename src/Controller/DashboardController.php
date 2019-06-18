@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Building;
+use App\Entity\BuildingType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -25,6 +27,12 @@ class DashboardController extends AbstractController
      */
     public function playerArmyAction()
     {
+        if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
+            return $this->redirectToRoute('login');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+
         return $this->render('dashboard/player_army.html.twig');
     }
 
@@ -33,6 +41,10 @@ class DashboardController extends AbstractController
      */
     public function kingdomCourtAction()
     {
+        if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
+            return $this->redirectToRoute('login');
+        }
+
         return $this->render('dashboard/kingdom_court.html.twig');
     }
 
@@ -41,6 +53,10 @@ class DashboardController extends AbstractController
      */
     public function worldMapAction()
     {
+        if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
+            return $this->redirectToRoute('login');
+        }
+
         return $this->render('dashboard/world_map.html.twig');
     }
 }
