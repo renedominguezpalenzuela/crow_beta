@@ -25,13 +25,13 @@ class Team
 
     /**
      * @var
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\OneToOne(targetEntity="User")
      */
     private $user;
 
     /**
      * @var
-     * @ORM\ManyToOne(targetEntity="Kingdom")
+     * @ORM\OneToOne(targetEntity="Kingdom")
      */
     private $kingdom;
 

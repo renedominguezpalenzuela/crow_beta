@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\TroopLocation;
+use App\Entity\TypeEvent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method TroopLocation|null find($id, $lockMode = null, $lockVersion = null)
- * @method TroopLocation|null findOneBy(array $criteria, array $orderBy = null)
- * @method TroopLocation[]    findAll()
- * @method TroopLocation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method TypeEvent|null find($id, $lockMode = null, $lockVersion = null)
+ * @method TypeEvent|null findOneBy(array $criteria, array $orderBy = null)
+ * @method TypeEvent[]    findAll()
+ * @method TypeEvent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TroopLocationRepository extends ServiceEntityRepository
+class TypeEventRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, TroopLocation::class);
+        parent::__construct($registry, TypeEvent::class);
     }
 
     // /**
-    //  * @return TroopLocation[] Returns an array of TroopLocation objects
+    //  * @return TypeEvent[] Returns an array of TypeEvent objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class TroopLocationRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?TroopLocation
+    public function findOneBySomeField($value): ?TypeEvent
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.exampleField = :val')

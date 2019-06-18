@@ -8,6 +8,7 @@
           href="{{ asset('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons') }}">
     <link rel="stylesheet"
           href="{{ asset('https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     {% block css %}{% endblock %}
 </head>
 <body class="dark-edition">
@@ -26,6 +27,12 @@
         <div class="sidebar-wrapper">
             <ul class="nav">
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li class="nav-item" id="combo-kingdom">
+                        {{ render(controller(
+                            'App\\Controller\\DefaultController::comboKindom',
+                            { 'max': 3 }
+                        )) }}
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('dashboard_player_army') }}">
                             <p>Player's Army</p>
@@ -41,6 +48,7 @@
                             <p>World Map</p>
                         </a>
                     </li>
+
                 {% endif %}
                 {#<li class="nav-item active">#}
                     {#<a class="nav-link" href="#">#}
@@ -62,7 +70,7 @@
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top " id="navigation-example">
             <div class="container-fluid">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="javascript:void(0)">Dashboard</a>
+                    <a class="navbar-brand" href="{{ path('dashboard') }}">Dashboard</a>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
                         aria-expanded="false" aria-label="Toggle navigation" data-target="#navigation-example">
@@ -187,7 +195,14 @@
             element.addClass('active');
             element.children().removeClass('active');
         }
+
+        $('#form_kingdom').change(function(response){
+            let url = '{{ path('go_kingdom') }}'+'?&form_kingdom='+$('#form_kingdom').val();
+            window.location.href = url;
+        });
     });
+
+
 </script>
 {% block js %}{% endblock %}
 </body>

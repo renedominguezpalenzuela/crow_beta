@@ -68,9 +68,20 @@ class Troop
 
     /**
      * @var
+     * @ORM\ManyToOne(targetEntity="UnitType")
+     */
+    private $unitType;
+
+    /**
+     * @var
      * @ORM\OneToMany(targetEntity="TroopBuilding", mappedBy="troops")
      */
     private $buildings;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $unit_type_id;
 
     public function getId(): ?int
     {
@@ -188,6 +199,18 @@ class Troop
                 $building->setTroops(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUnitType(): ?UnitType
+    {
+        return $this->unitType;
+    }
+
+    public function setUnitType(?UnitType $unitType): self
+    {
+        $this->unitType = $unitType;
 
         return $this;
     }

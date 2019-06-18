@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ team }}{% endblock %}
+
+{% block body %}
+    <div class="card">
+        <div class="card-header-primary">Information</div>
+        <div class="card-body">
+
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header-primary">Move Troop to Castle</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="troop pull-right">Archers: <span id="archer">100</span></div>
+                </div>
+                <div class="col-sm-5">
+                    <a class="btn btn-success btn-sm" id="plus-archer">+</a>
+                    <input type="number" id="value-archer" min="0" value="0">
+                    <a class="btn btn-danger btn-sm" id="unplus-archer">-</a>
+                    <a class="btn btn-warning btn-sm">Go!</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    <span class="troop pull-right">Spearmen: 300</span>
+                </div>
+                <div class="col-sm-5">
+                    <a class="btn btn-success btn-sm">+</a>
+                    <input type="number" id="val-spearmen" min="0" value="0">
+                    <a class="btn btn-danger btn-sm">-</a>
+                    <a class="btn btn-warning btn-sm">Go!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        $('#plus-archer').click(function(e){
+            e.preventDefault();
+        });
+
+        $('.main-panel > .content').css('background-image', 'url("{{ asset('images/game/'~team.kingdom.image) }}")');
+        $('.main-panel > .content').css('background-size', "cover");
+        $('.main-panel > .content').css('filter', "brightness(0.5)");
+        $('.main-panel > .content').css('min-height', "calc(150vh - 0px)");
+    </script>
+{% endblock %}

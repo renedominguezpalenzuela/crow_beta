@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Team;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
@@ -33,11 +34,16 @@ class UserController extends AbstractController
      */
     public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
+        if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
+            //...
+        }
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $kingdom = $form['kingdom']->getData();
+
             $em = $this->getDoctrine()->getManager();
 //            $file = $form['file']->getData();
 //            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
@@ -49,6 +55,21 @@ class UserController extends AbstractController
 //            $user->setPhoto($filename);
 
             $em->persist($user);
+            $em->flush();
+
+            //insert row to team
+            $team = new Team();
+            $team->setKingdom($kingdom);
+            $team->setUser($user);
+            $team->setGold('500000');
+
+            //verify if kingdom has leader and id_player_boss
+
+            if($kingdom->getIdKingdomBoss() == 0){
+                $kingdom->setIdKingdomBoss($user->getId());
+                $em->persist($kingdom);
+            }
+            $em->persist($team);
             $em->flush();
 
             $this->addFlash('success', 'Welcome '.$user->getUsername().'!');
