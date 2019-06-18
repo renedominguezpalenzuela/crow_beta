@@ -23,7 +23,6 @@ class APIController extends AbstractController
     {
 
         if($this->isGranted('IS_AUTHENTICATED_FULLY')){
-
             $parametersAsArray = [];
             if ($content = $request->getContent()) {
                 $parametersAsArray = json_decode($content, true);
