@@ -72,6 +72,11 @@ class Troop
      */
     private $buildings;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $unit_type_id;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -188,6 +193,18 @@ class Troop
                 $building->setTroops(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUnitTypeId(): ?int
+    {
+        return $this->unit_type_id;
+    }
+
+    public function setUnitTypeId(int $unit_type_id): self
+    {
+        $this->unit_type_id = $unit_type_id;
 
         return $this;
     }
