@@ -78,6 +78,11 @@ class Troop
      */
     private $buildings;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $unit_type_id;
+
     public function getId(): ?int
     {
         return $this->id;
