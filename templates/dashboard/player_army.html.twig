@@ -8,15 +8,39 @@
         <div class="card">
             <div class="card-header-primary">Castle</div>
             <div class="card-body">
-                aa
+                <table class="table">
+                    <tr>
+                        <td><h4>Status</h4></td>
+                    </tr>
+                    <tr>
+                        <td><p>Level: {{ buildingCastle.buildingType.level }}</p></td>
+                    </tr>
+                    <tr>
+                        <td><p>Defense: {{ buildingCastle.buildingType.defense }}</p></td>
+                    </tr>
+                </table>
+                <table class="table">
+                    <tr>
+                        <td><h4>Troops</h4></td>
+                    </tr>
+                    {% for t in troops %}
+                    <tr>
+                        <td><p>{{ t.unitType.name }}: <span class="badge-green">{{ t.total }}</span><p></td>
+                    </tr>
+                        {% else %}
+                    <tr>
+                        <td><p>There are not any troop</p></td>
+                    </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
     </div>
     <div class="col-sm-4">
         <div class="card">
-            <div class="card-header-primary">Troop</div>
+            <div class="card-header-primary">Troop Movement</div>
             <div class="card-body">
-                bb
+
             </div>
         </div>
     </div>
