@@ -31,7 +31,7 @@ class APIListUserResourcesController extends AbstractController
         $mensaje_error = "Not error found";
         $error = false;
 
-        /*  if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
+          if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
 
         $error=true;
 
@@ -42,7 +42,7 @@ class APIListUserResourcesController extends AbstractController
 
         return $this->json($respuesta);
 
-        }*/
+        }
 
         $arreglo_final = [
 
@@ -60,10 +60,10 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         //(1) Obtengo user() de la peticion
         //--------------------------------------------------------------------------
-        //$user = $this->getUser();
+        $user = $this->getUser();
         //Fake user
-        $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
-        $user = $fake_user;
+       // $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+       // $user = $fake_user;
         //--------------------------------------------------------------------------
         //(2) busco el castillo del usuario
         //--------------------------------------------------------------------------
