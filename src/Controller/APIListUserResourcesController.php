@@ -2,19 +2,16 @@
 
 namespace App\Controller;
 
-
+use App\Entity\Building;
+use App\Entity\BuildingType;
+use App\Entity\Team;
+use App\Entity\Troop;
+use App\Entity\TroopBuilding;
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
-use App\Entity\Building;
-use App\Entity\BuildingType;
-use App\Entity\Team;
-use App\Entity\User;
-use App\Entity\Troop;
-use App\Entity\UnitType;
-use App\Entity\TroopBuilding;
 
 /**
  * Class APIListUserResourcesController
@@ -31,16 +28,16 @@ class APIListUserResourcesController extends AbstractController
         $mensaje_error = "Not error found";
         $error = false;
 
-          if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
 
-        $error=true;
+            $error = true;
 
-        $respuesta=array(
-        'error'=>false,
-        'message'=>"User not authenticated",
-        );
+            $respuesta = array(
+                'error' => false,
+                'message' => "User not authenticated",
+            );
 
-        return $this->json($respuesta);
+            return $this->json($respuesta);
 
         }
 
@@ -62,15 +59,15 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         $user = $this->getUser();
         //Fake user
-       // $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
-       // $user = $fake_user;
+        // $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+        // $user = $fake_user;
         //--------------------------------------------------------------------------
         //(2) busco el castillo del usuario
         //--------------------------------------------------------------------------
         //2.1) busco el team del usuario
 
         $team = $em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
-        var_dump("User id " . $team->getID());
+        //var_dump("User id " . $team->getID());
 
         //2.2) buscar el kingdom del team
         $kingdom = $team->getKingdom();
@@ -141,54 +138,43 @@ class APIListUserResourcesController extends AbstractController
 
             $arreglo[] = array(
                 'troop_id' => $untroop->getID(),
-                'troop_name'=> $troop_type->getName(),
-                'level'=>$untroop->getLevel(),
-                'total'=>$untroop->getTotal(),
-                'attack'=>$untroop->getAttack(),
-                'defense'=>$untroop->getDefense(),
-                'damage'=>$untroop->getDamage(),
-                'speed'=>$untroop->getSpeed()
+                'troop_name' => $troop_type->getName(),
+                'level' => $untroop->getLevel(),
+                'total' => $untroop->getTotal(),
+                'attack' => $untroop->getAttack(),
+                'defense' => $untroop->getDefense(),
+                'damage' => $untroop->getDamage(),
+                'speed' => $untroop->getSpeed(),
             );
-
-      
-
-
-
 
         };
 
         $arreglo_final['troops'] = $arreglo;
 
-          //------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         //(5) TroopsLocation
         //------------------------------------------------------------------------------
-  
 
-         //Busco todas las tropas del usuario
-         $troops = $em->getRepository(Troop::class)->findBy(['user' => $user]);
+        //Busco todas las tropas del usuario
+        $troops = $em->getRepository(Troop::class)->findBy(['user' => $user]);
 
-         $arreglo = array();
-         foreach ($troops as $untroop) {
+        $arreglo = array();
+        foreach ($troops as $untroop) {
             $troop_building = $em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $untroop]);
 
             $arreglo[] = array(
                 'troop_id' => $untroop->getID(),
-                'troop_name'=>$untroop->getUnitType()->getName(),
-                'building_id'=> $troop_building->getBuilding()->getID(),
-                'building_name'=>$troop_building->getBuilding()->getBuildingType()->getName()
+                'troop_name' => $untroop->getUnitType()->getName(),
+                'building_id' => $troop_building->getBuilding()->getID(),
+                'building_name' => $troop_building->getBuilding()->getBuildingType()->getName(),
             );
-         }
+        }
 
-         $arreglo_final['troops_location'] = $arreglo;
+        $arreglo_final['troops_location'] = $arreglo;
 
-
-
-         $arreglo_final['resources']=array(
-             'gold'=>$team->getGold()
-         );
-       
-
-    
+        $arreglo_final['resources'] = array(
+            'gold' => $team->getGold(),
+        );
 
         //Respuesta
         $respuesta = array(
