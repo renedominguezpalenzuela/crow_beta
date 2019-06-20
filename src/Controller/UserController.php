@@ -60,6 +60,30 @@ class UserController extends AbstractController
             $em->persist($user);
             $em->flush();
 
+            //busco el id de los tipos de castillo
+            $castle_type_lv1 = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level'=>1]);
+            $castle_type_lv2 = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level'=>2]);
+
+            //busco si existe un castillo lv1 para el team de ese usuario
+            $castillo =  $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType'=>$castle_type_lv1]);
+
+            //busco si no existe un castillo lv1 para el team de ese usuario, lo busco para el level 2
+            if ($castillo==null){
+                $castillo =  $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType'=>$castle_type_lv2]);
+            }
+
+            //si no existe castillo lvl1 ni lv2 lo creo
+            if ($castillo==null){
+
+                $castillo = new Building();
+                $castillo->setUser($user);
+                $castillo->setBuildingType($castle_type_lv1);
+
+                $castillo->setDefenseRemaining($castle_type_lv1->getDefense());
+
+                $em->persist($castillo);
+            }
+
             //insert row to team
             $team = new Team();
             $team->setKingdom($kingdom);
