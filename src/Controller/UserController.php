@@ -29,6 +29,9 @@ class UserController extends AbstractController
         ]);
     }
 
+
+    
+
     /**
      * @Route("/new", name="user_new", methods="GET|POST")
      */
@@ -59,9 +62,9 @@ class UserController extends AbstractController
 
             //insert row to team
             $team = new Team();
-            $team->setKingdom($kingdom);
+            $team->setKingdom(1);
             $team->setUser($user);
-            $team->setGold('500000');
+            $team->setGold(500000);
 
             //verify if kingdom has leader and id_player_boss
 

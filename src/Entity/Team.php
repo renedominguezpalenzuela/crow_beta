@@ -28,6 +28,7 @@ class Team
      * @ORM\OneToOne(targetEntity="User", inversedBy="team")
      */
     private $user;
+    //tiene que ser unico
 
     /**
      * @var

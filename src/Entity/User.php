@@ -78,6 +78,8 @@ class User implements UserInterface, \Serializable
      * @ORM\OneToOne(targetEntity="Team", mappedBy="user")
      */
     private $team;
+
+
     
     public function getId(): ?int {
         return $this->id;
@@ -225,4 +227,6 @@ class User implements UserInterface, \Serializable
 
         return $this;
     }
+
+    
 }
