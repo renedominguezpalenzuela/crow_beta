@@ -62,7 +62,7 @@ class UserController extends AbstractController
 
             //insert row to team
             $team = new Team();
-            $team->setKingdom(1);
+            $team->setKingdom($kingdom);
             $team->setUser($user);
             $team->setGold(500000);
 

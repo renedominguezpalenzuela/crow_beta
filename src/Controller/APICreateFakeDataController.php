@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\BuildingType;
 use App\Entity\Building;
-use PhpParser\Builder;
 use App\Entity\UnitType;
 use App\Entity\Troop;
 use App\Entity\TroopBuilding;
@@ -57,10 +56,10 @@ class APICreateFakeDataController extends AbstractController
         $kingdom = $em->getRepository(Kingdom::class)->findOneBy(['name' => 'Test Kingdom']);
 
         //verify if kingdom has leader and id_player_boss
-        if ($kingdom->getIdKingdomBoss() == 0) {
+       // if ($kingdom->getIdKingdomBoss() == 0) {
             $kingdom->setIdKingdomBoss($user->getId());
             $em->persist($kingdom);
-        }
+        //}
 
         //Creando el Team
         $team = new Team();
