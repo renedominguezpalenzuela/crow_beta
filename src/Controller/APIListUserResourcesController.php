@@ -28,6 +28,7 @@ class APIListUserResourcesController extends AbstractController
         $mensaje_error = "Not error found";
         $error = false;
 
+        /*
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
 
             $error = true;
@@ -39,7 +40,7 @@ class APIListUserResourcesController extends AbstractController
 
             return $this->json($respuesta);
 
-        }
+        }*/
 
         $arreglo_final = [
 
@@ -57,10 +58,10 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         //(1) Obtengo user() de la peticion
         //--------------------------------------------------------------------------
-        $user = $this->getUser();
+        //$user = $this->getUser();
         //Fake user
-        // $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
-        // $user = $fake_user;
+         $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+         $user = $fake_user;
         //--------------------------------------------------------------------------
         //(2) busco el castillo del usuario
         //--------------------------------------------------------------------------
@@ -167,6 +168,7 @@ class APIListUserResourcesController extends AbstractController
                 'troop_name' => $untroop->getUnitType()->getName(),
                 'building_id' => $troop_building->getBuilding()->getID(),
                 'building_name' => $troop_building->getBuilding()->getBuildingType()->getName(),
+                'total'=>$troop_building->getTotal()
             );
         }
 
