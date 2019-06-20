@@ -54,6 +54,11 @@ class UnitType
      */
     private $cost;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $TotalInitial;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -144,6 +149,18 @@ class UnitType
     public function setCost(int $cost): self
     {
         $this->cost = $cost;
+
+        return $this;
+    }
+
+    public function getTotalInitial(): ?int
+    {
+        return $this->TotalInitial;
+    }
+
+    public function setTotalInitial(int $TotalInitial): self
+    {
+        $this->TotalInitial = $TotalInitial;
 
         return $this;
     }

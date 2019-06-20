@@ -3,40 +3,287 @@
 {% block title %}Player Army{% endblock %}
 
 {% block body %}
-<div class="row">
-    <div class="col-sm-4">
-        <div class="card">
-            <div class="card-header-primary">Castle</div>
-            <div class="card-body">
-                aa
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-header-primary">Castle</div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <td><h4>Status</h4></td>
+                        </tr>
+                        <tr>
+                            <td><p>Level: <span id="level-castle"></span></p></td>
+                        </tr>
+                        <tr>
+                            <td><p>Defense: <span id="defense-castle"></span></p></td>
+                        </tr>
+                        <tr>
+                            <td><p>Defense: <span id="capacity-castle"></span></p></td>
+                        </tr>
+                    </table>
+                    <h4>Troops</h4>
+                    <table class="table" id="list-troop">
+                        <tr>
+                            <td></td>
+                        </tr>
+                        {#{% for t in troops %}#}
+                        {#<tr>#}
+                        {#<td><p>{{ t.unitType.name }}: <span class="badge-green">{{ t.total }}</span><p></td>#}
+                        {#</tr>#}
+                        {#{% else %}#}
+                        {#<tr>#}
+                        {#<td><p>There are not any troop</p></td>#}
+                        {#</tr>#}
+                        {#{% endfor %}#}
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card">
-            <div class="card-header-primary">Troop</div>
-            <div class="card-body">
-                bb
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-header-primary">Troop Movement</div>
+                <div class="card-body">
+
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card">
-            <div class="card-header-primary">Resources</div>
-            <div class="card-body">
-                cc
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-header-primary">Resources</div>
+                <div class="card-body">
+                    <h5 style="color: yellow">Gold: <span id="gold-resource"></span></h5>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-sm-4">
-        <div class="card">
-            <div class="card-header-warning">Camp</div>
-            <div class="card-body">
-                cc
+
+        <div class="col-sm-4" id="camps">s</div>
+        <div class="col-sm-8">
+            <div class="card">
+                <div class="card-header-danger">Log Event</div>
+                <div class="card-body">
+                    asas
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header-danger">Chat</div>
+                <div class="card-body">
+                    Chat
+                </div>
             </div>
         </div>
+
+
     </div>
-</div>
 {% endblock %}
 
-{% block js %}{% endblock %}
+{% block js %}
+    <script>
+        // let data = {
+        //     "team": {"team_id": 1, "kingdom_name": "White kingdom"},
+        //     "castle": {"castle_id": 1, "level": 1, "capacity": 200, "defense_remaining": 50},
+        //     "buildings": [
+        //         {
+        //             "building_id": 1,
+        //             "building_name": "Camp",
+        //             "capacity": 100,
+        //             "filled": 50,
+        //             "defense_remaining": 40,
+        //             "level": 1
+        //         },
+        //         {
+        //             "building_id": 2,
+        //             "building_name": "Castle",
+        //             "capacity": 500,
+        //             "filled": 250,
+        //             "defense_remaining": 20,
+        //             "level": 1
+        //         },
+        //         {
+        //             "building_id": 3,
+        //             "building_name": "Barrack",
+        //             "capacity": 100,
+        //             "filled": 100,
+        //             "defense_remaining": 20,
+        //             "level": 1
+        //         },
+        //     ],
+        //
+        //     "troops": [
+        //         {
+        //             "troop_id": 1,
+        //             "troop_name": "Axemen",
+        //             "level": 1,
+        //             "total": 100,
+        //             "attack": 5,
+        //             "defense": 25,
+        //             "damage": 15,
+        //             "speed": 2
+        //         },
+        //         {
+        //             "troop_id": 2,
+        //             "troop_name": "Light Cavalry",
+        //             "level": 1,
+        //             "total": 80,
+        //             "attack": 7,
+        //             "defense": 25,
+        //             "damage": 10,
+        //             "speed": 2
+        //         },
+        //         {
+        //             "troop_id": 3,
+        //             "troop_name": "Archers",
+        //             "level": 1,
+        //             "total": 80,
+        //             "attack": 10,
+        //             "defense": 25,
+        //             "damage": 10,
+        //             "speed": 3
+        //         },
+        //     ],
+        //     "troops_location": [
+        //         {"troop_id": 1, "building": 1, "total": 150},
+        //         {"troop_id": 2, "building": 2, "total": 15},
+        //     ],
+        //     "resources": {"gold": 5000}
+        // };
+        let data = {
+            "datos": {
+                "team": {"team_id": 17, "kingdom_name": "Test Kingdom"},
+                "castle": {"castle_id": 41, "level": 1, "capacity": 25000, "defense_remaining": 500000},
+                "buildings": [{
+                    "building_id": 42,
+                    "building_name": "Barrack",
+                    "capacity": 0,
+                    "filled": 0,
+                    "level": 1,
+                    "defense_remaining": 0
+                }, {
+                    "building_id": 43,
+                    "building_name": "Camp",
+                    "capacity": 5000,
+                    "filled": 0,
+                    "level": 1,
+                    "defense_remaining": 50000
+                }, {
+                    "building_id": 44,
+                    "building_name": "Camp",
+                    "capacity": 5000,
+                    "filled": 0,
+                    "level": 1,
+                    "defense_remaining": 50000
+                }, {
+                    "building_id": 45,
+                    "building_name": "Camp",
+                    "capacity": 5000,
+                    "filled": 0,
+                    "level": 1,
+                    "defense_remaining": 50000
+                }],
+                "troops": [{
+                    "troop_id": 17,
+                    "troop_name": "Archers",
+                    "level": 1,
+                    "total": 200,
+                    "attack": 30,
+                    "defense": 20,
+                    "damage": 0,
+                    "speed": 6
+                }, {
+                    "troop_id": 18,
+                    "troop_name": "Spearman",
+                    "level": 1,
+                    "total": 150,
+                    "attack": 50,
+                    "defense": 40,
+                    "damage": 10,
+                    "speed": 5
+                }, {
+                    "troop_id": 19,
+                    "troop_name": "Axemen",
+                    "level": 1,
+                    "total": 100,
+                    "attack": 50,
+                    "defense": 50,
+                    "damage": 100,
+                    "speed": 4
+                }, {
+                    "troop_id": 20,
+                    "troop_name": "Light Cavalry",
+                    "level": 1,
+                    "total": 50,
+                    "attack": 100,
+                    "defense": 100,
+                    "damage": 50,
+                    "speed": 10
+                }],
+                "troops_location": [{
+                    "troop_id": 17,
+                    "troop_name": "Archers",
+                    "building_id": 42,
+                    "building_name": "Barrack"
+                }, {
+                    "troop_id": 18,
+                    "troop_name": "Spearman",
+                    "building_id": 42,
+                    "building_name": "Barrack"
+                }, {
+                    "troop_id": 19,
+                    "troop_name": "Axemen",
+                    "building_id": 41,
+                    "building_name": "Castle"
+                }, {"troop_id": 20, "troop_name": "Light Cavalry", "building_id": 42, "building_name": "Barrack"}],
+                "resources": {"gold": 500000}
+            }, "error": false, "message": "Not error found"
+        }
+
+        /* Castle */
+        $('#level-castle').html(showCastle(data).level);
+        $('#defense-castle').html(showCastle(data).defense_remaining);
+        $('#capacity-castle').html(showCastle(data).capacity);
+        /* /. */
+        /* troop */
+        let troop = showTroops(data);
+
+        for (i = 0; i < troop.length; i++) {
+            troop[i];
+            $('<tr><td><p>' + troop[i]['troop_name'] + '</p></td><td><p>' + troop[i]['total'] + '</p></td></tr>').appendTo('#list-troop');
+
+        }
+        /* Resousrces */
+        $('#gold-resource').html(showResources(data));
+
+        /* The troops_location */
+
+        let camp = showTroopLocation(data);
+
+        for (i = 0; i < camp.length; i++) {
+            $("<div class='card'>" +
+                "<div class=\"card-header-warning\">" + camp[i]['building_name'] + "</div>" +
+                "<div class=\"card-body\">" +
+                "" +
+                "</div>" +
+                "</div>").appendTo('#camps');
+        }
+
+        function showCastle(data) {
+            return data.datos.castle;
+        }
+
+        function showTroops(data) {
+            return data.datos.troops;
+        }
+
+        function showResources(data) {
+            return data.datos.resources.gold;
+        }
+
+        function showTroopLocation(data) {
+            return data.datos.troops_location
+        }
+
+        function showBuilding(data) {
+            return data.datos.buildings;
+        }
+    </script>
+{% endblock %}

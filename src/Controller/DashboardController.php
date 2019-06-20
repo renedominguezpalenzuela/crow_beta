@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Building;
 use App\Entity\BuildingType;
+use App\Entity\Troop;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,8 +33,29 @@ class DashboardController extends AbstractController
         }
 
         $em = $this->getDoctrine()->getManager();
+        //verify if user has any castle to create at the first time...
 
-        return $this->render('dashboard/player_army.html.twig');
+        $buildingCastle =  $em->getRepository(Building::class)->findCastle($this->getUser()->getId());
+        $troops = $em->getRepository(Troop::class)->findBy(['user' => $this->getUser()]);
+
+        if(!$buildingCastle){
+            $building = new Building();
+            $building->setBuildingType($em->getRepository(BuildingType::class)->findOneBy(['name' => 'Castle', 'level' => 1]));
+            $building->setUser($this->getUser());
+            $building->setDefenseRemaining(25000);
+            $em->persist($building);
+
+            $em->flush();
+
+            $buildingCastle =  $em->getRepository(Building::class)->findCastle($this->getUser()->getId());
+        }
+
+        //
+
+        return $this->render('dashboard/player_army.html.twig', [
+            'buildingCastle' => $buildingCastle,
+            'troops' => $troops
+        ]);
     }
 
     /**

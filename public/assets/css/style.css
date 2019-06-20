@@ -1,0 +1,13 @@
+h4 {
+    border-bottom: 2px solid;
+    color: whitesmoke;
+}
+
+.dark-edition .table > thead > tr > th, .dark-edition .table > tbody > tr > th, .dark-edition .table > tfoot > tr > th, .dark-edition .table > thead > tr > td, .dark-edition .table > tbody > tr > td, .dark-edition .table > tfoot > tr > td {
+    color: #000;
+}
+
+.card p{
+    text-shadow: 3px 3px 2px #000;
+    color: #FFF;
+}
