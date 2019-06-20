@@ -50,6 +50,8 @@ class DashboardController extends AbstractController
             $buildingCastle =  $em->getRepository(Building::class)->findCastle($this->getUser()->getId());
         }
 
+        //
+
         return $this->render('dashboard/player_army.html.twig', [
             'buildingCastle' => $buildingCastle,
             'troops' => $troops
