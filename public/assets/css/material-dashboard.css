@@ -14854,7 +14854,11 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
   min-height: calc(100vh - 123px);
   background-image: url('../../images/game/castle.jpg');
   background-size: cover;
-    filter:brightness(0.7);
+    -webkit-filter: grayscale(60%);
+    filter: grayscale(60%);
+    /*filter:brightness(0.7);*/
+    background-position-x: 50%;
+    background-position-y: 50%;
 }
 
 .main-panel>.footer {
