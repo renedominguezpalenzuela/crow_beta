@@ -77,8 +77,7 @@
 
 {% block js %}
     <script>
-        {#$.getJSON('{{ path('list_user_resources') }}', function(data){#}
-        $.getJSON('{{ path('prueba') }}', function(data){
+        $.getJSON('{{ path('list_user_resources') }}', function(data){
             /* Castle */
             $('#level-castle').html(showCastle(data).level);
             $('#defense-castle').html(showCastle(data).defense_remaining);
