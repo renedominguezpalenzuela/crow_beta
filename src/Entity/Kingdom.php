@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -35,7 +37,17 @@ class Kingdom
      * @ORM\Column(name="id_kingdom_boss", type="integer")
      * @Assert\NotBlank()
      */
-    private $idKingdomBoss;
+    private $idKingdomBoss = 0;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Building", mappedBy="kingdom")
+     */
+    private $buildings;
+
+    public function __construct()
+    {
+        $this->buildings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -81,5 +93,36 @@ class Kingdom
     public function __toString()
     {
         return $this->getName();
+    }
+
+    /**
+     * @return Collection|Building[]
+     */
+    public function getBuildings(): Collection
+    {
+        return $this->buildings;
+    }
+
+    public function addBuilding(Building $building): self
+    {
+        if (!$this->buildings->contains($building)) {
+            $this->buildings[] = $building;
+            $building->setKingdom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBuilding(Building $building): self
+    {
+        if ($this->buildings->contains($building)) {
+            $this->buildings->removeElement($building);
+            // set the owning side to null (unless already changed)
+            if ($building->getKingdom() === $this) {
+                $building->setKingdom(null);
+            }
+        }
+
+        return $this;
     }
 }

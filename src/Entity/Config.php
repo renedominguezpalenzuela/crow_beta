@@ -5,9 +5,9 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TypeEventRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ConfigRepository")
  */
-class TypeEvent
+class Config
 {
     /**
      * @ORM\Id()
@@ -17,23 +17,23 @@ class TypeEvent
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="boolean")
      */
-    private $name;
+    private $testing = false;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTesting(): ?bool
     {
-        return $this->name;
+        return $this->testing;
     }
 
-    public function setName(string $name): self
+    public function setTesting(bool $testing): self
     {
-        $this->name = $name;
+        $this->testing = $testing;
 
         return $this;
     }

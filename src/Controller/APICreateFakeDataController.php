@@ -48,6 +48,7 @@ class APICreateFakeDataController extends AbstractController
         $plainPassword = '123';
         $encoded = $encoder->encodePassword($user, $plainPassword);
         $user->setPassword($encoded);
+        $user->setGold(500000);
 
         $em->persist($user);
         $em->flush();
@@ -65,7 +66,6 @@ class APICreateFakeDataController extends AbstractController
         $team = new Team();
         $team->setKingdom($kingdom);
         $team->setUser($user);
-        $team->setGold(500000);
         $em->persist($team);
 
         $em->flush();

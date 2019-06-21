@@ -119,10 +119,14 @@ class APIListUserResourcesController extends AbstractController
                     'filled' => 0,
                     'level' => $building_type->getLevel(),
                     'defense_remaining' => $unbuilding->getDefenseRemaining(),
+//                    'troops'=>[]
                 );
             }
 
         };
+
+
+        //TODO: agregar los edificios de los otros miembros del team
 
         $arreglo_final['buildings'] = $arreglo;
 
@@ -155,8 +159,7 @@ class APIListUserResourcesController extends AbstractController
         //------------------------------------------------------------------------------
         //(5) TroopsLocation
         //------------------------------------------------------------------------------
-
-        //Busco todas las tropas del usuario
+        //Busco todas las ubicaciones de las tropas del usuario
         $troops = $em->getRepository(Troop::class)->findBy(['user' => $user]);
 
         $arreglo = array();
@@ -175,7 +178,7 @@ class APIListUserResourcesController extends AbstractController
         $arreglo_final['troops_location'] = $arreglo;
 
         $arreglo_final['resources'] = array(
-            'gold' => $team->getGold(),
+            'gold' => $user->getGold(),
         );
 
         //Respuesta
