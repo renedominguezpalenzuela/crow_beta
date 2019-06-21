@@ -15,6 +15,8 @@ use App\Entity\Building;
 use App\Entity\UnitType;
 use App\Entity\Troop;
 use App\Entity\TroopBuilding;
+use App\Service\CreateInitialUserData;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class APICreateFakeDataController
@@ -213,6 +215,7 @@ class APICreateFakeDataController extends AbstractController
              $castillo->setBuildingType($castle_type_lv1);
 
              $castillo->setDefenseRemaining($castle_type_lv1->getDefense());
+             $castillo->setKingdom($kingdom);
 
              $em->persist($castillo);
              $em->flush();
@@ -225,6 +228,7 @@ class APICreateFakeDataController extends AbstractController
 
           $barrack->setUser($user);
           $barrack->setBuildingType($barrack_type);
+          $barrack->setKingdom($kingdom);
 
           $barrack->setDefenseRemaining($barrack_type->getDefense());
 
@@ -240,6 +244,8 @@ class APICreateFakeDataController extends AbstractController
   
             $camp->setUser($user);
             $camp->setBuildingType($camp_type);
+
+            $camp->setKingdom($kingdom);
   
             $camp->setDefenseRemaining($camp_type->getDefense());
   
@@ -294,6 +300,28 @@ class APICreateFakeDataController extends AbstractController
 
     }
 
+
+
+    
+    /**
+     * @Route("/test_new_user", name="test")
+     */
+    public function test_new_user(UserPasswordEncoderInterface $encoder, CreateInitialUserData $userdata )
+    {
+        //Obtener usuario
+        //$user = $this->getUser();
+        //Fake user
+        $em = $this->getDoctrine()->getManager();
+        $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+        $user = $fake_user;
+        //var_dump($user);
+
+
+        $userdata->crear($user);
+
+        return $this->json( Response::HTTP_OK);
+
+    }
 
 
 }
