@@ -129,7 +129,7 @@ class APIMoveTroopsController extends AbstractController
 
                 $total_edificio_old = $tropa_edificio_old->getTotal();
 
-                var_dump("total_edificio_old " . $total_edificio_old . " total a mover " . $total_a_mover);
+               // var_dump("total_edificio_old " . $total_edificio_old . " total a mover " . $total_a_mover);
 
                 //VALIDAR: si total de tropas a mover es mayor que las que hay en el edificio error
                 if ($total_edificio_old < $total_a_mover) {
@@ -180,6 +180,7 @@ class APIMoveTroopsController extends AbstractController
                 //si llega a 0 las tropas en el edificio old la tupla se elimina
                 if ($resto_edificio_old == 0) {
                     //var_dump("borrando");
+                  
                     $em->remove($tropa_edificio_old);
                     $em->flush();
                 } else {

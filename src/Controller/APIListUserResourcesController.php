@@ -101,7 +101,7 @@ class APIListUserResourcesController extends AbstractController
         //----------------------------------------------------------------------------------------
         //(3) Buildings
         //----------------------------------------------------------------------------------------
-        //busco todos los edificios del user excepto el castillo que ya lo tengo
+        //busco todos los edificios del team excepto el castillo que ya lo tengo
         $buildings = $em->getRepository(Building::class)->findBy(['user' => $user]);
 
         $arreglo = array();
@@ -109,7 +109,8 @@ class APIListUserResourcesController extends AbstractController
 
             $building_type = $unbuilding->getBuildingType();
 
-            if ($building_type->getName() != 'Castle') {
+            //if ($building_type->getName() != 'Castle') {
+                //El castillo tambien se agrega en la lista lo que no se dibuja en el twig junto a los otros edificios
                 //Cantidad de tropas en un edificio
 
                 $arreglo[] = array(
@@ -121,7 +122,7 @@ class APIListUserResourcesController extends AbstractController
                     'defense_remaining' => $unbuilding->getDefenseRemaining(),
 //                    'troops'=>[]
                 );
-            }
+            //}
 
         };
 
