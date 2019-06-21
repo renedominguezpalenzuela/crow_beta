@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Kingdom;
 use App\Entity\BuildingType;
 use App\Entity\UnitType;
+use App\Entity\Config;
 
 class AppFixtures extends Fixture
 {
@@ -14,6 +15,13 @@ class AppFixtures extends Fixture
     {
         // $product = new Product();
         // $manager->persist($product);
+
+
+        //Configuracion global
+        $config = new Config();
+        $config->setTesting(false);
+        $manager->persist($config);
+
 
         $kingdoms = array(
             ['id'=>'1', 'name'=>'White Kingdom', 'image'=>'castillo1.jpg'] ,
@@ -75,6 +83,8 @@ class AppFixtures extends Fixture
            
             $manager->persist($unit);   
         }
+
+
 
 
 

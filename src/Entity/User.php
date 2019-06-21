@@ -80,6 +80,13 @@ class User implements UserInterface, \Serializable
     private $team;
 
 
+     /**
+     * @ORM\Column(name="gold", type="integer")
+     * @Assert\NotBlank()
+     */
+    private $gold;
+
+
     
     public function getId(): ?int {
         return $this->id;
@@ -227,6 +234,20 @@ class User implements UserInterface, \Serializable
 
         return $this;
     }
+
+
+    public function getGold(): ?int
+    {
+        return $this->gold;
+    }
+
+    public function setGold(int $gold): self
+    {
+        $this->gold = $gold;
+
+        return $this;
+    }
+
 
     
 }

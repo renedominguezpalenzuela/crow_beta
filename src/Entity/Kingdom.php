@@ -35,7 +35,7 @@ class Kingdom
      * @ORM\Column(name="id_kingdom_boss", type="integer")
      * @Assert\NotBlank()
      */
-    private $idKingdomBoss;
+    private $idKingdomBoss = 0;
 
     public function getId(): ?int
     {

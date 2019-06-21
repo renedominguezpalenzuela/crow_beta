@@ -17,11 +17,7 @@ class Team
      */
     private $id;
 
-    /**
-     * @ORM\Column(name="gold", type="integer")
-     * @Assert\NotBlank()
-     */
-    private $gold;
+
 
     /**
      * @var
@@ -41,18 +37,7 @@ class Team
         return $this->id;
     }
 
-    public function getGold(): ?int
-    {
-        return $this->gold;
-    }
-
-    public function setGold(int $gold): self
-    {
-        $this->gold = $gold;
-
-        return $this;
-    }
-
+   
     public function getUser(): ?User
     {
         return $this->user;
