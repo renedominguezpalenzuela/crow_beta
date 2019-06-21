@@ -38,14 +38,15 @@ class CreateInitialUserData
         //tambien se puede al crear el team, crear los castillos
         //al crear un usuario del team, buscar si existe un boss, si no existe se pone al usuario como boss
 
-        //busco team del user ()
+        //1)busco team (kingdom) del user 
+        //el kingdom se escoge al crear el usuario
         $team = $this->em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
-
-        //busco el boss del team (es el duenno del castillo)
         $kingdom = $team->getKingdom();
+
+        //2) busco el boss del team (es el user duenno del castillo)      
         $id_user_boss = $kingdom->getIdKingdomBoss();
 
-        //si no existe boss --> crear el castillo
+        //si no existe boss ??--> crear el castillo
 
         //busco el id de los tipos de castillo (TODO: crear un ciclo filtrar por name=castle)
         $castle_type_lv1 = $this->em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level' => 1]);

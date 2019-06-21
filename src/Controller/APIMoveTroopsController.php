@@ -66,6 +66,8 @@ class APIMoveTroopsController extends AbstractController
 
             foreach ($troops as $unatropa) {
 
+                //$resto_edificio_old = $total_edificio_old - $total_a_mover;
+
                 if ($from == $to) {
                     $mensaje_error = "From building same as To Building from id" . $from . " to id " . $to;
                     $error = true;
