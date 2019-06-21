@@ -41,6 +41,11 @@ class Building
      */
     private $troopBuildings;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Kingdom", inversedBy="buildings")
+     */
+    private $kingdom;
+
     public function __construct()
     {
         $this->troopBuildings = new ArrayCollection();
@@ -114,6 +119,18 @@ class Building
                 $troopBuilding->setBuilding(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getKingdom(): ?Kingdom
+    {
+        return $this->kingdom;
+    }
+
+    public function setKingdom(?Kingdom $kingdom): self
+    {
+        $this->kingdom = $kingdom;
 
         return $this;
     }
