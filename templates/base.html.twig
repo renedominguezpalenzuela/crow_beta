@@ -192,15 +192,11 @@
     });
 </script>
 <script>
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        $('.main-panel > .content').css('background-image', 'url("{{ asset('images/game/'~app.user.team.kingdom.image) }}")');
-    {% else %}
-    $('.main-panel > .content').css('background-image', 'url("{{ asset('images/game/warrio.jpg') }}")');
-    {% endif %}
-    $('.main-panel > .content').css('background-size', 'cover');
-    $('.main-panel > .content').css('min-height', 'calc(200vh - 123px');
-    $('.main-panel > .content').css('-webkit-filter', 'grayscale(60%)');
-    $('.main-panel > .content').css('filter', 'grayscale(60%)');
+    {#$('.main-panel > .content').css('background-image', 'url("{{ asset('images/game/castle.jpg') }}")');#}
+    {#$('.main-panel > .content').css('background-size', 'cover');#}
+    {#$('.main-panel > .content').css('min-height', 'calc(200vh - 123px');#}
+    // $('.main-panel > .content').css('-webkit-filter', 'grayscale(60%)');
+    // $('.main-panel > .content').css('filter', 'grayscale(60%)');
     // $('.main-panel > .content').css('-webkit-filter', 'brightness(50%)');
     // $('.main-panel > .content').css('filter', 'brightness(50%)');
     // $('.main-panel > .content').css('-webkit-filter', 'blur(4px)');
