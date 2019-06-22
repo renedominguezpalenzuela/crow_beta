@@ -99,20 +99,24 @@
                 let building_id = unBuilding['building_id'];
                 unBuilding['troop_location'] = [];
 
+                 //------------------------------------------------------------------------------------
+                 //ES MAS EFICIENTE ACCEDER a la variable unbuilding y no al arreglo buildings[y]
+                 //------------------------------------------------------------------------------------
+
                 //Pintamos los card
                 $("<div class='card'>" +
-                    "<div class=\"card-header-warning\">" + buildings[y]['building_name'] + "</div>" +
+                    "<div class=\"card-header-warning\">" + unBuilding['building_name'] + "</div>" +
                     "<div class=\"card-body\">" +
                         "<table class='table'>" +
                         "<tr>" +
-                        "<td><p>Level: " + buildings[y]['level'] + "</p></td>" +
+                        "<td><p>Level: " + unBuilding['level'] + "</p></td>" +
                         "</tr>" +
                         "<tr>" +
-                        "<td><p>Defense: " + buildings[y]['defense_remaining'] + "</p></td>" +
+                        "<td><p>Defense: " + unBuilding['defense_remaining'] + "</p></td>" +
                         "</tr>" +
                         "</table>" +
                         "<h4>Troops</h4>" +
-                        "<div id='troop_location"+buildings[y]['building_id']+"'></div>"+
+                        "<div id='troop_location"+unBuilding['building_id']+"'></div>"+
                     "</div>" +
                     "</div>").appendTo('#camps');
 
@@ -120,27 +124,39 @@
 
                 for (let i = 0; i < troopLocation.length; i++) {
                     let untroop_location = troopLocation[i];
+                   // console.log("Building_id "+building_id);
+                   // console.log("trooplocation building_id "+untroop_location['building_id']);
+
                     if (untroop_location['building_id'] == building_id) {
                         unBuilding['troop_location'].push(untroop_location);
-                        // console.log(troopLocation)
+                     //   console.log('match');
+                         //console.log(troopLocation)
                         // Puedo pintar aqui un troop del edificio [untroop_location]
                         //si lo pinto aqui no hago el push anterior aunque seria bueno mantener la extructura
                         //de forma global en la pagina para realizar validaciones en los movimientos de tropas
                         //y no hacer peticiones de mas al servidor
+
+                        //----------------------------------------
+                        //ES MAS EFICIENTE AQUI CREO
+                        //----------------------------------------
+                         $('<table class="table table-hover"><tr><td><p>'+untroop_location['troop_name']+': '+
+                         untroop_location['total']+'</p></td></tr></table>').appendTo('#troop_location'+untroop_location['building_id']);
                     }
                 }
 
                 buildings[y] = unBuilding;
                 // console.log(unBuilding.troop_location);
-                for (let k = 0; k < unBuilding.troop_location.length; k++){
+              {#  
+              for (let k = 0; k < unBuilding.troop_location.length; k++){
                     // console.log(unBuilding.troop_location[k]['troop_name']);
                     $('<table class="table table-hover"><tr><td><p>'+unBuilding.troop_location[k]['troop_name']+': '+unBuilding.troop_location[k]['total']+'</p></td></tr></table>').appendTo('#troop_location'+unBuilding.troop_location[k]['building_id']);
                 }
+                #}
             }
 
             //O Puedo al final de preparar la extructura de datos empezar a pintar los cards
             //revisa en la consola para que veas
-            // console.log(buildings);
+             //console.log(buildings);
         });
 
         {#$.getJSON('{{ path('list_user_resources') }}', function(data){#}
