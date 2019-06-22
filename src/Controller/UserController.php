@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Team;
+
 use App\Entity\User;
+use App\Entity\BuildingType;
+use App\Entity\Building;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -56,6 +58,9 @@ class UserController extends AbstractController
             $encoded = $encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($encoded);
 //            $user->setPhoto($filename);
+            $user->setKingdom($kingdom);
+
+            $user->setGold(500000);
 
             $em->persist($user);
             $em->flush();
@@ -85,19 +90,18 @@ class UserController extends AbstractController
             }
 
             //insert row to team
-            $team = new Team();
-            $team->setKingdom($kingdom);
-            $team->setUser($user);
-            $team->setGold(500000);
+           // $team = new Team();
+      
 
             //verify if kingdom has leader and id_player_boss
 
             if($kingdom->getIdKingdomBoss() == 0){
                 $kingdom->setIdKingdomBoss($user->getId());
                 $em->persist($kingdom);
+                
             }
-            $em->persist($team);
-            $em->flush();
+           // $em->persist($team);
+           $em->flush();
 
             $this->addFlash('success', 'Welcome '.$user->getUsername().'!');
 

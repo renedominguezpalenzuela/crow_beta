@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Team;
+
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Kingdom;
 
 /**
  * Class APIController
@@ -23,12 +24,12 @@ class APIController extends AbstractController
      */
     public function TeamkingdomList(Request $request)
     {
-        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
+       if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             $em = $this->getDoctrine()->getManager();
-            $teams = $em->getRepository(Team::class)->findBy(['user' => $this->getUser()]);
+            $kingdoms = $em->getRepository(Kingdom::class)->findBy(['user' => $this->getUser()]);
             $list = [];
 
-            foreach ($teams as $team) {
+            foreach ($kingdoms as $team) {
                 $list[] = [
                     'id' => $team->getUser()->getId(),
                     'player' => $team->getUser()->getUsername(),
@@ -42,13 +43,15 @@ class APIController extends AbstractController
             }
 
             return $this->json($list, Response::HTTP_OK);
-        }
+       }
 
-        $message = [
-            'result' => 'Error',
+
+
+        $respuesta = array(
+            'error' => true,
             'message' => 'User not authenticated',
-        ];
+        );
 
-        return $this->json($message, Response::HTTP_OK);
+        return $this->json($respuesta, Response::HTTP_OK);
     }
 }

@@ -13,16 +13,19 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        // $product = new Product();
-        // $manager->persist($product);
+        
 
-
+        //------------------------------------------------------------------------
         //Configuracion global
+        //------------------------------------------------------------------------
         $config = new Config();
         $config->setTesting(false);
         $manager->persist($config);
 
 
+        //------------------------------------------------------------------------
+        //Creando los kingdoms
+        //------------------------------------------------------------------------
         $kingdoms = array(
             ['id'=>'1', 'name'=>'White Kingdom', 'image'=>'castillo1.jpg'] ,
             ['id'=>'2', 'name'=>'Black Kingdom', 'image'=>'castillo2.jpg'] ,
@@ -42,6 +45,9 @@ class AppFixtures extends Fixture
         }
 
 
+        //------------------------------------------------------------------------
+        //Creando los tipos de edificios
+        //------------------------------------------------------------------------
         $buildings = array(
             ['id'=>1, 'name'=>'Castle', 'cost'=>0, 'level'=>1, 'capacity'=>25000, 'defense'=>500000, 'minimalUnit'=>0],
             ['id'=>2, 'name'=>'Castle', 'cost'=>10000000, 'level'=>2, 'capacity'=>25000, 'defense'=>1000000, 'minimalUnit'=>0],
@@ -63,14 +69,19 @@ class AppFixtures extends Fixture
         }
 
 
-        $units = array(
+        //------------------------------------------------------------------------
+        //Creando los tipos de tropas: UnitType
+        //------------------------------------------------------------------------
+    
+
+        $units_data = array(
             ['id'=>1, 'name'=>'Archers', 'level'=>1, 'attack'=>30, 'defense'=>20, 'damage'=>0, 'speed'=>6, 'cost'=>50, 'total_ini'=>200],
             ['id'=>2, 'name'=>'Spearman', 'level'=>1, 'attack'=>50, 'defense'=>40, 'damage'=>10, 'speed'=>5, 'cost'=>100, 'total_ini'=>150],
             ['id'=>3, 'name'=>'Axemen', 'level'=>1, 'attack'=>50, 'defense'=>50, 'damage'=>100, 'speed'=>4, 'cost'=>200, 'total_ini'=>100],            
             ['id'=>4, 'name'=>'Light Cavalry', 'level'=>1, 'attack'=>100, 'defense'=>100, 'damage'=>50, 'speed'=>10, 'cost'=>2000, 'total_ini'=>50],                                    
         );
 
-        foreach ($units as $ununit) {
+        foreach ($units_data as $ununit) {
             $unit = new UnitType();
             $unit->setName($ununit['name']);
             $unit->setLevel($ununit['level']);
@@ -86,7 +97,10 @@ class AppFixtures extends Fixture
 
 
 
-
+        //------------------------------------------------------------------------
+        //escribiendo en BD
+        //------------------------------------------------------------------------
+    
 
         $manager->flush();
     }

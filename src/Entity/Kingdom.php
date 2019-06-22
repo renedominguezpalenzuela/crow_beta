@@ -44,9 +44,15 @@ class Kingdom
      */
     private $buildings;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="kingdom")
+     */
+    private $users;
+
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -120,6 +126,37 @@ class Kingdom
             // set the owning side to null (unless already changed)
             if ($building->getKingdom() === $this) {
                 $building->setKingdom(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setKingdom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getKingdom() === $this) {
+                $user->setKingdom(null);
             }
         }
 

@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Controller\API\CreateTestUser;
 use App\Entity\Kingdom;
-use App\Entity\Team;
+
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +40,18 @@ class APICreateFakeDataController extends AbstractController
 
         //https://symfony.com/doc/4.0/security/password_encoding.html
 
+
+         //Seleccionar el Team
+         $kingdom = $em->getRepository(Kingdom::class)->findOneBy(['name' => 'Test Kingdom']);
+
+         //verify if kingdom has leader and id_player_boss
+        // if ($kingdom->getIdKingdomBoss() == 0) {
+             //$kingdom->setIdKingdomBoss($user->getId());
+             $em->persist($kingdom);
+         //}
+         $em->flush();
+
+
         // Creando un usuario
         $user = new User();
 
@@ -53,24 +65,15 @@ class APICreateFakeDataController extends AbstractController
         $user->setGold(500000);
 
         $em->persist($user);
-        $em->flush();
+       
 
-        //Asignar al primer kingdom
-        $kingdom = $em->getRepository(Kingdom::class)->findOneBy(['name' => 'Test Kingdom']);
+       
 
-        //verify if kingdom has leader and id_player_boss
-       // if ($kingdom->getIdKingdomBoss() == 0) {
-            $kingdom->setIdKingdomBoss($user->getId());
-            $em->persist($kingdom);
-        //}
+ 
+        //Creando el Team del User 
+        $user->setKingdom($kingdom);
 
-        //Creando el Team
-        $team = new Team();
-        $team->setKingdom($kingdom);
-        $team->setUser($user);
-        $em->persist($team);
-
-        $em->flush();
+        
 
         //Guardarlo en BD
 
@@ -130,12 +133,12 @@ class APICreateFakeDataController extends AbstractController
         $user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
 
         //Borrar el team del user
-        if ($user != null) {
+       /* if ($user != null) {
             $team = $em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
             if ($team != null) {
                 $em->remove($team);
             }
-        }
+        }*/
       
 
         //Borrar los troops en edificios del user
@@ -185,11 +188,11 @@ class APICreateFakeDataController extends AbstractController
           $user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
           
           //busco team
-          $team= $em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
+          //$team= $em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
           
           //busco el Castle 
           //busco el boss
-          $kingdom = $team-> getKingdom();
+          $kingdom = $user->getKingdom();
 
           $id_user_boss = $kingdom->getIdKingdomBoss();
 
