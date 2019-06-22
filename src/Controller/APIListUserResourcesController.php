@@ -165,15 +165,18 @@ class APIListUserResourcesController extends AbstractController
 
         $arreglo = array();
         foreach ($troops as $untroop) {
-            $troop_building = $em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $untroop]);
+            $troop_buildings = $em->getRepository(TroopBuilding::class)->findBy(['troops' => $untroop]);
 
+            foreach ($troop_buildings as $untroop_building) {
             $arreglo[] = array(
                 'troop_id' => $untroop->getID(),
                 'troop_name' => $untroop->getUnitType()->getName(),
-                'building_id' => $troop_building->getBuilding()->getID(),
-                'building_name' => $troop_building->getBuilding()->getBuildingType()->getName(),
-                'total'=>$troop_building->getTotal()
+                'building_id' => $untroop_building->getBuilding()->getID(),
+                'building_name' => $untroop_building->getBuilding()->getBuildingType()->getName(),
+                'total'=>$untroop_building->getTotal()
             );
+        }
+           
         }
 
         $arreglo_final['troops_location'] = $arreglo;
