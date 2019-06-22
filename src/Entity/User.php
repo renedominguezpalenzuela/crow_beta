@@ -73,18 +73,20 @@ class User implements UserInterface, \Serializable
      */
     private $active;
 
-    /**
-     * @var
-     * @ORM\OneToOne(targetEntity="Team", mappedBy="user")
-     */
-    private $team;
+
 
 
      /**
      * @ORM\Column(name="gold", type="integer")
      * @Assert\NotBlank()
      */
-    private $gold;
+    private $gold = 500000;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Kingdom", inversedBy="users")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $kingdom;
 
 
     
@@ -217,24 +219,7 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
-    public function getTeam(): ?Team
-    {
-        return $this->team;
-    }
-
-    public function setTeam(?Team $team): self
-    {
-        $this->team = $team;
-
-        // set (or unset) the owning side of the relation if necessary
-        $newUser = $team === null ? null : $this;
-        if ($newUser !== $team->getUser()) {
-            $team->setUser($newUser);
-        }
-
-        return $this;
-    }
-
+   
 
     public function getGold(): ?int
     {
@@ -244,6 +229,18 @@ class User implements UserInterface, \Serializable
     public function setGold(int $gold): self
     {
         $this->gold = $gold;
+
+        return $this;
+    }
+
+    public function getKingdom(): ?Kingdom
+    {
+        return $this->kingdom;
+    }
+
+    public function setKingdom(?Kingdom $kingdom): self
+    {
+        $this->kingdom = $kingdom;
 
         return $this;
     }

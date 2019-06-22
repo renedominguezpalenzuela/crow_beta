@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Building;
 use App\Entity\BuildingType;
-use App\Entity\Team;
+
 use App\Entity\Troop;
 use App\Entity\TroopBuilding;
 use App\Entity\User;
@@ -67,11 +67,11 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         //2.1) busco el team del usuario
 
-        $team = $em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
+        //$team = $em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
         //var_dump("User id " . $team->getID());
 
         //2.2) buscar el kingdom del team
-        $kingdom = $team->getKingdom();
+        $kingdom = $user->getKingdom();
 
         $arreglo_final['team'] = array(
             'team_id' => $kingdom->getID(),
