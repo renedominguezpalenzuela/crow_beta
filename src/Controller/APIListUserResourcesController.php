@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Building;
 use App\Entity\BuildingType;
-
 use App\Entity\Troop;
 use App\Entity\TroopBuilding;
 use App\Entity\User;
+use App\Service\GlobalConfig;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,34 +23,34 @@ class APIListUserResourcesController extends AbstractController
     /**
      * @Route("/list_user_resources", name="list_user_resources")
      */
-    public function list_user_resources(Request $request)
+    public function list_user_resources(Request $request, GlobalConfig $global_config)
     {
         $mensaje_error = "Not error found";
         $error = false;
 
-        /*
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if (!$global_config->isTestMode()) {
 
-            $error = true;
+            if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
 
-            $respuesta = array(
-                'error' => false,
-                'message' => "User not authenticated",
-            );
+                $error = true;
 
-            return $this->json($respuesta);
+                $respuesta = array(
+                    'error' => false,
+                    'message' => "User not authenticated",
+                );
 
-        }*/
+                return $this->json($respuesta);
+
+            }
+        }
 
         $arreglo_final = [
-
             'team' => '',
             'castle' => '',
             'buildings' => '',
             'troops' => '',
             'troops_location' => '',
             'resources' => '',
-
         ];
 
         $em = $this->getDoctrine()->getManager();
@@ -58,10 +58,16 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         //(1) Obtengo user() de la peticion
         //--------------------------------------------------------------------------
-        //$user = $this->getUser();
-        //Fake user
-         $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
-         $user = $fake_user;
+        if ($global_config->isTestMode()) {
+            //Fake user si testing mode
+            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+            $user = $fake_user;
+
+        } else {
+            //usuario real si testing mode = false
+            $user = $this->getUser();
+        }
+
         //--------------------------------------------------------------------------
         //(2) busco el castillo del usuario
         //--------------------------------------------------------------------------
@@ -110,22 +116,19 @@ class APIListUserResourcesController extends AbstractController
             $building_type = $unbuilding->getBuildingType();
 
             //if ($building_type->getName() != 'Castle') {
-                //El castillo tambien se agrega en la lista lo que no se dibuja en el twig junto a los otros edificios
-                //Cantidad de tropas en un edificio
+            //El castillo tambien se agrega en la lista lo que no se dibuja en el twig junto a los otros edificios
+            //Cantidad de tropas en un edificio
 
-                $arreglo[] = array(
-                    'building_id' => $unbuilding->getID(),
-                    'building_name' => $building_type->getName(),
-                    'capacity' => $building_type->getCapacity(),
-                    'filled' => 0,
-                    'level' => $building_type->getLevel(),
-                    'defense_remaining' => $unbuilding->getDefenseRemaining(),
-//                    'troops'=>[]
-                );
-            //}
+            $arreglo[] = array(
+                'building_id' => $unbuilding->getID(),
+                'building_name' => $building_type->getName(),
+                'capacity' => $building_type->getCapacity(),
+                'filled' => 0,
+                'level' => $building_type->getLevel(),
+                'defense_remaining' => $unbuilding->getDefenseRemaining(),
+            );
 
         };
-
 
         //TODO: agregar los edificios de los otros miembros del team
 
@@ -168,15 +171,15 @@ class APIListUserResourcesController extends AbstractController
             $troop_buildings = $em->getRepository(TroopBuilding::class)->findBy(['troops' => $untroop]);
 
             foreach ($troop_buildings as $untroop_building) {
-            $arreglo[] = array(
-                'troop_id' => $untroop->getID(),
-                'troop_name' => $untroop->getUnitType()->getName(),
-                'building_id' => $untroop_building->getBuilding()->getID(),
-                'building_name' => $untroop_building->getBuilding()->getBuildingType()->getName(),
-                'total'=>$untroop_building->getTotal()
-            );
-        }
-           
+                $arreglo[] = array(
+                    'troop_id' => $untroop->getID(),
+                    'troop_name' => $untroop->getUnitType()->getName(),
+                    'building_id' => $untroop_building->getBuilding()->getID(),
+                    'building_name' => $untroop_building->getBuilding()->getBuildingType()->getName(),
+                    'total' => $untroop_building->getTotal(),
+                );
+            }
+
         }
 
         $arreglo_final['troops_location'] = $arreglo;

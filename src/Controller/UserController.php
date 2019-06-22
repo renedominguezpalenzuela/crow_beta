@@ -2,19 +2,17 @@
 
 namespace App\Controller;
 
-
-use App\Entity\User;
-use App\Entity\BuildingType;
 use App\Entity\Building;
+use App\Entity\BuildingType;
+use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\CreateInitialUserData;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
 /**
  * @Route("/user")
@@ -31,15 +29,60 @@ class UserController extends AbstractController
         ]);
     }
 
-
-    
-
     /**
      * @Route("/new", name="user_new", methods="GET|POST")
      */
-    public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
+    function new (Request $request, UserPasswordEncoderInterface $encoder, CreateInitialUserData $datos_iniciales): Response {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            //...
+        }
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $em = $this->getDoctrine()->getManager();
+
+            //Obteniendo el kingdom seleccionado por el usuario
+            $kingdom = $form['kingdom']->getData();
+            $user->setKingdom($kingdom);
+
+            //Encriptando password
+            $encoded = $encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($encoded);
+
+            //escribiendo datos del usuario en la BD
+            $em->persist($user);
+            $em->flush();
+
+            //            $file = $form['file']->getData();
+            //            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
+            //            $file->move($this->getParameter('kernel.root_dir').'/../public/images/avatars', $filename);
+            //            $user->setPhoto($filename);
+
+            //-----------------------------------------------------
+            //  Creando resto de los datos del usuario
+            //-----------------------------------------------------
+            $datos_iniciales->crear($user);
+
+            $this->addFlash('success', 'Welcome ' . $user->getUsername() . '!');
+
+            return $this->redirectToRoute('login');
+        }
+
+        return $this->render('user/new.html.twig', [
+            'user' => $user,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/new_old", name="user_new_old", methods="GET|POST")
+     */
+    public function new_old(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
-        if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             //...
         }
         $user = new User();
@@ -51,7 +94,7 @@ class UserController extends AbstractController
 
             $em = $this->getDoctrine()->getManager();
 //            $file = $form['file']->getData();
-//            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
+            //            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
 
 //            $file->move($this->getParameter('kernel.root_dir').'/../public/images/avatars', $filename);
 
@@ -60,25 +103,25 @@ class UserController extends AbstractController
 //            $user->setPhoto($filename);
             $user->setKingdom($kingdom);
 
-            $user->setGold(500000);
+           // $user->setGold(500000);
 
             $em->persist($user);
             $em->flush();
 
             //busco el id de los tipos de castillo
-            $castle_type_lv1 = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level'=>1]);
-            $castle_type_lv2 = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level'=>2]);
+            $castle_type_lv1 = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level' => 1]);
+            $castle_type_lv2 = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level' => 2]);
 
             //busco si existe un castillo lv1 para el team de ese usuario
-            $castillo =  $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType'=>$castle_type_lv1]);
+            $castillo = $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType' => $castle_type_lv1]);
 
             //busco si no existe un castillo lv1 para el team de ese usuario, lo busco para el level 2
-            if ($castillo==null){
-                $castillo =  $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType'=>$castle_type_lv2]);
+            if ($castillo == null) {
+                $castillo = $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType' => $castle_type_lv2]);
             }
 
             //si no existe castillo lvl1 ni lv2 lo creo
-            if ($castillo==null){
+            if ($castillo == null) {
 
                 $castillo = new Building();
                 $castillo->setUser($user);
@@ -90,20 +133,19 @@ class UserController extends AbstractController
             }
 
             //insert row to team
-           // $team = new Team();
-      
+            // $team = new Team();
 
             //verify if kingdom has leader and id_player_boss
 
-            if($kingdom->getIdKingdomBoss() == 0){
+            if ($kingdom->getIdKingdomBoss() == 0) {
                 $kingdom->setIdKingdomBoss($user->getId());
                 $em->persist($kingdom);
-                
-            }
-           // $em->persist($team);
-           $em->flush();
 
-            $this->addFlash('success', 'Welcome '.$user->getUsername().'!');
+            }
+            // $em->persist($team);
+            $em->flush();
+
+            $this->addFlash('success', 'Welcome ' . $user->getUsername() . '!');
 
             return $this->redirectToRoute('login');
         }
@@ -119,7 +161,7 @@ class UserController extends AbstractController
      */
     public function show(User $user): Response
     {
-        if($this->getUser() != $user){
+        if ($this->getUser() != $user) {
             throw $this->createNotFoundException();
         }
         return $this->render('user/show.html.twig', [
@@ -132,7 +174,7 @@ class UserController extends AbstractController
      */
     public function edit(Request $request, User $user): Response
     {
-        if($this->getUser() != $user){
+        if ($this->getUser() != $user) {
             throw $this->createNotFoundException();
         }
 
@@ -158,7 +200,7 @@ class UserController extends AbstractController
      */
     public function delete(Request $request, User $user): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($user);
             $entityManager->flush();

@@ -18,8 +18,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class APIMoveTroopsController extends AbstractController
 {
     /**
-     * @Route("/move_troops", name="move_troops")
+     * @Route("/move_troops", name="move_troops", methods={"POST"})
      */
+    
     public function move_troops(Request $request)
     {
         $mensaje_error = "Not error found";
