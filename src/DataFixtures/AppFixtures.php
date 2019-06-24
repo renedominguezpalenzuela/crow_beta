@@ -20,6 +20,7 @@ class AppFixtures extends Fixture
         //------------------------------------------------------------------------
         $config = new Config();
         $config->setTesting(false);
+        $config->setGoldIni(500000);
         $manager->persist($config);
 
 
@@ -65,7 +66,8 @@ class AppFixtures extends Fixture
             $building->setDefense($unbuilding['defense']);
             $building->setMinimalUnit($unbuilding['minimalUnit']);
             
-            $manager->persist($building);   
+            $manager->persist($building);  
+        
         }
 
 
