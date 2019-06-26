@@ -2,8 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Building;
-use App\Entity\BuildingType;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
@@ -78,85 +76,6 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/new_old", name="user_new_old", methods="GET|POST")
-     */
-    public function new_old(Request $request, UserPasswordEncoderInterface $encoder): Response
-    {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            //...
-        }
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $kingdom = $form['kingdom']->getData();
-
-            $em = $this->getDoctrine()->getManager();
-//            $file = $form['file']->getData();
-            //            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
-
-//            $file->move($this->getParameter('kernel.root_dir').'/../public/images/avatars', $filename);
-
-            $encoded = $encoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($encoded);
-//            $user->setPhoto($filename);
-            $user->setKingdom($kingdom);
-
-           // $user->setGold(500000);
-
-            $em->persist($user);
-            $em->flush();
-
-            //busco el id de los tipos de castillo
-            $castle_type_lv1 = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level' => 1]);
-            $castle_type_lv2 = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'castle', 'level' => 2]);
-
-            //busco si existe un castillo lv1 para el team de ese usuario
-            $castillo = $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType' => $castle_type_lv1]);
-
-            //busco si no existe un castillo lv1 para el team de ese usuario, lo busco para el level 2
-            if ($castillo == null) {
-                $castillo = $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType' => $castle_type_lv2]);
-            }
-
-            //si no existe castillo lvl1 ni lv2 lo creo
-            if ($castillo == null) {
-
-                $castillo = new Building();
-                $castillo->setUser($user);
-                $castillo->setBuildingType($castle_type_lv1);
-
-                $castillo->setDefenseRemaining($castle_type_lv1->getDefense());
-
-                $em->persist($castillo);
-            }
-
-            //insert row to team
-            // $team = new Team();
-
-            //verify if kingdom has leader and id_player_boss
-
-            if ($kingdom->getIdKingdomBoss() == 0) {
-                $kingdom->setIdKingdomBoss($user->getId());
-                $em->persist($kingdom);
-
-            }
-            // $em->persist($team);
-            $em->flush();
-
-            $this->addFlash('success', 'Welcome ' . $user->getUsername() . '!');
-
-            return $this->redirectToRoute('login');
-        }
-
-        return $this->render('user/new.html.twig', [
-            'user' => $user,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
      * @Route("/{id}", name="user_show", methods={"GET"})
      */
     public function show(User $user): Response
@@ -169,19 +88,31 @@ class UserController extends AbstractController
         ]);
     }
 
+
+
+    //-----------------------------------------------------------------------------------------------------
+    // Modificar datos del usuario
+    //-----------------------------------------------------------------------------------------------------
     /**
      * @Route("/{id}/edit", name="user_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, User $user): Response
+    public function edit(Request $request, User $user, UserPasswordEncoderInterface $encoder): Response
     {
         if ($this->getUser() != $user) {
             throw $this->createNotFoundException();
         }
 
+     
+
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            //actualizando el password
+            $encoded = $encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($encoded);
+
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('user_index', [
