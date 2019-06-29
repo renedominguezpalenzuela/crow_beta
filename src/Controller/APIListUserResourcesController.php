@@ -122,6 +122,7 @@ class APIListUserResourcesController extends AbstractController
             $arreglo[] = array(
                 'building_id' => $unbuilding->getID(),
                 'building_name' => $building_type->getName(),
+                'building_name2'=> $unbuilding->getName2(),
                 'capacity' => $building_type->getCapacity(),
                 'filled' => 0,
                 'level' => $building_type->getLevel(),

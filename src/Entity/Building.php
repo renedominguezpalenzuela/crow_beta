@@ -46,6 +46,11 @@ class Building
      */
     private $kingdom;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name2;
+
     public function __construct()
     {
         $this->troopBuildings = new ArrayCollection();
@@ -131,6 +136,18 @@ class Building
     public function setKingdom(?Kingdom $kingdom): self
     {
         $this->kingdom = $kingdom;
+
+        return $this;
+    }
+
+    public function getName2(): ?string
+    {
+        return $this->name2;
+    }
+
+    public function setName2(string $name2): self
+    {
+        $this->name2 = $name2;
 
         return $this;
     }

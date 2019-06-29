@@ -1,0 +1,36 @@
+/*
+Mis estilos
+*/
+
+
+.subrayado {
+    border-bottom: 2px solid;
+    color: whitesmoke;
+}
+
+
+.lineaestrecha {
+    line-height: 0.4;
+}
+
+
+
+.dark-edition .table > thead > tr > th, .dark-edition .table > tbody > tr > th, .dark-edition .table > tfoot > tr > th, .dark-edition .table > thead > tr > td, .dark-edition .table > tbody > tr > td, .dark-edition .table > tfoot > tr > td {
+    color: #000;
+}
+
+
+.card p, .form-inline {
+    text-shadow: 3px 3px 2px rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    
+}
+ 
+
+select option{
+   background-color:rgb(255, 255, 255) !important;
+    color:rgb(255, 0, 0);
+}
+
+
+
