@@ -1,226 +1,248 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Player Army{% endblock %}
+{% block title %}Player Army
+{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-sm-4">
+
+
+
+
+
+
+<div class="row lineaestrecha">
+    <div id="col1" class="col-sm-4">
+        <div class="row">
+
+            {# -- Castle -- #}
             <div class="card">
-                <div class="card-header-primary">Castle</div>
+                <div class="card-header-primary">
+                    <h5>Castle</h5>
+                </div>
                 <div class="card-body">
-                    <table class="table">
+                    <table class="table-sm">
                         <tr>
-                            <td><h4>Status</h4></td>
+                            <td>
+                                <p>Level:
+                                    <span id="level-castle"></span>
+                                </p>
+                            </td>
                         </tr>
                         <tr>
-                            <td><p>Level: <span id="level-castle"></span></p></td>
+                            <td>
+                                <p>Defense:
+                                    <span id="defense-castle"></span>
+                                </p>
+                            </td>
                         </tr>
                         <tr>
-                            <td><p>Defense: <span id="defense-castle"></span></p></td>
+                            <td>
+                                <p>Capacity:
+                                    <span id="capacity-castle"></span>
+                                </p>
+                            </td>
                         </tr>
-                        <tr>
-                            <td><p>Capacity: <span id="capacity-castle"></span></p></td>
-                        </tr>
+
+
                     </table>
-                    {#<h4>Troops</h4>#}
-                    {#<table class="table" id="list-troop">#}
-                        {#<tr>#}
-                            {#<td></td>#}
-                        {#</tr>#}
-                    {#</table>#}
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-header-primary">Troop Movement</div>
-                <div class="card-body">
-                    
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <div class="card-header-primary">Resources</div>
-                <div class="card-body">
-                    <h5 style="color: yellow">Gold: <span id="gold-resource"></span></h5>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-sm-4" id="camps"></div>
-        <div class="col-sm-8">
-            <div class="card">
-                <div class="card-header-danger">Log Event</div>
-                <div class="card-body">
-                    asas
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header-danger">Chat</div>
-                <div class="card-body">
-                    Chat
-                </div>
-            </div>
-        </div>
+                    <p><span class="subrayado">Troops</span></p>
+                    <table id="castle_troops" class="table-sm">
+
+                        {#--- Contiene las tropas del castillo ---#}
+
+                    </table>
 
 
-    </div>
+                </div> {#card body#}
+            </div> {#Card 1#}
+
+            {# -- Barraca -- #}
+
+            <div class="card">
+                <div class="card-header-primary">
+                    <h5>Barrack</h5>
+                </div>
+                <div class="card-body">
+                    <p><span class="subrayado">Troops</span></p>
+                    <table id="barrack_troops" class="table-sm">
+
+                        {#--- Contiene las tropas de la barraca ---#}
+
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        {#--- Contiene la lista de edificios ---#}
+        <div class="row" id="lista_edificios">
+
+
+
+        </div>
+
+    </div> {#Columna 1#}
+
+
+    {#Columna 2#}
+    <div id="col2" class="col-sm-8">
+        <div class="row">
+
+
+            {#Troops Movement#}
+
+            <div class="card">
+                <div class="card-header-primary">
+                    <h5>Troops Movement</h5>
+                </div>
+
+
+                <div class="card-body">
+                    <h5 class="card-title">Plans</h5>
+                    {#Planeando movimientos#}
+                    <div id="form_planning_troops">
+
+                    </div>
+
+
+                    <h5 class="card-title">Execution</h5>
+                    {#Lista de movimientos planeados#}
+                    <div>
+                        <table id="execution_troops_movement">
+
+                        </table>
+
+                    </div>
+
+                    {#
+                        <tr>
+                                <td>
+                                    <p>Archers: 10 From: Castle to: Barrack
+                                    </p>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                        #}
+
+                    {#Enviar al servidor los movimientos#}
+                    {#poner notificacion y logs sobre los movimientos#}
+                    <button type="submit" class="btn btn-primary" id="boton_go">Go</button>
+
+                </div>
+            </div>
+
+
+        </div> {# Linea #}
+
+
+        <div class="row">
+
+                <div class="card">
+                        <div class="card-header-primary">
+                            <h5>Store</h5>
+                        </div>
+                        <div class="card-body">
+                            this is the Store area
+                        </div>
+                    </div>
+
+
+            <div class="card">
+                <div class="card-header-primary">
+                    <h5>Chat</h5>
+                </div>
+                <div class="card-body">
+                    this is the chat area
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header-primary">
+                    <h5>Logs</h5>
+                </div>
+                <div class="card-body">
+                    this is the log area
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+    </div> {#Fin Columna 2#}
+
+</div> {#Linea 1#}
+
+
 {% endblock %}
 
 {% block js %}
-    <script>
-        $.getJSON('{{ path('list_user_resources') }}', function (data) { /* Castle */
-            let castle = data.datos.castle;
 
-            $('#level-castle').html(castle.level);
-            $('#defense-castle').html(castle.defense_remaining);
-            $('#capacity-castle').html(castle.capacity);
-            // console.log(data);
-            // for (i = 0; i < troop.length; i++) {
-            // troop[i];
-            // $('<tr><td><p>' + troop[i]['troop_name'] + '</p></td><td><p>' + troop[i]['total'] + '</p></td></tr>').appendTo('#list-troop');
-            //
-            // }
+{# -- Funciones auxiliares -- #}
+<script src="{{asset('assets/js/utiles/playerarmy.js')}}"></script>
 
-            /* troop */
-            let troop = data.datos.troops;
+<script>
+    // -------------------------------------------------------------------------------
+    // Declarando variables globales que contendran todos los datos recibidos
+    // -------------------------------------------------------------------------------
+    let recursos = null;
+    let lista_edificios = null;
+    let castillo = null;
+    let troops = null;
+    let troopLocation = null;
+    let buildings = null;
 
-            /* troop location */
-            let troopLocation = data.datos.troops_location;
 
-            /* buildings */
-            let buildings = data.datos.buildings;
+    let troops_movements = [];
 
-            // Buscando troop location
-            for (let y = 0; y < buildings.length; y++) { // puedo pintar aqui el card del edificio
+    let imagen_add = "{{ asset('images/iconos/add.png') }}";
+    let imagen_del = "{{ asset('images/iconos/delete.png') }}";
 
-                let unBuilding = buildings[y];
-                let building_id = unBuilding['building_id'];
-                unBuilding['troop_location'] = [];
 
-                 //------------------------------------------------------------------------------------
-                 //ES MAS EFICIENTE ACCEDER a la variable unbuilding y no al arreglo buildings[y]
-                 //------------------------------------------------------------------------------------
 
-                //Pintamos los card
-                $("<div class='card'>" +
-                    "<div class=\"card-header-warning\">" + unBuilding['building_name'] + "</div>" +
-                    "<div class=\"card-body\">" +
-                        "<table class='table'>" +
-                        "<tr>" +
-                        "<td><p>Level: " + unBuilding['level'] + "</p></td>" +
-                        "</tr>" +
-                        "<tr>" +
-                        "<td><p>Defense: " + unBuilding['defense_remaining'] + "</p></td>" +
-                        "</tr>" +
-                        "</table>" +
-                        "<h4>Troops</h4>" +
-                        "<div id='troop_location"+unBuilding['building_id']+"'></div>"+
-                    "</div>" +
-                    "</div>").appendTo('#camps');
+    // ------------------------------------------------------------------------------
+    // Obtener datos iniciales (se ejecuta al cargar la pagina)
+    // ------------------------------------------------------------------------------
+    $.getJSON("{{path('list_user_resources')}}", function (data) { // obteniendo los datos recibidos de la peticion
+        datos = data.datos;
+        buildings = datos.buildings;
+        castillo = datos.castle;
+        troopLocation = datos.troops_location;
+        troops = datos.troops;
 
-                // recorrer todos los troops location buscando si esta el building
 
-                for (let i = 0; i < troopLocation.length; i++) {
-                    let untroop_location = troopLocation[i];
-                   // console.log("Building_id "+building_id);
-                   // console.log("trooplocation building_id "+untroop_location['building_id']);
+        //Datos del Castillo
+        setCastilloData(castillo);
 
-                    if (untroop_location['building_id'] == building_id) {
-                        unBuilding['troop_location'].push(untroop_location);
-                     //   console.log('match');
-                         //console.log(troopLocation)
-                        // Puedo pintar aqui un troop del edificio [untroop_location]
-                        //si lo pinto aqui no hago el push anterior aunque seria bueno mantener la extructura
-                        //de forma global en la pagina para realizar validaciones en los movimientos de tropas
-                        //y no hacer peticiones de mas al servidor
+        //Crear Lista de edificios en html en castle y barrack
+        dibujarEdificiosenHTML(buildings);
 
-                        //----------------------------------------
-                        //ES MAS EFICIENTE AQUI CREO
-                        //----------------------------------------
-                         $('<table class="table table-hover"><tr><td><p>'+untroop_location['troop_name']+': '+
-                         untroop_location['total']+'</p></td></tr></table>').appendTo('#troop_location'+untroop_location['building_id']);
-                    }
-                }
+        //Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
+        setTroopOnBuildings(buildings, troopLocation)
 
-                buildings[y] = unBuilding;
-                // console.log(unBuilding.troop_location);
-              {#  
-              for (let k = 0; k < unBuilding.troop_location.length; k++){
-                    // console.log(unBuilding.troop_location[k]['troop_name']);
-                    $('<table class="table table-hover"><tr><td><p>'+unBuilding.troop_location[k]['troop_name']+': '+unBuilding.troop_location[k]['total']+'</p></td></tr></table>').appendTo('#troop_location'+unBuilding.troop_location[k]['building_id']);
-                }
-                #}
-            }
+        //inicializando tropas en todos los edificios que no sean barrack y castle
+        dibujarTropasenHTML(buildings);
 
-            //O Puedo al final de preparar la extructura de datos empezar a pintar los cards
-            //revisa en la consola para que veas
-           // console.log(data.datos);
-        });
+        //Crear formulario de mover tropas
 
-        {#$.getJSON('{{ path('list_user_resources') }}', function(data){#}
-        {#/* Castle */#}
-        {#$('#level-castle').html(showCastle(data).level);#}
-        {#$('#defense-castle').html(showCastle(data).defense_remaining);#}
-        {#$('#capacity-castle').html(showCastle(data).capacity);#}
-        {#/* /. */#}
-        {#/* troop */#}
-        {#let troop = showTroops(data);#}
+        crearFormularioMoverTropas(troops, buildings, imagen_add);
 
-        {#for (i = 0; i < troop.length; i++) {#}
-        {#troop[i];#}
-        {#$('<tr><td><p>' + troop[i]['troop_name'] + '</p></td><td><p>' + troop[i]['total'] + '</p></td></tr>').appendTo('#list-troop');#}
+        //Funcionalidad del boton
+        //crear arreglo
+        //mostrar lista
+        crearFuncionalidadBotonFormularioPlanMovements(troops_movements);
 
-        {#}#}
-        {#/* Resousrces */#}
-        {#$('#gold-resource').html(showResources(data));#}
 
-        {#/* The troops_location */#}
+        //Funcionalidad del boton GO
+        let ruta_move_troops = "{{path('move_troops')}}";
+        crearBotonGo(ruta_move_troops);
+      
 
-        {#let camp = showBuilding(data);#}
-        {#let level, defense;#}
-        {#let troopLocation = showTroopLocation(data);#}
+    });
+</script>
 
-        {#for (i = 0; i < camp.length; i++) {#}
-        {#level = camp[i]['level'];#}
-        {#defense = camp[i]['defense_remaining'];#}
-
-        {#$("<div class='card'>" +#}
-        {#"<div class=\"card-header-warning\">" + camp[i]['building_name'] + "</div>" +#}
-        {#"<div class=\"card-body\">" +#}
-        {#"<table class='table'>" +#}
-        {#"<tr>" +#}
-        {#"<td><p>Level: "+level+"</p></td>" +#}
-        {#"</tr>" +#}
-        {#"<tr>" +#}
-        {#"<td><p>Defense: "+defense+"</p></td>" +#}
-        {#"</tr>" +#}
-        {#"</table>"+#}
-        {#"<h4>Troops</h4>"+#}
-        {#"</div>" +#}
-        {#"</div>").appendTo('#camps');#}
-        {#}#}
-
-        {#function showCastle(data) {#}
-        {#return data.datos.castle;#}
-        {#}#}
-
-        {#function showTroops(data) {#}
-        {#return data.datos.troops;#}
-        {#}#}
-
-        {#function showResources(data) {#}
-        {#return data.datos.resources.gold;#}
-        {#}#}
-
-        {#function showTroopLocation(data) {#}
-        {#return data.datos.troops_location#}
-        {#}#}
-
-        {#function showBuilding(data) {#}
-        {#return data.datos.buildings;#}
-        {#}#}
-        {#});#}
-    </script>
 {% endblock %}
