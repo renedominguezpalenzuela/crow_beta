@@ -99,6 +99,7 @@ class CreateInitialUserData
 
             $castillo = new Building();
             $castillo->setUser($user);
+            $castillo->setName2($castle_type_lv1->getName());
             $castillo->setBuildingType($castle_type_lv1);
 
             $castillo->setDefenseRemaining($castle_type_lv1->getDefense());
@@ -122,6 +123,7 @@ class CreateInitialUserData
 
         $barrack->setUser($user);
         $barrack->setBuildingType($barrack_type);
+        $barrack->setName2($barrack_type->getName());
         $barrack->setKingdom($this->kingdom);
 
         $barrack->setDefenseRemaining($barrack_type->getDefense());
