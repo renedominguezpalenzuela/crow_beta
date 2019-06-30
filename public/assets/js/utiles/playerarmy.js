@@ -6,8 +6,75 @@ function setCastilloData(datos_castillo) {
 };
 
 
+//boton_go
+function crearBotonGo(ruta_move_troops) {
+    $("#boton_go").click(
+
+        function (event) {
+            event.preventDefault();
+            //Recorrer la tabla de datos
+            //id="execution_troops_movement"
+            //formar el json
+            let cadena = '';
+            var datos = [];
+            $("#execution_troops_movement tr").each(function () {
+                cadena = $(this).attr('cadena_api')
+
+                datos.push(cadena);
+              //datos = datos +cadena;
+            });
+
+           // console.log(datos);
+        
 
 
+         
+            //enviarlo al servidor
+
+            var datos_enviar ={
+                peticion : '['+datos.toString()+']'
+            }
+          
+
+            $.post(ruta_move_troops,
+                datos_enviar
+
+            ,
+                function (data, textStatus, jqXHR) {
+                    //console.log(data);
+                    console.log('ok');
+                    location.reload();
+
+                }
+            ).done(
+                function(){
+                    console.log("done");
+                }
+
+            ).fail(
+                function(data, textStatus,jqXHR ){
+                    console.log(textStatus + ' : '+jqXHR);
+                }
+
+            ).always(
+                function(){
+                    console.log("always");
+                }
+
+            );
+
+              //escribir mensaje de confirmacion al usuario
+            // console.log("sss"+ruta_move_troops);
+
+
+        }
+    );
+}
+
+
+
+
+//Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
 function setTroopOnBuildings(buildings, troopLocation) {
 
     // Buscando troop location
@@ -87,9 +154,9 @@ function crearFormularioMoverTropas(troops, buildings, imagen) {
         lista_tropas_html.append(
             '<form class="form">' +
             '<div class="form-row">' +
-            '<label class="col-form-label col-sm-2" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
+            '<label class="col-form-label col-sm-2" id="tropa_name_' + troop_id + '" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
             '<span class="bmd-form-group-sm">' +
-            '<input type="text" id="troop_total' + troop_id + '" class="col-sm-2 form-control mb-2 mr-sm-2" placeholder="0"/>' +
+            '<input type="number" min="0" step="1" pattern="\d+" id="troop_total' + troop_id + '" class="col-sm-4 form-control mb-2 mr-sm-2" placeholder="0"/>' +
             '</span>' +
 
             '<label class="col-form-label col-sm-1" for="from_select_' + troop_id + '">From</label>' +
@@ -107,11 +174,8 @@ function crearFormularioMoverTropas(troops, buildings, imagen) {
             '</span>' +
 
 
-            // <a href="#" id="boton_add04" tropa_id="04" class="boton_plan_troops_movements">
-            // <img src="{{ asset('images/iconos/add.png') }}" height="40" alt=""> </a>
-
             '<a href="#" id="boton_add' + troop_id + '" tropa_id="' + troop_id + '" class="boton_plan_troops_movements">' +
-            '<img src="' + imagen + '" height="40" alt=""> </a>' +
+            '<img src="' + imagen + '" height="30" alt=""> </a>' +
 
 
 
@@ -124,45 +188,130 @@ function crearFormularioMoverTropas(troops, buildings, imagen) {
 
 
 
-      
+
     }
 }
 
 
-function crearFuncionalidadBotonFormularioPlanMovements(){
+
+
+
+
+
+function crearFuncionalidadBotonFormularioPlanMovements() {
+
+
+
+
+
     $(".boton_plan_troops_movements").click(
 
-        function (event) {
+        function (event, imagen_del) {
+
+            imagen_del = '/images/iconos/delete.png';
+            //console.log("sss" + imagen_del);
 
             event.preventDefault();
 
+            var id_tropas = $(this).attr('tropa_id');
+
             //Obteniendo el id del input que contiene el total de tropas
-            var tropa_id = 'tropa_id_' + $(this).attr('tropa_id');
+            //  var tropa_id = 'tropa_id_' + id_tropas;
+
+            // var tropa_name =  $('#tropa_'+tropa_id).text();
+            let tropa_label_id = 'tropa_name_' + id_tropas;
+            let tropa_name = $('#' + tropa_label_id).text();
+
+
             //obteniendo el total introducido en el input 
-            var total_Tropas = $('#' + tropa_id).val();
+            let total_tropa_id = 'troop_total' + id_tropas;
+            let total_tropas = $('#' + total_tropa_id).val();
+            //console.log(total_tropa_id);
 
-            //ID del select from
+            //ID del select from   //valor seleccionado from
             var from_id = 'from_select_' + $(this).attr('tropa_id');
-            //valor seleccionado from
             var from_select = $('#' + from_id + ' option:selected').val();
+            var from_name = $('#' + from_id + ' option:selected').text();
 
-            //ID del select to
+            //ID del select to     //valor seleccionado from
             var to_id = 'to_select_' + $(this).attr('tropa_id');
-            //valor seleccionado from
             var to_select = $('#' + to_id + ' option:selected').val();
-
-            //var from_select =  $('#from_select_04 option:selected').val();
-
-            console.log(from_select + " : " + to_select);
+            var to_name = $('#' + to_id + ' option:selected').text();
 
 
-            //console.log(tropa_id +": "+ total_Tropas + " : "+from_id+" : "+from_select);
+
+            //console.log(tropa_name + ' : ' + from_select + " : " + to_select + ' : ' + to_name);
+            //Agregar a la tabla
+
+            //{"from":17,"to":16, "troops":[{"troops_id":13, "total":10}]}
+            //Cadena final es un arreglo [{},{}]
+            // let cadena_api = '{"from":' + from_select + ',"to":' + to_select + ', "troops":[{"troops_id":' + id_tropas + ',"total":' + total_tropas + '}]}';
+            let cadena_api = '{"troops_id":' + id_tropas +
+                                ',"total":' + total_tropas +
+                                ',"from":' + from_select +
+                                ',"to":' + to_select + 
+                                '}';
+
+
+            let id_unico = id_tropas + ID();
+
+            //console.log(cadena_api);
+
+            //Validaciones
+            let validaciones_ok = true;
+
+            if (total_tropas <= 0) {
+                validaciones_ok = false;
+            }
+
+
+
+            if (validaciones_ok) {
+                $("#execution_troops_movement").append(
+                    '<tr id=' + id_unico + ' cadena_api=' + cadena_api + '>' +
+                    '<td><p>' +
+                    tropa_name + " : " + total_tropas + " From: " + from_name + " To: " + to_name +
+
+                    '</p></td>' +
+                    '<td><p>' +
+                    '<a href="#" id="' + id_unico + '" class="boton_del_execute_troops_movements">' +
+                    '<img src="' + imagen_del + '" height="30" alt=""> </a>' +
+
+                    '<p></td>' +
+                    '</tr>'
+                );
+            }
+
+
+
+
+
+            crearFuncionalidadBotonDelPlanMovements();
+
 
         }
 
-    )
+    );
 
 }
+
+
+
+function crearFuncionalidadBotonDelPlanMovements() {
+
+    $(".boton_del_execute_troops_movements").click(
+        function (event) {
+            event.preventDefault();
+
+            var id_tropas = $(this).attr('id');
+            //console.log(id_tropas);
+            //eliminando
+            $('#' + id_tropas).remove();
+        }
+    );
+
+}
+
 
 
 function dibujarEdificiosenHTML(buildings) {
@@ -170,7 +319,7 @@ function dibujarEdificiosenHTML(buildings) {
 
     //limpiar contenido 
 
-    console.log(buildings);
+    //console.log(buildings);
 
     for (unedificio of buildings) {
 
@@ -180,7 +329,7 @@ function dibujarEdificiosenHTML(buildings) {
 
             let id = unedificio.building_name + unedificio.building_id.toString();
 
-            console.log(id);
+            //console.log(id);
             lista_edificios_html.append(
                 '<div class="card">' +
                 '<div class="card-header-primary">' +
@@ -242,5 +391,30 @@ function dibujarTropasenHTML(buildings) {
 
 
 }
+
+
+// Generate unique IDs for use as pseudo-private/protected names.
+// Similar in concept to
+// <http://wiki.ecmascript.org/doku.php?id=strawman:names>.
+//
+// The goals of this function are twofold:
+// 
+// * Provide a way to generate a string guaranteed to be unique when compared
+//   to other strings generated by this function.
+// * Make the string complex enough that it is highly unlikely to be
+//   accidentally duplicated by hand (this is key if you're using `ID`
+//   as a private/protected name on an object).
+//
+// Use:
+//
+//     var privateName = ID();
+//     var o = { 'public': 'foo' };
+//     o[privateName] = 'bar';
+var ID = function () {
+    // Math.random should be unique because of its seeding algorithm.
+    // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+    // after the decimal.
+    return '_' + Math.random().toString(36).substr(2, 9);
+};
 
 

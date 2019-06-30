@@ -100,21 +100,36 @@
 
                 <div class="card-body">
                     <h5 class="card-title">Plans</h5>
-                   {#Planeando movimientos#}
+                    {#Planeando movimientos#}
                     <div id="form_planning_troops">
-                        
+
                     </div>
 
 
                     <h5 class="card-title">Execution</h5>
                     {#Lista de movimientos planeados#}
-                    <div id="execution_troops_movement">
+                    <div>
+                        <table id="execution_troops_movement">
+
+                        </table>
 
                     </div>
-                     
+
+                    {#
+                        <tr>
+                                <td>
+                                    <p>Archers: 10 From: Castle to: Barrack
+                                    </p>
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
+                        #}
+
                     {#Enviar al servidor los movimientos#}
                     {#poner notificacion y logs sobre los movimientos#}
-                    <button type="submit" class="btn btn-primary">Go</button>
+                    <button type="submit" class="btn btn-primary" id="boton_go">Go</button>
 
                 </div>
             </div>
@@ -122,13 +137,25 @@
 
         </div> {# Linea #}
 
+
         <div class="row">
+
+                <div class="card">
+                        <div class="card-header-primary">
+                            <h5>Store</h5>
+                        </div>
+                        <div class="card-body">
+                            this is the Store area
+                        </div>
+                    </div>
+
+
             <div class="card">
                 <div class="card-header-primary">
                     <h5>Chat</h5>
                 </div>
                 <div class="card-body">
-                    here the chat area
+                    this is the chat area
                 </div>
             </div>
 
@@ -137,7 +164,7 @@
                     <h5>Logs</h5>
                 </div>
                 <div class="card-body">
-                    here the log area
+                    this is the log area
                 </div>
             </div>
 
@@ -172,8 +199,10 @@
 
     let troops_movements = [];
 
+    let imagen_add = "{{ asset('images/iconos/add.png') }}";
+    let imagen_del = "{{ asset('images/iconos/delete.png') }}";
 
- 
+
 
     // ------------------------------------------------------------------------------
     // Obtener datos iniciales (se ejecuta al cargar la pagina)
@@ -192,22 +221,26 @@
         //Crear Lista de edificios en html en castle y barrack
         dibujarEdificiosenHTML(buildings);
 
-        //Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
+        //Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
         setTroopOnBuildings(buildings, troopLocation)
 
         //inicializando tropas en todos los edificios que no sean barrack y castle
         dibujarTropasenHTML(buildings);
 
         //Crear formulario de mover tropas
-        let imagen =" {{ asset('images/iconos/add.png') }}";
-        crearFormularioMoverTropas(troops, buildings, imagen);
+
+        crearFormularioMoverTropas(troops, buildings, imagen_add);
 
         //Funcionalidad del boton
         //crear arreglo
         //mostrar lista
         crearFuncionalidadBotonFormularioPlanMovements(troops_movements);
 
-        //console.log(buildings);
+
+        //Funcionalidad del boton GO
+        let ruta_move_troops = "{{path('move_troops')}}";
+        crearBotonGo(ruta_move_troops);
+      
 
     });
 </script>
