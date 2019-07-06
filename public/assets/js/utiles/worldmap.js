@@ -1,13 +1,23 @@
 
-
+/*
 $("#boton_create_squad").click(
 
     function (event) {
         event.preventDefault();
         console.log("Hi");
     }
-);
+);*/
 
+/*
+$(document).ready(function(){
+
+    console.log("inicializando");
+    var url = document.location.toString();
+    if (url.match('#')) {
+        $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+        $('.nav-tabs a').removeClass('active');
+    }
+});*/
 
 
 //Crea lista de tropas para seleccionar 
@@ -235,12 +245,23 @@ function botonCrearSquad(ruta_create_squad) {
                 function (data, textStatus, jqXHR) {
                     console.log('ok');
                     console.log(data);
-                    // location.reload();
+                    
+
+                   
+                    //pintarSquads(squads);
 
                 }
             ).done(
                 function () {
+                   
+                  
+                    $('[href="#squads"]').tab('show');
+
+                    
+                    location.reload();
                     console.log("done");
+                    $('[href="#world"]').removeClass('active');
+                    $('[href="#squads"]').addClass('active');
                 }
 
             ).fail(
@@ -373,8 +394,9 @@ function pintarEdificiosEnemigos(ruta_edificios_enemigos) {
 }
 
 
-function pintarSquads(squads) {
+function pintarSquads(squads, image_del) {
 
+    console.log('Pintar squad');
     
     var lista_squads_html = $("#lista_squads");
     lista_squads_html.text('');
@@ -385,18 +407,84 @@ function pintarSquads(squads) {
 
         //console.log(id);
         lista_squads_html.append(
-            '<div class="card">' +
+            '<div class="card" id="squad"'+id+'>' +
             '<div class="card-header-primary">' +
-            '<h5>' + unsquad.building_name2 + '</h5>' +
-            '</div>' +
+            '<h4 class="card-title">'+
+             unsquad.building_name2 +            
+            '<div class="float-right">'+
+            '<a href="#" id="' + id + '" class="boton_del_squad">' +
+            '<img src="' + imagen_del + '" height="30" alt=""> </a>' +
+            '</div>'+
+            '</h4>'+
+            '</div>'+  
             '<div class="card-body">' +
             '<p><span class="subrayado">Troops</span></p>' +
             '<table id="' + id + '">' +
-
             '</table>' +
             '</div>' +
             '</div>'
         );
 
     }
+}
+
+
+
+//elimina tropa de la seleccion
+function BotonDelSquad() {
+
+    $(".boton_del_squad").click(
+        function (event) {
+
+
+            event.preventDefault();
+
+            var id_squad = $(this).attr('id');
+            //console.log(id_tropas);
+            //eliminando
+            $('#squad' + id_squad).remove();
+        }
+    );
+
+}
+
+
+function inicializarVistaSquads(ruta_listar_resources, ruta_create_squad){
+
+    $.getJSON(ruta_listar_resources, function (data) { // obteniendo los datos recibidos de la peticion
+        datos = data.datos;
+        buildings = datos.buildings;
+        troops = datos.troops;
+
+        squads = datos.squads;
+
+        //Mostrar listado de Squads propios
+
+
+        //Mostrar listado de edificios solo los enemigos
+
+        //Formulario seleccionar tropas
+        crearFormularioSelectTropas(troops, buildings, imagen_add);
+        crearFuncionalidadBotonAddTroop();
+
+        //Funcionalidad del boton GO
+      
+        botonCrearSquad(ruta_create_squad, squads);
+
+        pintarSquads(squads, imagen_del);
+
+        BotonDelSquad();
+
+        console.log(squads);
+
+       
+
+
+
+
+
+    });
+
+
+
 }

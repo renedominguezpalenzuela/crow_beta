@@ -3,6 +3,10 @@
 {% block title %}World Map
 {% endblock %}
 
+
+
+
+
 {% block body %}
 
 
@@ -32,7 +36,7 @@
 
 
     <div class="card-body">
-        <div class="tab-content text-center">
+        <div class="tab-content">
 
             {# --- Opcion: World listar todos los edificios enemigos ---- #}
             <div class="tab-pane active" id="world">
@@ -198,7 +202,7 @@
                     <div class="col">
                         <h5 class="card-title">Squads</h5>
 
-                        <div  id="lista_squads">
+                        <div  id="lista_squads" class="card-columns">
 
                         </div>
                     </div>
@@ -230,7 +234,35 @@
 
 
 
+
+
+
+    
+
+
 <script>
+
+//$(document).ready(function(){
+
+    $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+
+        localStorage.setItem('activeTab', $(e.target).attr('href'));
+
+    });
+
+    var activeTab = localStorage.getItem('activeTab');
+
+    if(activeTab){
+
+        $('#myTab a[href="' + activeTab + '"]').tab('show');
+
+    }
+
+//});
+
+
+
+
     // -------------------------------------------------------------------------------
     // Declarando variables globales que contendran todos los datos recibidos
     // -------------------------------------------------------------------------------
@@ -243,11 +275,7 @@
     // ------------------------------------------------------------------------------
     // Obtener datos iniciales (se ejecuta al cargar la pagina)
     // ------------------------------------------------------------------------------
-    /*peticion_all = {}
-    peticion_all.listar_kingdom_resources =1;
-    var datos_enviar = {
-        peticion: JSON.stringify(peticion_all)
-    }*/
+
 
 
     let troops = null;
@@ -256,7 +284,11 @@
     let squads=null;
 
     //Ejecutar por primera ves al cargar la pagina
-    ruta_edificios_enemigos = "{{path('list_enemy_buildings')}}";
+    let ruta_edificios_enemigos = "{{path('list_enemy_buildings')}}";
+    let ruta_listar_resources = "{{path('list_user_resources')}}";
+    let  ruta_create_squad = "{{path('create_squad')}}";
+
+
     pintarEdificiosEnemigos(ruta_edificios_enemigos);
 
     //Evento se ejecuta antes de mostrar un tab
@@ -264,44 +296,13 @@
     $('.nav-tabs a').on('shown.bs.tab', function (event) {
         var nombre_tab = $(event.target).text();         // active tab
 
-        let troops = null;
-        let buildings = null;
-        let buildings_enemigos = null;
-        let squads=null;
-
-
-
+ 
         if (nombre_tab == 'Squads') {
 
             console.log('squads');
+            inicializarVistaSquads(ruta_listar_resources, ruta_create_squad);
 
-            $.getJSON("{{path('list_user_resources')}}", function (data) { // obteniendo los datos recibidos de la peticion
-                datos = data.datos;
-                buildings = datos.buildings;
-                troops = datos.troops;
-
-                squads = datos.squads;
-
-                //Mostrar listado de Squads propios
-
-
-                //Mostrar listado de edificios solo los enemigos
-
-                //Formulario seleccionar tropas
-                crearFormularioSelectTropas(troops, buildings, imagen_add);
-                crearFuncionalidadBotonAddTroop();
-
-                //Funcionalidad del boton GO
-                let ruta_create_squad = "{{path('create_squad')}}";
-                botonCrearSquad(ruta_create_squad);
-
-                pintarSquads(squads);
-
-
-
-
-
-            });
+       
         }
 
         if (nombre_tab == 'World') {
