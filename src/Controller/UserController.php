@@ -103,7 +103,6 @@ class UserController extends AbstractController
         }
 
      
-
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 

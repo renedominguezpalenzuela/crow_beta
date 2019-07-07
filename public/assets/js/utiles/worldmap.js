@@ -1,23 +1,181 @@
 
-/*
-$("#boton_create_squad").click(
 
-    function (event) {
-        event.preventDefault();
-        console.log("Hi");
-    }
-);*/
+//elimina tropa de la seleccion
 
-/*
-$(document).ready(function(){
 
-    console.log("inicializando");
-    var url = document.location.toString();
-    if (url.match('#')) {
-        $('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
-        $('.nav-tabs a').removeClass('active');
-    }
-});*/
+
+
+function pintarEdificiosEnemigos(ruta_edificios_enemigos, imagen_attack, ruta_attack) {
+
+    let edificios = [];
+    let troopLocation = [];
+
+
+    $.getJSON(ruta_edificios_enemigos, function (data) {
+
+        edificios = data.datos.buildings;
+        squads = data.datos.squads;
+
+
+
+
+        let lista_squads_html = '';
+        for (unsquad of squads) {
+
+
+
+            lista_squads_html = lista_squads_html +
+                '<option value="' + unsquad.building_id + '">' + unsquad.building_name2.trim() + '</option>';
+            console.log('aaa' + unsquad.building_name2.trim());
+
+
+        }
+
+        if (lista_squads_html == '') {
+            lista_squads_html = '<option value="' + -1 + '">No Squad created</option>';
+        }
+
+
+        //console.log(squads);
+
+        var lista_edificios_enemigos_html = $("#lista_edificios_enemigos");
+        lista_edificios_enemigos_html.text('');
+
+        for (unedificio of edificios) {
+
+            let id = unedificio.building_name + unedificio.building_id.toString();
+
+
+
+            //  console.log(unedificio);
+            lista_edificios_enemigos_html.append(
+                '<div class="card">' +
+                '<div class="card-header-primary">' +
+                '<h5>' + unedificio.building_name2 + '</h5>' +
+                '</div>' +
+                '<div class="card-body">' +
+                '<p><span class="subrayado">Troops</span></p>' +
+                '<table id="' + id + '">' +
+                '</table>' +
+
+
+
+                '<div class="row">' +
+                
+                //'<label class="subrayado" for="from_select_' + id + '">Attacker Squad</label>' +
+                '<p><span class="subrayado ml-3">Attack Squad</span></p>'+
+                '</div>'+
+
+                '<div class="row ml-2">' +
+                
+                '<select  class="form-control mb-2 col-sm-6" id="from_select_' + id + '">' +
+                lista_squads_html +
+                '</select>' +
+
+                '<a href="#" id="' + id + '" class="boton_attack col-sm-4">' +
+                '<img src="' + imagen_attack + '" height="30" alt=""> </a>' +
+               
+                '</div>' +
+                '</div>'+
+
+
+
+
+
+
+                '</div>' +
+                '</div>'
+            );
+
+
+
+            lista_tropas_html = $("#" + id);
+
+            let tropas = unedificio.troops_location;
+            for (una_tropa of tropas) {
+                if (lista_tropas_html != null) {
+                    lista_tropas_html.append('<tr><td><p> <span class="ml-1">' + una_tropa.troop_name + ': '+ una_tropa.total + '</span></p></td></tr>');
+
+                }
+            }
+
+
+
+
+
+        }
+        botonAtacar( ruta_attack);
+
+
+    });
+
+}
+
+
+function botonAtacar(ruta_attack) {
+    $(".boton_attack").click(
+        function (event) {
+
+
+            event.preventDefault();
+
+            var id = $(this).attr('id');
+            console.log("prueba ok" + id);
+
+            var peticion_all = {};
+            var datos_enviar = {
+                peticion: JSON.stringify(peticion_all)
+            }
+
+
+            $.post(ruta_attack,
+                datos_enviar
+
+                ,
+                function (data, textStatus, jqXHR) {
+                    console.log('ok');
+                    console.log(data);
+
+
+
+                    //pintarSquads(squads);
+
+                }
+            ).done(
+                function () {
+
+
+                    //$('[href="#squads"]').tab('show');
+
+
+                    location.reload();
+                    //console.log("done");
+                    //$('[href="#world"]').removeClass('active');
+                    //$('[href="#squads"]').addClass('active');
+                }
+
+            ).fail(
+                function (data, textStatus, jqXHR) {
+                    console.log(textStatus + ' : ' + jqXHR);
+                    console.log('error');
+                }
+
+            ).always(
+                function () {
+                    console.log("always");
+                }
+
+            );
+
+
+        }
+    );
+
+
+
+}
+
+
 
 
 //Crea lista de tropas para seleccionar 
@@ -40,9 +198,9 @@ function crearFormularioSelectTropas(troops, buildings, imagen) {
 
 
     lista_tropas_html.append(
-        '<form  class="form">' +
+        '<form>' +
         '<div class="form-row">' +
-        '<label class="col-form-label col-sm-2" for="squadname">Name:</label>' +
+        '<label class="col-form-label" for="squadname">Name:</label>' +
         '<input class="col-sm-6 form-control mb-2 mr-sm-2" id="squadname" placeholder="Squad Name" type="text">' +
         '</div>'
     );
@@ -56,14 +214,14 @@ function crearFormularioSelectTropas(troops, buildings, imagen) {
         lista_tropas_html.append(
 
             '<div class="form-row">' +
-            '<label class="col-form-label col-sm-2" id="tropa_name_' + troop_id + '" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
-            '<span class="bmd-form-group-sm">' +
-            '<input type="number" min="0" step="1" pattern="\d+" id="troop_total' + troop_id + '" class="col-sm-4 form-control mb-2 mr-sm-2" placeholder="0"/>' +
-            '</span>' +
+            '<label class="col-form-label col-sm-1 " id="tropa_name_' + troop_id + '" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
+            //'<span class="bmd-form-group-sm">' +
+            '<input type="number" min="0" step="1" pattern="\d+" id="troop_total' + troop_id + '" class="col-sm-1 form-control mb-2 ml-2 " placeholder="0"/>' +
+            //'</span>' +
 
-            '<label class="col-form-label col-sm-1" for="from_select_' + troop_id + '">From</label>' +
-            '<span class="bmd-form-group-sm is-filled">' +
-            '<select class="form-control mb-2 mr-sm-2" id="from_select_' + troop_id + '">' +
+            '<label class="col-form-label col-sm-2 ml-2" for="from_select_' + troop_id + '">From</label>' +
+            //'<span class="bmd-form-group-sm is-filled">' +
+            '<select class="form-control mb-2 mr-sm-2 col-sm-3" id="from_select_' + troop_id + '">' +
             cadena_buildings_html +
             '</select>' +
             '</span>' +
@@ -87,7 +245,6 @@ function crearFormularioSelectTropas(troops, buildings, imagen) {
 
 //Boton signo mas de cada tropa, adiciona tropa a la selecion
 function crearFuncionalidadBotonAddTroop() {
-
 
     $(".boton_add_troop").click(
 
@@ -153,7 +310,7 @@ function crearFuncionalidadBotonAddTroop() {
                     '<a href="#" id="' + id_unico + '" class="boton_del_selected_troop">' +
                     '<img src="' + imagen_del + '" height="30" alt=""> </a>' +
 
-                    '<p></td>' +
+                    '</p></td>' +
                     '</tr>'
                 );
             }
@@ -191,6 +348,7 @@ function botonCrearSquad(ruta_create_squad) {
     $("#boton_create_squad").click(
         function (event) {
             event.preventDefault();
+            
 
             //Objeto JavaScript que contendra todos los datos a enviar
             var peticion_all = {};
@@ -202,7 +360,7 @@ function botonCrearSquad(ruta_create_squad) {
             nombre_new_squad = $("#squadname").val();
             peticion_all.name = nombre_new_squad;
 
-            if (nombre_new_squad=='') {
+            if (nombre_new_squad == '') {
                 //Error nombre del squad no puede estar vacio
                 return;
             }
@@ -245,28 +403,29 @@ function botonCrearSquad(ruta_create_squad) {
                 function (data, textStatus, jqXHR) {
                     console.log('ok');
                     console.log(data);
-                    
 
-                   
+
+
                     //pintarSquads(squads);
 
                 }
             ).done(
                 function () {
-                   
-                  
-                    $('[href="#squads"]').tab('show');
 
-                    
+
+                    //$('[href="#squads"]').tab('show');
+
+
                     location.reload();
-                    console.log("done");
-                    $('[href="#world"]').removeClass('active');
-                    $('[href="#squads"]').addClass('active');
+                    //console.log("done");
+                    //$('[href="#world"]').removeClass('active');
+                    //$('[href="#squads"]').addClass('active');
                 }
 
             ).fail(
                 function (data, textStatus, jqXHR) {
                     console.log(textStatus + ' : ' + jqXHR);
+                    console.log('error');
                 }
 
             ).always(
@@ -285,141 +444,39 @@ function botonCrearSquad(ruta_create_squad) {
 }
 
 
-function Test() {
-    var my_objeto = {};
-
-    var name = [];
-    var age = [];
-    name.push('nombre 1');
-    name.push('nombre 2');
-
-    age.push('24');
-    age.push('30');
-
-    var vtitulo = 'Este es el titulo';
-    my_objeto.titulo = vtitulo;
-
-    var unjson_en_cadena = '{"troops_id":1,"total":2,"from":1}';
-    my_objeto.json_cadena = JSON.parse(unjson_en_cadena);
-
-    var arreglo_de_cadenas = '[{"troops_id":1,"total":2,"from":1},{"troops_id":1,"total":2,"from":1}]';
-    my_objeto.arreglo_json_cadena = JSON.parse(arreglo_de_cadenas);
 
 
 
 
-    my_objeto.name = name;
-    my_objeto.age = age;
-
-
-    //Referencia a arreglos
-    my_objeto.name[1] = "FFF";
-
-
-
-
-
-
-
-    console.log(JSON.stringify(my_objeto));
-
-}
-
-function pintarEdificiosEnemigos(ruta_edificios_enemigos) {
-
-    var edificios = [];
-
-    $.getJSON(ruta_edificios_enemigos, function (data) {
-
-        edificios = data.datos.buildings;
-
-        var lista_edificios_enemigos_html = $("#lista_edificios_enemigos");
-        lista_edificios_enemigos_html.text('');
-
-        for (unedificio of edificios) {
-
-            let id = unedificio.building_name + unedificio.building_id.toString();
-
-            //console.log(id);
-            lista_edificios_enemigos_html.append(
-                '<div class="card">' +
-                '<div class="card-header-primary">' +
-                '<h5>' + unedificio.building_name2 + '</h5>' +
-                '</div>' +
-                '<div class="card-body">' +
-                '<p><span class="subrayado">Troops</span></p>' +
-                '<table id="' + id + '">' +
-
-                '</table>' +
-                '</div>' +
-                '</div>'
-            );
-
-        }
-
-    });
-
-
-
-
-
-
-
-    /*
-    <div class="card">
-                            <div class="card-header-primary ">
-                                {# <div class="card-icon">
-                                                                        <i class="material-icons"></i>
-                                                                    </div>
-                                                                   
-                                                                    <p class="card-category">Revenue</p>
-                                                                    <h3 class="card-title">$34,245</h3>#}
-                                <h5>Castle</h5>
-                            </div>
- 
-                            <img alt="Card image cap" class="card-img-top" src="...">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a longer card with supporting text below as a natural
-                                    lead-in to additional content. This content is a little bit longer.</p>
-                                <p class="card-text">
-                                    <small class="text-muted">Last updated 3 mins ago</small>
-                                </p>
-                            </div>
-                        </div>
-    */
-
-
-
-}
 
 
 function pintarSquads(squads, image_del) {
 
-    console.log('Pintar squad');
-    
+    //console.log('Pintar squad');
+
     var lista_squads_html = $("#lista_squads");
     lista_squads_html.text('');
 
     for (unsquad of squads) {
 
-        let id = unsquad.building_name + unsquad.building_id.toString();
+        let id = unsquad.building_id.toString();
+       // let nombre = 
 
         //console.log(id);
         lista_squads_html.append(
-            '<div class="card" id="squad"'+id+'>' +
+            '<div class="card" id="squad' + id + '">' +
             '<div class="card-header-primary">' +
-            '<h4 class="card-title">'+
-             unsquad.building_name2 +            
-            '<div class="float-right">'+
+            '<h4 class="card-title">' +
+            unsquad.building_name2 +
+            '<div class="float-right">' +
             '<a href="#" id="' + id + '" class="boton_del_squad">' +
             '<img src="' + imagen_del + '" height="30" alt=""> </a>' +
-            '</div>'+
-            '</h4>'+
-            '</div>'+  
+            '</div>' +
+            '</h4>' +
+            '</div>' +
             '<div class="card-body">' +
             '<p><span class="subrayado">Troops</span></p>' +
-            '<table id="' + id + '">' +
+            '<table id="' +unsquad.building_name+ id + '">' +
             '</table>' +
             '</div>' +
             '</div>'
@@ -435,56 +492,101 @@ function BotonDelSquad() {
 
     $(".boton_del_squad").click(
         function (event) {
-
-
             event.preventDefault();
 
             var id_squad = $(this).attr('id');
-            //console.log(id_tropas);
-            //eliminando
+         
+            
+
+            //eliminando del html
             $('#squad' + id_squad).remove();
+
+            console.log(id_squad);
+      
+
+            //eliminando en el servidor
+            var peticion_all = {};
+            peticion_all.id_squad= id_squad;
+
+            var datos_enviar = {
+                peticion: JSON.stringify(peticion_all)
+            }
+
+
+
+            $.post(ruta_delete_squad,
+                datos_enviar,
+                function (data, textStatus, jqXHR) {
+                    console.log('ok');
+                    console.log(data);
+
+
+
+                    //pintarSquads(squads);
+
+                }
+            ).done(
+                function () {
+                  
+                    console.log("done");
+                   
+                }
+
+            ).fail(
+                function (data, textStatus, jqXHR) {
+                   // console.log(textStatus + ' : ' + jqXHR);
+                }
+
+            ).always(
+                function () {
+                    console.log("always");
+                   // location.reload();
+                }
+
+            );
+
         }
     );
 
 }
 
 
-function inicializarVistaSquads(ruta_listar_resources, ruta_create_squad){
 
-    $.getJSON(ruta_listar_resources, function (data) { // obteniendo los datos recibidos de la peticion
-        datos = data.datos;
-        buildings = datos.buildings;
-        troops = datos.troops;
+function dibujarTropasenHTML(buildings) {
 
-        squads = datos.squads;
+   // console.log(buildings);
 
-        //Mostrar listado de Squads propios
+    for (unedificio of buildings) {
 
+       let lista_tropas_html = null;
+ 
+       //se crea en cada edificio una tabla con id = "squad1", "squad2"...
+        if (unedificio.building_name == "Squad") {
+            let id = unedificio.building_name + unedificio.building_id.toString();
+            lista_tropas_html = $("#" + id);
+        }
 
-        //Mostrar listado de edificios solo los enemigos
+        let tropas = unedificio.troop_location;
 
-        //Formulario seleccionar tropas
-        crearFormularioSelectTropas(troops, buildings, imagen_add);
-        crearFuncionalidadBotonAddTroop();
+        
+        for (una_tropa of tropas) {
+            if (lista_tropas_html != null) {
+                lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.troop_name + ": " + una_tropa.total + "</span></p></td></tr>");
 
-        //Funcionalidad del boton GO
-      
-        botonCrearSquad(ruta_create_squad, squads);
-
-        pintarSquads(squads, imagen_del);
-
-        BotonDelSquad();
-
-        console.log(squads);
-
-       
+            }
+        }
 
 
-
-
-
-    });
+    }
 
 
 
 }
+
+
+
+
+
+
+
+

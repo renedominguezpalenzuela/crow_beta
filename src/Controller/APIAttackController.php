@@ -18,22 +18,25 @@ use Symfony\Component\Routing\Annotation\Route;
  * @package App\Controller
  * @Route("/api")
  */
-class APICreateSquadController extends AbstractController
+class APIAttackController extends AbstractController
 {
 
     //Extructura nueva
-    //{ "name":"nombre_nuevo_squad",
-    //    "datos": ["{"troops_id":13,"total":2,from":16}"]
+    //{ 
+    //    "datos": "{"attacker_squad_id":13,"building_atacado_id":13}"
     //}
     /**
-     * @Route("/create_squad", name="create_squad", methods={"POST"})
+     * @Route("/attack", name="attack", methods={"POST"})
      */
 
     public function create_squad(Request $request, GlobalConfig $global_config)
     {
         $mensaje_error = "Not error found";
         $error = false;
+        $resultado = '';
 
+
+       
         //--------------------------------------------------------------------------------------------------
         // Validando si usuario autenticado correctamente
         //--------------------------------------------------------------------------------------------------
@@ -77,145 +80,28 @@ class APICreateSquadController extends AbstractController
             $user = $this->getUser();
         }
 
-        //--------------------------------------------------------------------------------
-        //(2) Recorriendo los datos
-        //--------------------------------------------------------------------------------
-        $nombre_squad = $parametersAsArray['name'];
 
-        // var_dump($parametersAsArray['datos_tropas']);
 
-        $kingdom = $user->getKingdom();
+        
+        //Calculando resultado de la pelea
+        $posibles_resultados=array("Victory", "Defeat" ,"Stalemate");
 
-        //Crear el Squad, como un edificio nuevo
-        $squad = new Building();
-        $building_type = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'Squad']);
+        $indice_resultados =  random_int(0, 2);
 
-        $squad->setBuildingType($building_type);
-        $squad->setKingdom($kingdom);
-        $squad->setUser($user);
-        $squad->setDefenseRemaining(0);
-        $squad->setName2($nombre_squad);
+        $resultado = $posibles_resultados[$indice_resultados];
 
-        $em->persist($squad);
+        $this->addFlash('info', 'Battle Result: '.$resultado);
 
-        foreach ($parametersAsArray['datos_tropas'] as $undato) {
-
-            $from = $undato['from'];
-            $troop_id = $undato['troops_id'];
-            $total_a_mover = $undato['total'];
-
-            //TODO: Validar que numeros no sean negativos ni cero
-            //TODO: Validar en cada edificio solo debe existir una tupla troops - building
-
-            //Obtener nombres de edificios para mensajes de error
-            $edificio_old = $em->getRepository(Building::class)->find($from);
-            if ($edificio_old == null) {
-                $mensaje_error = "From building don't exist: (From building id: " . $from . " )";
-                $error = true;
-                break;
-            }
-            $edificio_old_name = $edificio_old->getBuildingType()->getName();
-
-            //2.1) Comprobar que existe la tropa en el edificio
-            //buscar en que edificio esta la tropa ubicada
-            //buscar en troop_building
-            $tropa_edificio_old = $em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $from]);
-            if ($tropa_edificio_old == null) {
-                $mensaje_error = "Troops don't exist on From building: (from building id: " . $from . " " . $edificio_old_name . " troop id: " . $troop_id . " )";
-                $error = true;
-                break;
-            }
-
-            //Obtener nombre de la tropa para mensajes de error
-            $troops = $em->getRepository(Troop::class)->find($tropa_edificio_old->getTroops());
-
-            //Validar: que exista la tropa en el edificio de donde viene
-            if ($tropa_edificio_old == null) {
-                $mensaje_error = "Troop don't exist on building " . $edificio_old_name;
-                $error = true;
-                break; //interrumpir el ciclo
-            };
-
-            //2.2) comprobar que el total de tropas ubicadas sea mayor al que se quiere mover
-            // si es menor -- error terminar
-
-            $total_edificio_old = $tropa_edificio_old->getTotal();
-
-            // var_dump("total_edificio_old " . $total_edificio_old . " total a mover " . $total_a_mover);
-
-            //VALIDAR: si total de tropas a mover es mayor que las que hay en el edificio error
-            if ($total_edificio_old < $total_a_mover) {
-
-                $nombre_edificio = $tropa_edificio_old->getBuilding()->getName();
-                $mensaje_error = "Total Troop on building minor than movement. Building id: " . strval($tropa_edificio_old->getID()) . " " . $nombre_edificio;
-                $error = true;
-                break;
-
-            }
-
-            //3) comprobar que el edificio al que se quiere mover sea del equipo
-            //buscar en la tabla edificio y comprobar que el team es el mismo
-
-            //4) comprobar la capacidad del edificio si caben las tropas
-            //buscar en building type el id
-            //se obtiene la capacidad
-
-            //5) modificar el total del edificio donde se encuentran actualmente (si queda en cero, borrar la tupla)
-            $resto_edificio_old = $total_edificio_old - $total_a_mover;
-
-            //var_dump("resto_edificio_old " . $resto_edificio_old);
-
-            if ($resto_edificio_old > 0) {
-                $tropa_edificio_old->setTotal($resto_edificio_old);
-            }
-
-            //6) escribir la nueva tupla en el nuevo edificio (si existia una tupla modificar su valor, si no crear una nueva tupla)
-
-            //Verificar si existe la tupla del edificio nuevo con las tropas, si existe se actualiza
-            //si no existe se crea
-
-            //TODO: Validar en cada edificio solo debe existir una tupla troops - building
-            $tropa_edificio_new = $em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $squad->getId()]);
-
-            if ($tropa_edificio_new == null) {
-                $tropa_edificio_new = new TroopBuilding();
-                $tropa_edificio_new->setTroops($troops);
-                $tropa_edificio_new->setBuilding($squad);
-                $tropa_edificio_new->setTotal(0);
-            }
-
-            //Calculo la nueva cantidad de tropas en el edificio new
-            $total_inicial_edificio_new = $tropa_edificio_new->getTotal() + $total_a_mover;
-
-            $tropa_edificio_new->setTotal($total_inicial_edificio_new);
-
-            //si llega a 0 las tropas en el edificio old la tupla se elimina
-            if ($resto_edificio_old == 0) {
-                //var_dump("borrando");
-
-                $em->remove($tropa_edificio_old);
-                $em->flush();
-            } else {
-                $em->persist($tropa_edificio_old);
-            }
-
-            $em->persist($tropa_edificio_new);
-
-            //  } //END Ciclo   foreach ($troops as $unatropa)
-
-            if ($error) {
-                break;
-            }
-
-        } //END Ciclo  foreach ($parametersAsArray as $undato)
+ 
 
         $respuesta = array(
             'error' => $error,
             'message' => $mensaje_error,
+            'result'=>$resultado
         );
 
         if (!$error) {
-            $em->flush();
+          //  $em->flush();
 
         }
         return $this->json($respuesta, Response::HTTP_OK);

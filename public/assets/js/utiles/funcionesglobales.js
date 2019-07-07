@@ -24,3 +24,56 @@ var ID = function () {
     return '_' + Math.random().toString(36).substr(2, 9);
 };
 
+
+
+//Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
+function setTroopOnBuildings(buildings, troopLocation) {
+
+    // Buscando troop location
+    for (let y = 0; y < buildings.length; y++) { // puedo pintar aqui el card del edificio
+
+        let unBuilding = buildings[y];
+        let building_id = unBuilding['building_id'];
+        unBuilding['troop_location'] = [];
+
+
+        // recorrer todos los troops location buscando si esta el building
+
+        for (let i = 0; i < troopLocation.length; i++) {
+            let untroop_location = troopLocation[i];
+            // console.log("Building_id "+building_id);
+            // console.log("trooplocation building_id "+untroop_location['building_id']);
+
+            if (untroop_location['building_id'] == building_id) {
+                unBuilding['troop_location'].push(untroop_location);
+                //   console.log('match');
+                //console.log(troopLocation)
+                // Puedo pintar aqui un troop del edificio [untroop_location]
+                //si lo pinto aqui no hago el push anterior aunque seria bueno mantener la extructura
+                //de forma global en la pagina para realizar validaciones en los movimientos de tropas
+                //y no hacer peticiones de mas al servidor
+
+                //----------------------------------------
+                //ES MAS EFICIENTE AQUI CREO
+                //----------------------------------------
+                /* $('<table class="table table-hover"><tr><td><p>'+untroop_location['troop_name']+': '+
+                 untroop_location['total']+'</p></td></tr></table>').appendTo('#troop_location'+untroop_location['building_id']);*/
+            }
+        }
+
+        buildings[y] = unBuilding;
+        // console.log(unBuilding.troop_location);
+        /*  
+        for (let k = 0; k < unBuilding.troop_location.length; k++){
+              // console.log(unBuilding.troop_location[k]['troop_name']);
+              $('<table class="table table-hover"><tr><td><p>'+unBuilding.troop_location[k]['troop_name']+': '+unBuilding.troop_location[k]['total']+'</p></td></tr></table>').appendTo('#troop_location'+unBuilding.troop_location[k]['building_id']);
+          }
+          */
+    }
+
+    //O Puedo al final de preparar la extructura de datos empezar a pintar los cards
+    //revisa en la consola para que veas
+    // console.log(data.datos);
+};
+
+

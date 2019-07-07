@@ -75,7 +75,7 @@ function crearBotonGo(ruta_move_troops) {
 
 
 
-
+/*
 //Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
 function setTroopOnBuildings(buildings, troopLocation) {
 
@@ -106,25 +106,21 @@ function setTroopOnBuildings(buildings, troopLocation) {
                 //----------------------------------------
                 //ES MAS EFICIENTE AQUI CREO
                 //----------------------------------------
-                /* $('<table class="table table-hover"><tr><td><p>'+untroop_location['troop_name']+': '+
-                 untroop_location['total']+'</p></td></tr></table>').appendTo('#troop_location'+untroop_location['building_id']);*/
+                // $('<table class="table table-hover"><tr><td><p>'+untroop_location['troop_name']+': '+
+                // untroop_location['total']+'</p></td></tr></table>').appendTo('#troop_location'+untroop_location['building_id']);
             }
         }
 
         buildings[y] = unBuilding;
         // console.log(unBuilding.troop_location);
-        /*  
-        for (let k = 0; k < unBuilding.troop_location.length; k++){
-              // console.log(unBuilding.troop_location[k]['troop_name']);
-              $('<table class="table table-hover"><tr><td><p>'+unBuilding.troop_location[k]['troop_name']+': '+unBuilding.troop_location[k]['total']+'</p></td></tr></table>').appendTo('#troop_location'+unBuilding.troop_location[k]['building_id']);
-          }
-          */
+  
     }
 
     //O Puedo al final de preparar la extructura de datos empezar a pintar los cards
     //revisa en la consola para que veas
     // console.log(data.datos);
 };
+*/
 
 
 function crearFormularioMoverTropas(troops, buildings, imagen) {
@@ -201,15 +197,8 @@ function crearFormularioMoverTropas(troops, buildings, imagen) {
 
 
 function crearFuncionalidadBotonFormularioPlanMovements() {
-
-
-
-
-
     $(".boton_plan_troops_movements").click(
-
         function (event, imagen_del) {
-
             imagen_del = '/images/iconos/delete.png';
             //console.log("sss" + imagen_del);
 

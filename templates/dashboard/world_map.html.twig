@@ -4,318 +4,204 @@
 {% endblock %}
 
 
-
-
-
 {% block body %}
 
 
-{#---- Menu superior------------ #}
-<div class="card card-nav-tabs card-plain">
 
-    {#----Opciones Menu superior------------ #}
-    <div class="card-header card-header-danger">
-        <!-- colors: "header-primary", "header-info", "header-success", "header-warning", "header-danger" -->
-        <div class="nav-tabs-navigation">
-            <div class="nav-tabs-wrapper">
-                <ul class="nav nav-tabs" data-tabs="tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#world">World</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#squads">Squads</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#history">History</a>
-                    </li>
-                </ul>
-            </div>
+
+<div class="lineaestrecha row">
+
+    
+    <div class="col">
+        World Map, Kingdom filter
+        
+        {%  for unmensaje in app.flashes('info')  %}
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ unmensaje }}
         </div>
+        {% endfor %}
+
     </div>
-    {#---- Fin opciones Menu superior------------ #}
-
-
-    <div class="card-body">
-        <div class="tab-content">
-
-            {# --- Opcion: World listar todos los edificios enemigos ---- #}
-            <div class="tab-pane active" id="world">
-
-                <div lineaestrecha row>
-                    <div class="col">
-                        World Map, Filtro para un reino
-                    </div>
-
-
-                </div>
-                <div lineaestrecha row>
-
-                    <div class="card-columns" id="lista_edificios_enemigos">
-                        <div class="card">
-                            <div class="card-header-primary ">
-                                {# <div class="card-icon">
-                                                                        <i class="material-icons"></i>
-                                                                    </div>
-                                                                   
-                                                                    <p class="card-category">Revenue</p>
-                                                                    <h3 class="card-title">$34,245</h3>#}
-                                <h5>Castle</h5>
-                            </div>
-
-                            <img alt="Card image cap" class="card-img-top" src="...">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a longer card with supporting text below as a natural
-                                    lead-in to additional content. This content is a little bit longer.</p>
-                                <p class="card-text">
-                                    <small class="text-muted">Last updated 3 mins ago</small>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header-primary">
-                                <h5>Castle</h5>
-                            </div>
-                            <img alt="Card image cap" class="card-img-top" src="...">
-                            <div class="card-body ">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This card has supporting text below as a natural lead-in to
-                                    additional content.</p>
-                                <p class="card-text">
-                                    <small class="text-muted">Last updated 3 mins ago</small>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header-primary">
-                                <h5>Castle</h5>
-                            </div>
-                            <img alt="Card image cap" class="card-img-top" src="...">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a wider card with supporting text below as a natural
-                                    lead-in to additional content. This card has even longer content than the first
-                                    to show that equal height action.</p>
-                                <p class="card-text">
-                                    <small class="text-muted">Last updated 3 mins ago</small>
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header-primary">
-                                <h5>Castle</h5>
-                            </div>
-                            <img alt="Card image cap" class="card-img-top" src="...">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This card has supporting text below as a natural lead-in to
-                                    additional content.</p>
-                                <p class="card-text">
-                                    <small class="text-muted">Last updated 3 mins ago</small>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header-primary">
-                                <h5>Castle</h5>
-                            </div>
-                            <img alt="Card image cap" class="card-img-top" src="...">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a wider card with supporting text below as a natural
-                                    lead-in to additional content. This card has even longer content than the first
-                                    to show that equal height action.</p>
-                                <p class="card-text">
-                                    <small class="text-muted">Last updated 3 mins ago</small>
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="card-header-primary">
-                                <h5>Castle</h5>
-                            </div>
-                            <img alt="Card image cap" class="card-img-top" src="...">
-                            <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a wider card with supporting text below as a natural
-                                    lead-in to additional content. This card has even longer content than the first
-                                    to show that equal height action.</p>
-                                <p class="card-text">
-                                    <small class="text-muted">Last updated 3 mins ago</small>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-            {# --- Opcion: Squads listar todos los squads y crear nuevos squads ---- #}
-            <div class="tab-pane" id="squads">
-
-                {#Crear nuevo squad#}
-                <div lineaestrecha row>
-
-                    <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-primary"
-                        data-target="#collapseExample" data-toggle="collapse" type="button">
-                        New Squad
-                    </button>
 
 
 
-                    <div class="collapse" id="collapseExample">
-                        <h5 class="card-title">Select Troops</h5>
-
-                        {#  --- Seleccionar tropas ---#}
-                        <div class="card card-body" id="world_map_create_troops">
-
-                        </div>
-
-                        <h5 class="card-title">Selected Troops</h5>
-
-                        {# --- Tropas seleccionadas #}
-                        <div>
-                            <table id="world_map_tropas_seleccionadas">
-
-                            </table>
-
-                        </div>
-
-                        {# -- boton crear Squad ---#}
-                        <button type="submit" class="btn btn-primary" id="boton_create_squad">Create</button>
-
-                    </div>
 
 
 
-                    <div class="col"></div>
 
 
-                </div>
 
-                <div lineaestrecha row>
-                    <div class="col">
-                        <h5 class="card-title">Squads</h5>
+</div>
 
-                        <div  id="lista_squads" class="card-columns">
+{# --- Opcion: World listar todos los edificios enemigos ---- #}
 
-                        </div>
-                    </div>
+<div class="lineaestrecha row">
+    <div class="card-columns" id="lista_edificios_enemigos"></div>
+</div>
 
 
-                </div>
-
-            </div>
 
 
-            {# --- Opcion: history, mostrar logs generales  ---- #}
-            <div class="tab-pane" id="history">
-                <p>
-                    this is the history area</p>
-            </div>
 
-        </div>
+{# --- Opcion: Squads listar todos los squads y crear nuevos squads ---- #}
+
+
+{#Crear nuevo squad#}
+<div class="lineaestrecha row">
+
+    <div class="col">
+        <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-primary"
+            data-target="#collapseExample" data-toggle="collapse" type="button">
+            New Squad
+        </button>
     </div>
 
 </div>
+
+<div class="lineaestrecha row">
+
+    <div class="collapse col-sm-12" id="collapseExample">
+        <h5 class="card-title">Select Troops</h5>
+
+        {#  --- Seleccionar tropas ---#}
+        {#<div class="card card-body" id="world_map_create_troops">#}
+        <div id="world_map_create_troops">
+
+        </div>
+
+        <h5 class="card-title">Selected Troops</h5>
+
+        {# --- Tropas seleccionadas #}
+        <div>
+            <table id="world_map_tropas_seleccionadas">
+
+            </table>
+
+        </div>
+
+        {# -- boton crear Squad ---#}
+        <button type="submit" class="btn btn-primary" id="boton_create_squad">Create</button>
+
+    </div>
+
+
+
+</div>
+
+<div class="lineaestrecha row">
+
+    <!--  <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-primary" data-target="#listasquads"
+                data-toggle="collapse" type="button">
+                Squads List
+            </button>-->
+
+
+    <!--<div class="collapse" id="listasquads">-->
+    <div id="listasquads">
+        <!--<h5 class="card-title">Squads</h5>-->
+
+        <div id="lista_squads" class="card-columns">
+
+        </div>
+    </div>
+
+
+</div>
+
+
 {% endblock %}
+
 
 {% block js %}
 
 
 {# -- Funciones auxiliares -- #}
 <script src="{{asset('assets/js/utiles/funcionesglobales.js')}}"></script>
-<script src="{{asset('assets/js/utiles/worldmap.js')}}"></script>
-
-
-
-
-
-
-    
+<script src="{{asset('assets/js/utiles/worldmap.js')}}"> </script>
 
 
 <script>
-
-//$(document).ready(function(){
-
-    $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
-
-        localStorage.setItem('activeTab', $(e.target).attr('href'));
-
-    });
-
-    var activeTab = localStorage.getItem('activeTab');
-
-    if(activeTab){
-
-        $('#myTab a[href="' + activeTab + '"]').tab('show');
-
-    }
-
-//});
-
-
-
-
     // -------------------------------------------------------------------------------
     // Declarando variables globales que contendran todos los datos recibidos
     // -------------------------------------------------------------------------------
 
-
-
-    let imagen_add = "{{ asset('images/iconos/add.png') }}";
-    let imagen_del = "{{ asset('images/iconos/delete.png') }}";
 
     // ------------------------------------------------------------------------------
     // Obtener datos iniciales (se ejecuta al cargar la pagina)
     // ------------------------------------------------------------------------------
 
 
-
     let troops = null;
     let buildings = null;
     let buildings_enemigos = null;
-    let squads=null;
+    let squads = null;
 
-    //Ejecutar por primera ves al cargar la pagina
-    let ruta_edificios_enemigos = "{{path('list_enemy_buildings')}}";
-    let ruta_listar_resources = "{{path('list_user_resources')}}";
-    let  ruta_create_squad = "{{path('create_squad')}}";
+    // Ejecutar por primera ves al cargar la pagina
+    let ruta_edificios_enemigos = "{{ path('list_enemy_buildings') }}";
+    let ruta_listar_resources = "{{ path('list_user_resources') }}";
+    let ruta_create_squad = "{{ path('create_squad') }}";
+    let ruta_delete_squad = "{{ path('delete_squad') }}";
+    let ruta_attack = "{{ path('attack') }}";
+
+    let imagen_add = "{{ asset('images/iconos/add.png') }}";
+    let imagen_del = "{{ asset('images/iconos/delete.png') }}";
+    let imagen_attack = "{{ asset('images/iconos/attack.png') }}";
 
 
-    pintarEdificiosEnemigos(ruta_edificios_enemigos);
 
-    //Evento se ejecuta antes de mostrar un tab
-    //https://www.w3schools.com/bootstrap/bootstrap_ref_js_tab.asp
-    $('.nav-tabs a').on('shown.bs.tab', function (event) {
-        var nombre_tab = $(event.target).text();         // active tab
 
- 
-        if (nombre_tab == 'Squads') {
 
-            console.log('squads');
-            inicializarVistaSquads(ruta_listar_resources, ruta_create_squad);
+    $.getJSON(ruta_listar_resources, function (data) { // obteniendo los datos recibidos de la peticion
+        datos = data.datos;
+        buildings = datos.buildings;
+        troops = datos.troops;
+        troopLocation = datos.troops_location;
 
-       
-        }
+        squads = datos.squads;
 
-        if (nombre_tab == 'World') {
-            pintarEdificiosEnemigos(ruta_edificios_enemigos);
-        }
 
-        //var y = $(event.relatedTarget).text();  // previous tab
+        pintarEdificiosEnemigos(ruta_edificios_enemigos, imagen_attack, ruta_attack);
 
-        //alert(x+''+y);
+        console.log('reload');
+
+
+
+
+
+        // Mostrar listado de Squads propios
+
+
+        // Mostrar listado de edificios solo los enemigos
+
+        // Formulario seleccionar tropas
+        crearFormularioSelectTropas(troops, buildings, imagen_add);
+        crearFuncionalidadBotonAddTroop();
+
+        //Funcionalidad del boton GO
+
+        botonCrearSquad(ruta_create_squad, squads);
+
+
+        //Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
+        setTroopOnBuildings(squads, troopLocation)
+
+        pintarSquads(squads, imagen_del);
+        //console.log(troopLocation);
+
+
+
+        //inicializando tropas en todos los edificios que no sean barrack y castle
+        dibujarTropasenHTML(squads);
+
+
+
+        BotonDelSquad(ruta_delete_squad);
+
+
+
+
     });
-
-
-
 
 </script>
 
