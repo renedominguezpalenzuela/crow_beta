@@ -20,6 +20,18 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class APIListUserResourcesController extends AbstractController
 {
+
+    //Parametros
+    /**
+     *  NO necesita parametros
+     *   peticion_all = {}
+     *   peticion_all.listar_kingdom_resources = 1;  -- > lista los edificios propios
+     *   peticion_all.listar_kingdom_resources = 0;  -- > lista los edificios enemigos
+     *   var datos_enviar = {
+     *   peticion: JSON.stringify(peticion_all)
+    }
+     *  *///
+
     /**
      * @Route("/list_user_resources", name="list_user_resources")
      */
@@ -44,6 +56,12 @@ class APIListUserResourcesController extends AbstractController
             }
         }
 
+        // $peticion_json = $request->get("peticion");
+
+        //$peticion = json_decode($peticion_json);
+
+        // $peticion->listar_kingdom_resources
+
         $arreglo_final = [
             'team' => '',
             'castle' => '',
@@ -51,6 +69,7 @@ class APIListUserResourcesController extends AbstractController
             'troops' => '',
             'troops_location' => '',
             'resources' => '',
+            'squads' => '',
         ];
 
         $em = $this->getDoctrine()->getManager();
@@ -107,33 +126,60 @@ class APIListUserResourcesController extends AbstractController
         //----------------------------------------------------------------------------------------
         //(3) Buildings
         //----------------------------------------------------------------------------------------
-        //busco todos los edificios del team excepto el castillo que ya lo tengo
+        //busco todos los edificios del User excepto el castillo que ya lo tengo
+        //TODO: Agregar todos los edificios del kingdom
+
+        //$agregar = false;
+
+        // if ($peticion->listar_kingdom_resources) {
         $buildings = $em->getRepository(Building::class)->findBy(['user' => $user]);
+        // } else {
+        //    $kingdom = $user->getKingdom()->getID();
+        //    $buildings = $em->getRepository(Building::class)->BuscarEdificiosEnemigos($kingdom);
+        // }
 
         $arreglo = array();
+        $arreglo_squads = array();
+
         foreach ($buildings as $unbuilding) {
-
-            $building_type = $unbuilding->getBuildingType();
-
             //if ($building_type->getName() != 'Castle') {
             //El castillo tambien se agrega en la lista lo que no se dibuja en el twig junto a los otros edificios
             //Cantidad de tropas en un edificio
 
+            $building_type = $unbuilding->getBuildingType();
+
+            //Agregar por ser del mismo kingdom
+
             $arreglo[] = array(
                 'building_id' => $unbuilding->getID(),
                 'building_name' => $building_type->getName(),
-                'building_name2'=> $unbuilding->getName2(),
+                'building_name2' => $unbuilding->getName2(),
                 'capacity' => $building_type->getCapacity(),
                 'filled' => 0,
                 'level' => $building_type->getLevel(),
                 'defense_remaining' => $unbuilding->getDefenseRemaining(),
+                'kingdom' => $unbuilding->getKingdom()->getID(),
             );
 
-        };
+            if ($building_type->getName() == 'Squad') {
+                $arreglo_squads[] = array(
+                    'building_id' => $unbuilding->getID(),
+                    'building_name' => $building_type->getName(),
+                    'building_name2' => $unbuilding->getName2(),
+                    'capacity' => $building_type->getCapacity(),
+                    'filled' => 0,
+                    'level' => $building_type->getLevel(),
+                    'defense_remaining' => $unbuilding->getDefenseRemaining(),
+                    'kingdom' => $unbuilding->getKingdom()->getID(),
+                );
+            }
+
+        }; //fin del loop
 
         //TODO: agregar los edificios de los otros miembros del team
 
         $arreglo_final['buildings'] = $arreglo;
+        $arreglo_final['squads'] = $arreglo_squads;
 
         //------------------------------------------------------------------------------
         //(4) Troops
@@ -196,6 +242,175 @@ class APIListUserResourcesController extends AbstractController
             'message' => $mensaje_error,
         );
 
+        //return $this->json(Response::HTTP_OK);
+
         return $this->json($respuesta, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/list_enemy_buildings", name="list_enemy_buildings")
+     */
+    public function list_enemy_buildings(Request $request, GlobalConfig $global_config)
+    {
+
+        $mensaje_error = "Not error found";
+        $error = false;
+
+        if (!$global_config->isTestMode()) {
+
+            if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+
+                $error = true;
+
+                $respuesta = array(
+                    'error' => false,
+                    'message' => "User not authenticated",
+                );
+
+                return $this->json($respuesta);
+
+            }
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        //--------------------------------------------------------------------------
+        //(1) Obtengo user() de la peticion
+        //--------------------------------------------------------------------------
+        if ($global_config->isTestMode()) {
+            //Fake user si testing mode
+            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+            $user = $fake_user;
+
+        } else {
+            //usuario real si testing mode = false
+            $user = $this->getUser();
+        }
+
+        // $peticion_json = $request->get("peticion");
+
+        //$peticion = json_decode($peticion_json);
+
+        // $peticion->listar_kingdom_resources
+
+        $arreglo_final = [
+            'buildings' => '',
+            'squads'=>''
+    
+        ];
+
+        //--------------------------------------------------------------------------
+        //(1) Obtengo user() de la peticion
+        //--------------------------------------------------------------------------
+        if ($global_config->isTestMode()) {
+            //Fake user si testing mode
+            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+            $user = $fake_user;
+
+        } else {
+            //usuario real si testing mode = false
+            $user = $this->getUser();
+        }
+
+        //--------------------------------------------------------------------------
+        //(2) busco el castillo del usuario
+        //--------------------------------------------------------------------------
+        //2.1) busco el team del usuario
+
+        //$team = $em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
+        //var_dump("User id " . $team->getID());
+
+        //2.2) buscar el kingdom del team
+
+        $kingdom = $user->getKingdom();
+
+        $buildings = $em->getRepository(Building::class)->BuscarEdificiosEnemigos($kingdom->getID());
+
+        $arreglo_buildings = array();
+
+        foreach ($buildings as $unbuilding) {
+            //if ($building_type->getName() != 'Castle') {
+            //El castillo tambien se agrega en la lista lo que no se dibuja en el twig junto a los otros edificios
+            //Cantidad de tropas en un edificio
+
+            $building_type = $unbuilding->getBuildingType();
+
+            //Agregar por ser del mismo kingdom
+
+            if ($building_type->getName() != 'Squad' && $building_type->getName() != 'Barrack') {
+
+                //Buscar las tropas en este building
+                $troop_buildings = $em->getRepository(TroopBuilding::class)->findBy(['building' => $unbuilding]);
+
+                $arreglo_troops = array();
+                foreach ($troop_buildings as $onetroop) {
+
+                    $temp_troop = $em->getRepository(Troop::class)->find($onetroop->getTroops());
+
+                    $arreglo_troops[] = array(
+                        'troop_id' => $temp_troop->getID(),
+                        'troop_name' => $temp_troop->getUnitType()->getName(),
+                        'building_id' => $onetroop->getBuilding()->getID(),
+                        'building_name' => $onetroop->getBuilding()->getBuildingType()->getName(),
+                        'total' => $onetroop->getTotal(),
+                    );
+
+                }
+
+                //if ($arreglo_troops!=null){
+                $arreglo_buildings[] = array(
+                    'building_id' => $unbuilding->getID(),
+                    'building_name' => $building_type->getName(),
+                    'building_name2' => $unbuilding->getName2(),
+                    'capacity' => $building_type->getCapacity(),
+                    'filled' => 0,
+                    'level' => $building_type->getLevel(),
+                    'defense_remaining' => $unbuilding->getDefenseRemaining(),
+                    'kingdom' => $unbuilding->getKingdom()->getID(),
+                    'kingdom_name' => $unbuilding->getKingdom()->getName(),
+                    'troops_location' => $arreglo_troops,
+                );
+            }
+
+        }; //fin del loop
+
+        //Buscar los squads propios
+
+        $squad_type = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'Squad']);
+        $squads  = $em->getRepository(Building::class)->findBy(['user' => $user, 'buildingType' => $squad_type]);
+        $arreglo_squads=array();
+        foreach ($squads as $unbuilding) {
+
+             //if ($arreglo_troops!=null){
+                $arreglo_squads[] = array(
+                    'building_id' => $unbuilding->getID(),
+                    'building_name' =>  $squad_type->getName(),
+                    'building_name2' => $unbuilding->getName2(),
+                    'capacity' =>  $squad_type->getCapacity(),
+                    'filled' => 0,
+                    'level' =>  $squad_type->getLevel(),
+                    'defense_remaining' => $unbuilding->getDefenseRemaining(),
+                    'kingdom' => $unbuilding->getKingdom()->getID(),
+                    'kingdom_name' => $unbuilding->getKingdom()->getName(),
+                );
+        }
+
+
+
+
+        //TODO: agregar los edificios de los otros miembros del team
+        $arreglo_final['buildings'] = $arreglo_buildings;
+        $arreglo_final['squads'] = $arreglo_squads;
+
+        //Respuesta
+        $respuesta = array(
+            'datos' => $arreglo_final,
+            'error' => $error,
+            'message' => $mensaje_error,
+        );
+
+        //return $this->json(Response::HTTP_OK);
+
+        return $this->json($respuesta, Response::HTTP_OK);
+
     }
 }

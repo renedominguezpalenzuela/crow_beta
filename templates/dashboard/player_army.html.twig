@@ -140,14 +140,14 @@
 
         <div class="row">
 
-                <div class="card">
-                        <div class="card-header-primary">
-                            <h5>Store</h5>
-                        </div>
-                        <div class="card-body">
-                            this is the Store area
-                        </div>
-                    </div>
+            <div class="card">
+                <div class="card-header-primary">
+                    <h5>Store</h5>
+                </div>
+                <div class="card-body">
+                    this is the Store area
+                </div>
+            </div>
 
 
             <div class="card">
@@ -183,6 +183,7 @@
 {% block js %}
 
 {# -- Funciones auxiliares -- #}
+<script src="{{asset('assets/js/utiles/funcionesglobales.js')}}"></script>
 <script src="{{asset('assets/js/utiles/playerarmy.js')}}"></script>
 
 <script>
@@ -207,7 +208,14 @@
     // ------------------------------------------------------------------------------
     // Obtener datos iniciales (se ejecuta al cargar la pagina)
     // ------------------------------------------------------------------------------
-    $.getJSON("{{path('list_user_resources')}}", function (data) { // obteniendo los datos recibidos de la peticion
+    //TODO: Listar edificios propios y los del kingdom
+   /* peticion_all = {}
+    peticion_all.listar_kingdom_resources = 1;
+    var datos_enviar = {
+        peticion: JSON.stringify(peticion_all)
+    }*/
+
+    $.getJSON("{{path('list_user_resources')}}",  function (data) { // obteniendo los datos recibidos de la peticion
         datos = data.datos;
         buildings = datos.buildings;
         castillo = datos.castle;
@@ -240,7 +248,7 @@
         //Funcionalidad del boton GO
         let ruta_move_troops = "{{path('move_troops')}}";
         crearBotonGo(ruta_move_troops);
-      
+
 
     });
 </script>

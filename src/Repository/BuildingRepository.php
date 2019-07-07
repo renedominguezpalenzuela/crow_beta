@@ -29,4 +29,21 @@ class BuildingRepository extends ServiceEntityRepository
             ->setParameter('userId', $userId)
             ->getQuery()->getOneOrNullResult();
     }
+
+
+    public function BuscarEdificiosEnemigos($kingdom_id){
+        return $this->getEntityManager()
+                             ->createQuery(
+                                        '
+                                               SELECT b
+                                               FROM App\Entity\Building b
+                                               WHERE b.kingdom!=:kindom_id
+                                        '
+                             )
+                             ->setParameter('kindom_id', $kingdom_id)
+                            ->getResult() 
+                         ;
+       }
+
+       
 }
