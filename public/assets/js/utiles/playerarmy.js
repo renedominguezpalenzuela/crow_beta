@@ -75,55 +75,8 @@ function crearBotonGo(ruta_move_troops) {
 
 
 
-/*
-//Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
-function setTroopOnBuildings(buildings, troopLocation) {
 
-    // Buscando troop location
-    for (let y = 0; y < buildings.length; y++) { // puedo pintar aqui el card del edificio
-
-        let unBuilding = buildings[y];
-        let building_id = unBuilding['building_id'];
-        unBuilding['troop_location'] = [];
-
-
-        // recorrer todos los troops location buscando si esta el building
-
-        for (let i = 0; i < troopLocation.length; i++) {
-            let untroop_location = troopLocation[i];
-            // console.log("Building_id "+building_id);
-            // console.log("trooplocation building_id "+untroop_location['building_id']);
-
-            if (untroop_location['building_id'] == building_id) {
-                unBuilding['troop_location'].push(untroop_location);
-                //   console.log('match');
-                //console.log(troopLocation)
-                // Puedo pintar aqui un troop del edificio [untroop_location]
-                //si lo pinto aqui no hago el push anterior aunque seria bueno mantener la extructura
-                //de forma global en la pagina para realizar validaciones en los movimientos de tropas
-                //y no hacer peticiones de mas al servidor
-
-                //----------------------------------------
-                //ES MAS EFICIENTE AQUI CREO
-                //----------------------------------------
-                // $('<table class="table table-hover"><tr><td><p>'+untroop_location['troop_name']+': '+
-                // untroop_location['total']+'</p></td></tr></table>').appendTo('#troop_location'+untroop_location['building_id']);
-            }
-        }
-
-        buildings[y] = unBuilding;
-        // console.log(unBuilding.troop_location);
-  
-    }
-
-    //O Puedo al final de preparar la extructura de datos empezar a pintar los cards
-    //revisa en la consola para que veas
-    // console.log(data.datos);
-};
-*/
-
-
-function crearFormularioMoverTropas(troops, buildings, imagen) {
+function crearFormularioMoverTropas(troops, buildings, imagen_add, imagen_del) {
 
     lista_tropas_html = $("#form_planning_troops");
 
@@ -173,7 +126,7 @@ function crearFormularioMoverTropas(troops, buildings, imagen) {
 
 
             '<a href="#" id="boton_add' + troop_id + '" tropa_id="' + troop_id + '" class="boton_plan_troops_movements">' +
-            '<img src="' + imagen + '" height="30" alt=""> </a>' +
+            '<img src="' + imagen_add + '" height="30" alt=""> </a>' +
 
 
 
@@ -182,7 +135,7 @@ function crearFormularioMoverTropas(troops, buildings, imagen) {
 
         );
 
-        //crearFuncionalidadBotonFormularioPlanMovements();
+        //crearFuncionalidadBotonFormularioPlanMovements(imagen_del);
 
 
 
@@ -194,13 +147,13 @@ function crearFormularioMoverTropas(troops, buildings, imagen) {
 
 
 
+/* Crea listado de tropas para revisa antes de enviar */
+function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
 
-
-function crearFuncionalidadBotonFormularioPlanMovements() {
+  
     $(".boton_plan_troops_movements").click(
-        function (event, imagen_del) {
-            imagen_del = '/images/iconos/delete.png';
-            //console.log("sss" + imagen_del);
+        function (event) {
+    
 
             event.preventDefault();
 
@@ -265,7 +218,7 @@ function crearFuncionalidadBotonFormularioPlanMovements() {
 
                     '</p></td>' +
                     '<td><p>' +
-                    '<a href="#" id="' + id_unico + '" class="boton_del_execute_troops_movements">' +
+                    '<a href="#" id="boton_del' + id_unico + '" class="boton_del_execute_troops_movements">' +
                     '<img src="' + imagen_del + '" height="30" alt=""> </a>' +
 
                     '<p></td>' +
@@ -276,8 +229,10 @@ function crearFuncionalidadBotonFormularioPlanMovements() {
 
 
 
+            let id_boton = 'boton_del' + id_unico;
+            console.log(id_boton);
 
-            crearFuncionalidadBotonDelPlanMovements();
+           // crearFuncionalidadBotonDelPlanMovements(id_boton);
 
 
         }
@@ -288,14 +243,15 @@ function crearFuncionalidadBotonFormularioPlanMovements() {
 
 
 
-function crearFuncionalidadBotonDelPlanMovements() {
+function crearFuncionalidadBotonDelPlanMovements(id_boton) {
 
-    $(".boton_del_execute_troops_movements").click(
+    $("#"+id_boton).click(
         function (event) {
             event.preventDefault();
+            
 
-            var id_tropas = $(this).attr('id');
-            //console.log(id_tropas);
+            //var id_tropas = $(this).attr('id');
+            console.log(id_boton);
             //eliminando
             $('#' + id_tropas).remove();
         }

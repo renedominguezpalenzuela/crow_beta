@@ -15,6 +15,7 @@
     <div class="col">
         World Map, Kingdom filter
         
+        {#---- Mensages provenientes del servidor ----#}
         {%  for unmensaje in app.flashes('info')  %}
         <div class="alert alert-success alert-dismissible">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -32,82 +33,29 @@
 
 
 
+
+
 </div>
 
 {# --- Opcion: World listar todos los edificios enemigos ---- #}
 
 <div class="lineaestrecha row">
-    <div class="card-columns" id="lista_edificios_enemigos"></div>
-</div>
+    <div class="card-columns" id="lista_edificios_enemigos">
 
-
-
-
-
-{# --- Opcion: Squads listar todos los squads y crear nuevos squads ---- #}
-
-
-{#Crear nuevo squad#}
-<div class="lineaestrecha row">
-
-    <div class="col">
-        <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-primary"
-            data-target="#collapseExample" data-toggle="collapse" type="button">
-            New Squad
-        </button>
-    </div>
-
-</div>
-
-<div class="lineaestrecha row">
-
-    <div class="collapse col-sm-12" id="collapseExample">
-        <h5 class="card-title">Select Troops</h5>
-
-        {#  --- Seleccionar tropas ---#}
-        {#<div class="card card-body" id="world_map_create_troops">#}
-        <div id="world_map_create_troops">
-
-        </div>
-
-        <h5 class="card-title">Selected Troops</h5>
-
-        {# --- Tropas seleccionadas #}
-        <div>
-            <table id="world_map_tropas_seleccionadas">
-
-            </table>
-
-        </div>
-
-        {# -- boton crear Squad ---#}
-        <button type="submit" class="btn btn-primary" id="boton_create_squad">Create</button>
 
     </div>
 
+    <div  id="ventanas_atacar_ocultas">
 
-
-</div>
-
-<div class="lineaestrecha row">
-
-    <!--  <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-primary" data-target="#listasquads"
-                data-toggle="collapse" type="button">
-                Squads List
-            </button>-->
-
-
-    <!--<div class="collapse" id="listasquads">-->
-    <div id="listasquads">
-        <!--<h5 class="card-title">Squads</h5>-->
-
-        <div id="lista_squads" class="card-columns">
-
-        </div>
+        
     </div>
-
-
 </div>
+
+
+
+
+
+
 
 
 {% endblock %}
@@ -158,47 +106,12 @@
         troops = datos.troops;
         troopLocation = datos.troops_location;
 
-        squads = datos.squads;
+      
 
+        pintarEdificiosEnemigos(ruta_edificios_enemigos, imagen_attack, ruta_attack, imagen_add, imagen_del);
+        
 
-        pintarEdificiosEnemigos(ruta_edificios_enemigos, imagen_attack, ruta_attack);
-
-        console.log('reload');
-
-
-
-
-
-        // Mostrar listado de Squads propios
-
-
-        // Mostrar listado de edificios solo los enemigos
-
-        // Formulario seleccionar tropas
-        crearFormularioSelectTropas(troops, buildings, imagen_add);
-        crearFuncionalidadBotonAddTroop();
-
-        //Funcionalidad del boton GO
-
-        botonCrearSquad(ruta_create_squad, squads);
-
-
-        //Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
-        setTroopOnBuildings(squads, troopLocation)
-
-        pintarSquads(squads, imagen_del);
-        //console.log(troopLocation);
-
-
-
-        //inicializando tropas en todos los edificios que no sean barrack y castle
-        dibujarTropasenHTML(squads);
-
-
-
-        BotonDelSquad(ruta_delete_squad);
-
-
+       
 
 
     });
