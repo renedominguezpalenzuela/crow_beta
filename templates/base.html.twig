@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Crow</title>
-    <link rel="stylesheet" href="{{ asset('assets/css/material-dashboard.css?v=2.1.0') }}">
-   {# <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css') }}">#}
+    <link rel="stylesheet" href="{{ asset('assets/css/material-dashboard.min.css?v=2.1.0') }}">
+
    
-    <link rel="stylesheet"
+   {# <link rel="stylesheet"
           href="{{ asset('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons') }}">
     <link rel="stylesheet"
           href="{{ asset('https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css') }}">
-          
+
+#}     
 
    {# Mi fichero de estilos #}
     <link rel="stylesheet" href="{{ asset('assets/css/myestilos.css') }}">
@@ -159,9 +160,9 @@
             </div>
         </footer>
         <script>
-            //const x = new Date().getFullYear();
-            //let date = document.getElementById('date');
-            //date.innerHTML = '&copy; ' + x + date.innerHTML;
+          {#  const x = new Date().getFullYear();
+            let date = document.getElementById('date');
+            date.innerHTML = '&copy; ' + x + date.innerHTML;#}
         </script> 
     </div>
 </div>
@@ -170,7 +171,7 @@
 <script src="{{ asset('assets/js/core/bootstrap-material-design.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/plugins/perfect-scrollbar.jquery.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('assets/js/plugins/bootstrap-notify.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/js/material-dashboard.js?v=2.1.0') }}" type="text/javascript"></script>
+<script src="{{ asset('assets/js/material-dashboard.js') }}" type="text/javascript"></script>
 <script>
     {#
      Para los colores de las notificaciones desde el controlador es
@@ -207,15 +208,19 @@
     });
 </script>
 <script>
-    {#$('.main-panel > .content').css('background-image', 'url("{{ asset('images/game/castle.jpg') }}")');#}
-    {#$('.main-panel > .content').css('background-size', 'cover');#}
-    {#$('.main-panel > .content').css('min-height', 'calc(200vh - 123px');#}
-    // $('.main-panel > .content').css('-webkit-filter', 'grayscale(60%)');
-    // $('.main-panel > .content').css('filter', 'grayscale(60%)');
-    // $('.main-panel > .content').css('-webkit-filter', 'brightness(50%)');
-    // $('.main-panel > .content').css('filter', 'brightness(50%)');
-    // $('.main-panel > .content').css('-webkit-filter', 'blur(4px)');
-    // $('.main-panel > .content').css('filter', 'blur(4px)');
+    $('.main-panel > .content').css('background-image', 'url("{{ asset('images/interface/project_crow_login.jpg') }}")');
+    $('.main-panel > .content').css('background-size', 'cover');
+    $('.main-panel > .content').css('background-repeat', 'no-repeat');
+  //  $('.main-panel > .content').css('min-height', 'calc(200vh - 123px');
+
+   
+    
+   // $('.main-panel > .content').css('-webkit-filter', 'grayscale(60%)');
+   //  $('.main-panel > .content').css('filter', 'grayscale(60%)');
+     //$('.main-panel > .content').css('-webkit-filter', 'brightness(50%)');
+     //$('.main-panel > .content').css('filter', 'brightness(50%)');
+   //  $('.main-panel > .content').css('-webkit-filter', 'blur(4px)');
+   //  $('.main-panel > .content').css('filter', 'blur(4px)');
 </script>
 {% block js %}{% endblock %}
 </body>
