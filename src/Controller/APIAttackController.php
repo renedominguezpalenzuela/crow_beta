@@ -72,7 +72,7 @@ class APIAttackController extends AbstractController
         //--------------------------------------------------------------------------
         if ($global_config->isTestMode()) {
             //Fake user si testing mode
-            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => $global_config->getTest_user()]);
             $user = $fake_user;
 
         } else {

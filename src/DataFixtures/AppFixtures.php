@@ -21,27 +21,28 @@ class AppFixtures extends Fixture
         $config = new Config();
         $config->setTesting(false);
         $config->setGoldIni(500000);
+        $config->setTest_user('axl');
         $manager->persist($config);
 
 
         //------------------------------------------------------------------------
         //Creando los kingdoms
         //------------------------------------------------------------------------
-        $kingdoms = array(
-            ['id'=>'1', 'name'=>'White Kingdom', 'image'=>'castillo1.jpg'] ,
-            ['id'=>'2', 'name'=>'Black Kingdom', 'image'=>'castillo2.jpg'] ,
-            ['id'=>'3', 'name'=>'Red Kingdom', 'image'=>'castillo3.jpg'] ,
-            ['id'=>'4', 'name'=>'Blue Kingdom', 'image'=>'castillo4.jpg'] ,
-            ['id'=>'5', 'name'=>'Yellow Kingdom', 'image'=>'castillo5.jpg'],
-            ['id'=>'6', 'name'=>'Test Kingdom', 'image'=>'castillo5.jpg']                    
+        $kingdoms = array(           
+            ['id'=>'1', 'name'=>'Red Kingdom', 'image'=>'castillo1.jpg', 'color_class'=>'card-header-danger'] ,           
+            ['id'=>'2', 'name'=>'Blue Kingdom', 'image'=>'castillo2.jpg', 'color_class'=>'card-header-info'] ,
+            ['id'=>'3', 'name'=>'Orange Kingdom', 'image'=>'castillo3.jpg', 'color_class'=>'card-header-warning'] ,
+            ['id'=>'4', 'name'=>'White Kingdom', 'image'=>'castillo4.jpg', 'color_class'=>'card-header-white'] ,
+            ['id'=>'5', 'name'=>'Green Kingdom', 'image'=>'castillo5.jpg', 'color_class'=>'card-header-success'] ,                   
+            ['id'=>'6', 'name'=>'Test Kingdom', 'image'=>'castillo6.jpg', 'color_class'=>'card-header-white']                                
         );
-          //['id'=>'6', 'name'=>'Green Kingdom'], 
-            //['id'=>'7', 'name'=>'Orange Kingdom']    
+  
         foreach ($kingdoms as $unkingdom) {
             $kingdom = new Kingdom();
             $kingdom->setName($unkingdom['name']);
             $kingdom->setImage($unkingdom['image']);
             $kingdom->setIdKingdomBoss(0);
+            $kingdom->setColor_class($unkingdom['color_class']);
             $manager->persist($kingdom);   
         }
 

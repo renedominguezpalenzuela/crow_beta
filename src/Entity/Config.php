@@ -26,6 +26,13 @@ class Config
      */
     private $gold_ini = 500000;
 
+
+      /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $test_user='axl';
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -51,6 +58,26 @@ class Config
     public function setGoldIni(?int $gold_ini): self
     {
         $this->gold_ini = $gold_ini;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of test_user
+     */ 
+    public function getTest_user()
+    {
+        return $this->test_user;
+    }
+
+    /**
+     * Set the value of test_user
+     *
+     * @return  self
+     */ 
+    public function setTest_user($test_user)
+    {
+        $this->test_user = $test_user;
 
         return $this;
     }

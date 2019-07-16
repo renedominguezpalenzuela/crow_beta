@@ -52,7 +52,7 @@ class CreateInitialUserData
         //Crear las tropas
         $this->CreateTroops($user);
 
-        //Crear un camp
+     
 
         return;
 

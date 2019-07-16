@@ -17,6 +17,8 @@ use App\Entity\Troop;
 use App\Entity\TroopBuilding;
 use App\Service\CreateInitialUserData;
 use Symfony\Component\HttpFoundation\Response;
+use App\Service\GlobalConfig;
+
 
 /**
  * Class APICreateFakeDataController
@@ -309,13 +311,13 @@ class APICreateFakeDataController extends AbstractController
     /**
      * @Route("/test_new_user", name="test")
      */
-    public function test_new_user(UserPasswordEncoderInterface $encoder, CreateInitialUserData $userdata )
+    public function test_new_user(UserPasswordEncoderInterface $encoder, CreateInitialUserData $userdata, GlobalConfig $global_config )
     {
         //Obtener usuario
         //$user = $this->getUser();
         //Fake user
         $em = $this->getDoctrine()->getManager();
-        $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+        $fake_user = $em->getRepository(User::class)->findOneBy(['name' => $global_config->getTest_User()]);
         $user = $fake_user;
         //var_dump($user);
 

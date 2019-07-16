@@ -39,6 +39,16 @@ class Kingdom
      */
     private $idKingdomBoss = 0;
 
+  /**
+     * @ORM\Column(type="string", length=255)
+     */
+
+     
+    private $color_class = "card-header-primary";
+    //card-header-primary (purple) | info (blue) | success (green) | warning(orange) | danger(red) | rose(pink)
+
+
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Building", mappedBy="kingdom")
      */
@@ -159,6 +169,26 @@ class Kingdom
                 $user->setKingdom(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of color_class
+     */ 
+    public function getColor_class()
+    {
+        return $this->color_class;
+    }
+
+    /**
+     * Set the value of color_class
+     *
+     * @return  self
+     */ 
+    public function setColor_class($color_class)
+    {
+        $this->color_class = $color_class;
 
         return $this;
     }

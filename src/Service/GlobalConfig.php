@@ -37,6 +37,13 @@ class GlobalConfig
         return $test_mode;
     }
 
+
+    public function getTest_User(){
+      
+        $test_user = $this->config->getTest_user();       
+        return $test_user;
+    }
+
     public function getUserInitialGold(){
         $gold = 0;
         $gold = $this->config->getGoldIni();
