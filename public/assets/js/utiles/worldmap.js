@@ -1,162 +1,189 @@
 
 
-//Dibuja la lista de edificios enemigos
-function pintarEdificiosEnemigos(ruta_edificios_enemigos, imagen_attack, ruta_attack, imagen_add, imagen_del) {
+function pintarEdificios(ruta_lista_edificios, ruta_accion, id_lista_edificios, id_lista_ventana_ocultas, imagen_accion, imagen_add, imagen_del) {
 
     let edificios = [];
     let troopLocation = [];
+    let castle_troops = [];
+    let myid = '';
+    let id = '';
 
-    let castle_troops=[];
+    //lista_edificios_enemigos
+    let lista_edificios_html = $("#" + id_lista_edificios);
 
-   
+    //ventanas_ocultas_html
+    let ventanas_ocultas_html = $("#" + id_lista_ventana_ocultas);
 
-
-    $.getJSON(ruta_edificios_enemigos, function (data) {
+    $.getJSON(ruta_lista_edificios, function (data) {
 
         edificios = data.datos.buildings;
         castle_troops = data.datos.castle_troops;
 
-       // console.log(castle_troops);
-
-
-        var lista_edificios_enemigos_html = $("#lista_edificios_enemigos");
-        var ventanas_atacar_ocultas_html=$("#ventanas_atacar_ocultas");
-
-        lista_edificios_enemigos_html.text('');
+        lista_edificios_html.text('');
 
         for (unedificio of edificios) {
 
-            let id = unedificio.building_name + unedificio.building_id.toString();
+            id = unedificio.building_name + unedificio.building_id.toString();
 
-
-            myid=ID();  
+            myid = ID();
             //  console.log(unedificio);
-            lista_edificios_enemigos_html.append(
-                '<div class="card">' +
-                    '<div class="card-header-primary">' +
-                       '<h5>' + unedificio.building_name2 + '</h5>' +
-                    '</div>' +
-                    '<div class="card-body">' +
-                       '<p><span class="subrayado">Kingdom</span></p>' +
-                       '<p>' + unedificio.kingdom_name + '</p>' +
-                       '<p><span class="subrayado">Stats</span></p>' +
-                       '<p>level: '+unedificio.level+'</p>'+
-                       //'<p>Capacity: '+unedificio.filled+'/'+unedificio.capacity+'</p>'+
-                       '<p>defense: '+unedificio.defense_remaining+'</p>'+
+            // color_class = "card-header-danger";
 
-
-
-                       '<p><span class="subrayado">Troops</span></p>' +
-                       '<table id="tropa' + myid + '">' +
-                       '</table>' +
-
-                       '<div class="row ml-2">' +
-                            // '<a href="#" id="' + id + '" class="boton_attack col-sm-4">' +
-                            // '<img src="' + imagen_attack + '" height="30" alt=""> </a>' +              
-                            '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ventana'+myid+'">'+
-                                'Attack'+
-                            '</button>'+
-
-
-
-
-                       '</div>' +
-                    '</div>'+
-                '</div>'
+            //console.log(unedificio.color_class);
+            lista_edificios_html.append(
+                unedificioHTML(
+                    unedificio.building_name2,
+                    unedificio.kingdom_name,
+                    unedificio.level,
+                    unedificio.defense_remaining,
+                    myid,
+                    unedificio.color_class)
             );
 
 
-            //Lista de tropas defendiendo el edificio
+            //Mostrar Lista de tropas defendiendo el edificio
             lista_tropas_html = $("#tropa" + myid);
-
             let tropas = unedificio.troops_location;
             for (una_tropa of tropas) {
-                
                 if (lista_tropas_html != null) {
-                    lista_tropas_html.append('<tr><td><p> <span class="ml-1">' + una_tropa.troop_name + ': '+ una_tropa.total + '</span></p></td></tr>');
-
+                    lista_tropas_html.append(unaTropaHtml(una_tropa.troop_name, una_tropa.total));
                 }
             }
 
 
             //Creando Ventana oculta atacar:
-            
-            let idFormulario = 'formulario'+ID();
-            let id_lista_tropas_seleccionadas = 'tropa_seleccionada'+ID();
+            let idFormulario = 'formulario' + ID();
+            let id_lista_tropas_seleccionadas = 'tropa_seleccionada' + ID();
 
-            ventanas_atacar_ocultas_html.append(
-            '<div class="modal fade" id="ventana'+myid+'" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">'+
-                '<div class="modal-dialog modal-dialog-centered" role="document">'+
-                    '<div class="modal-content card">'+
-                        '<div class="modal-header card-header-primary ">'+
-                            '<h5 class="modal-title" id="LongTitle'+myid+'">Attack: '+unedificio.building_name2+', '+unedificio.kingdom_name+'</h5>'+
-                            '<button type="button" class="close" data-dismiss="modal" aria-label="Close">'+
-                            '<span aria-hidden="true">&times;</span>'+
-                            '</button>'+
-                        '</div>'+
-                        '<div class="modal-body">'+
-                        '<div id="'+idFormulario+'" class="form_planning_troops"></div>'+
-                        '<p><span class="subrayado">Attacking Squad</span></p>' +
-           
-                        '<form id="'+id_lista_tropas_seleccionadas+'" class="form execution_troops_attack"></form>'+
+            let cadena_html = ventanaOcultaSeleccionarTropasHTML(myid,
+                unedificio.building_name2,
+                unedificio.kingdom_name,
+                idFormulario,
+                id_lista_tropas_seleccionadas);
 
-                        '</div>'+
-                        '<div class="modal-footer">'+
-                            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
-                            '<button type="button" class="btn btn-primary boton_attack" id=attack_btn"'+myid+'">Attack</button>'+
-                          
-                        '</div>'+
-                    '</div>'+
-                '</div>'+
-            '</div>'
-            );
-
-
-            
+         
+                ventanas_ocultas_html.append(cadena_html);
 
 
 
-             
-            crearFormularioEscogerTropasAtaque(idFormulario,id_lista_tropas_seleccionadas,  castle_troops, imagen_add, imagen_del) ;
-      
-
-
-
+                crearFormularioEscogerTropasAtaque(idFormulario, id_lista_tropas_seleccionadas, castle_troops, imagen_add, imagen_del);
 
 
         } //fin del ciclo
 
 
 
-       
 
-        botonAtacar( ruta_attack);
+
+        botonAtacar(ruta_attack);
 
 
     });
 
+
+}
+
+//Dibuja una tropa
+function unaTropaHtml(troop_name, total) {
+    return '<tr><td><p> <span class="ml-1">' + troop_name + ': ' + total + '</span></p></td></tr>'
+}
+
+//dibuja un edificio
+function unedificioHTML(building_name2, kingdom_name, level, defense_remaining, myid, color_class) {
+
+
+    if (color_class == "card-header-white") {
+        color_class = color_class + " text-dark";
+    }
+
+    return '<div class="card">' +
+                '<div class="' + color_class + '">' +
+                    '<h5>' + building_name2 + ', ' + kingdom_name + '</h5>' +
+                '</div>' +
+                '<div class="card-body">' +
+                        // '<p><span class="subrayado">Kingdom</span></p>' +
+                        // '<p>' + kingdom_name + '</p>' +
+                    '<p><span class="subrayado">Stats</span></p>' +
+                        '<p>level: ' + level + '</p>' +
+                        //'<p>Capacity: '+unedificio.filled+'/'+unedificio.capacity+'</p>'+
+                        '<p>defense: ' + defense_remaining + '</p>' +
+                        //Listado de tropas
+                        '<p><span class="subrayado">Troops</span></p>' +
+                        '<table id="tropa' + myid + '">' +
+                        '</table>' +
+
+                        //Boton de atacar
+                        '<div class="row ml-2">' +
+                        // '<a href="#" id="' + id + '" class="boton_attack col-sm-4">' +
+                        // '<img src="' + imagen_attack + '" height="30" alt=""> </a>' +              
+                        '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ventana' + myid + '">' +
+                        'Attack' +
+                        '</button>' +
+
+                    '</div>' +
+                '</div>' +
+            '</div>';
+}
+
+//Dibuja ventanas ocultas para seleccionar tropas para el ataque
+function ventanaOcultaSeleccionarTropasHTML(myid, building_name2, kingdom_name, idFormulario, id_lista_tropas_seleccionadas) {
+    let cadena_html = 
+        '<div class="modal fade" id="ventana' + myid + '" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">' +
+           '<div class="modal-dialog modal-dialog-centered" role="document">' +
+                '<div class="modal-content card">' +
+                 
+                    '<div class="modal-header card-header-primary ">' +
+                        '<h5 class="modal-title" id="LongTitle' + myid + '">Attack: ' + unedificio.building_name2 + ', ' + unedificio.kingdom_name + '</h5>' +
+                        '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
+                            '<span aria-hidden="true">&times;</span>' +
+                        '</button>' +
+                    '</div>' +
+
+                
+                    '<div class="modal-body">' +
+                        '<div id="' + idFormulario + '" class="form_planning_troops"></div>' +
+                            '<p><span class="subrayado">Attacking Squad</span></p>' +
+                            '<form id="' + id_lista_tropas_seleccionadas + '" class="form execution_troops_attack"></form>' +
+                        '</div>' +
+                   
+
+                        '<div class="modal-footer">' +
+                            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
+                            '<button type="button" class="btn btn-primary boton_attack" id=attack_btn"' + myid + '">Attack</button>' +        
+                        '</div>' +
+                    '</div>' +
+
+                 
+               '</div>' +
+            '</div>' +
+        '</div>';
+
+
+    return cadena_html;
 }
 
 
+
+
 //Crea en la ventana oculta, la lista de tropas del castillo 
-function crearFormularioEscogerTropasAtaque(idFormulario,id_lista_tropas_seleccionadas, troops, imagen_add, image_del) {
+function crearFormularioEscogerTropasAtaque(idFormulario, id_lista_tropas_seleccionadas, troops, imagen_add, image_del) {
 
-   // lista_tropas_html = $(".form_planning_troops");
-   lista_tropas_html = $("#"+idFormulario);
-   // imagen_add = '/images/iconos/add.png';
+    // lista_tropas_html = $(".form_planning_troops");
+    lista_tropas_html = $("#" + idFormulario);
+    // imagen_add = '/images/iconos/add.png';
 
- 
 
-   // lista_tropas_html.append
+
+    // lista_tropas_html.append
     for (unatropa of troops) {
 
         //let id = unedificio.building_name+unedificio.building_id.toString();
 
-        
+
 
         let troop_id = unatropa.troop_id;
-        let boton_id = 'boton_add'+ID();
-        let total_id = 'total_tropas'+ID();
+        let boton_id = 'boton_add' + ID();
+        let total_id = 'total_tropas' + ID();
 
 
         //unatropa.troop_id
@@ -164,53 +191,49 @@ function crearFormularioEscogerTropasAtaque(idFormulario,id_lista_tropas_selecci
         //
         lista_tropas_html.append(
             '<form class="form">' +
-            '<div class="form-row">' +
-            '<label class="col-form-label col-sm-2" id="tropa_name_' + troop_id + '" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
-            '<span class="bmd-form-group-sm">' +
-            
-            '<input type="number" value="'+unatropa.total+'" min="1" max="'+unatropa.total+'"  step="1" pattern="\d+" id="' + total_id + '" class="form-control mb-sm-2" />' +
-            '</span>' +
-           
-            '<a href="#" id="'+boton_id + '" tropa_id="' + troop_id + '" class="boton_add_troops_to_attack ml-2">' +
-            '<img src="' + imagen_add + '" height="30" alt=""> </a>' +
+                '<div class="form-row">' +
+                    '<label class="col-form-label col-sm-2" id="tropa_name_' + troop_id + '" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
+                    '<span class="bmd-form-group-sm">' +
 
+                    '<input type="number" value="' + unatropa.total + '" min="1" max="' + unatropa.total + '"  step="1" pattern="\d+" id="' + total_id + '" class="form-control mb-sm-2" />' +
+                    '</span>' +
 
-
-            '</div>' +
+                    '<a href="#" id="' + boton_id + '" tropa_id="' + troop_id + '" class="boton_add_troops_to_attack ml-2">' +
+                    '<img src="' + imagen_add + '" height="30" alt=""> </a>' +
+                '</div>' +
             '</form>'
-
         );
 
-       
-        crearFuncionalidadBotonAddTroopsToAttack(boton_id,id_lista_tropas_seleccionadas, total_id, imagen_del);
+
+        crearFuncionalidadBotonAddTroopsToAttack(boton_id, id_lista_tropas_seleccionadas, total_id, imagen_del);
 
 
 
     }
 
-    
-    
-    if (troops.length==0) {
-        lista_tropas_html.append("<h4>Move troops to your castle to start an attack</h4>") 
+
+
+    if (troops.length == 0) {
+        lista_tropas_html.append("<h4>Move troops to your castle to start an attack</h4>")
         //TODO: Deshabilitar boton atacar
 
         //TODO: cambiar color del texto
         //TODO: Validar que el total no exeda el maximo
         //TODO: validar que no se agreguen mas tropas de las existentes en el castillo
     }
-    
-   
+
+
 }
 
 
 
 //Boton mas de cada tropa, agregar tropa al escudron de ataqe
-function crearFuncionalidadBotonAddTroopsToAttack(boton_id,id_lista_tropas_seleccionadas, total_id, imagen_del) {
+function crearFuncionalidadBotonAddTroopsToAttack(boton_id, id_lista_tropas_seleccionadas, total_id, imagen_del) {
     //$(".boton_add_troops_to_attack").click(
-        $("#"+boton_id).click(
+    $("#" + boton_id).click(
         function (event) {
-          
-            
+
+
             event.preventDefault();
 
             var id_tropas = $(this).attr('tropa_id');
@@ -226,9 +249,9 @@ function crearFuncionalidadBotonAddTroopsToAttack(boton_id,id_lista_tropas_selec
             //obteniendo el total introducido en el input 
             //let total_tropa_id = 'troop_total' + id_tropas;
             let total_tropas = $('#' + total_id).val();
-            
 
-           
+
+
 
             //console.log(tropa_name + ' : ' +total_tropas);
             //Agregar a la tabla
@@ -237,11 +260,11 @@ function crearFuncionalidadBotonAddTroopsToAttack(boton_id,id_lista_tropas_selec
             //Cadena final es un arreglo [{},{}]
             // let cadena_api = '{ "troops":[{"troops_id":' + id_tropas + ',"total":' + total_tropas + '}]}';
             let cadena_api = '{"troops_id":' + id_tropas +
-                                ',"total":' + total_tropas +                               
-                                '}';
+                ',"total":' + total_tropas +
+                '}';
 
 
-            let id_unico =  ID();
+            let id_unico = ID();
 
             //console.log(cadena_api);
 
@@ -252,28 +275,28 @@ function crearFuncionalidadBotonAddTroopsToAttack(boton_id,id_lista_tropas_selec
                 validaciones_ok = false;
             }
 
-        
-            
-         
-           
 
-           // if (validaciones_ok) {
-               // $(".execution_troops_attack").append(
-                $("#"+id_lista_tropas_seleccionadas).append(
-                
-                    '<div class="form-row" id="linea' + id_unico+'">' +
-                     '<label class="col-form-label col-sm-4">'+tropa_name + " : " + total_tropas +  '</label>' +
 
-                     '<a href="#" id="' + id_unico + '" class="boton_del_execute_troops_movements">' +
-                     '<img src="' + imagen_del + '" height="30" alt=""> </a>'+
-                     '</div>'
-                   
-                );
+
+
+
+            // if (validaciones_ok) {
+            // $(".execution_troops_attack").append(
+            $("#" + id_lista_tropas_seleccionadas).append(
+
+                '<div class="form-row" id="linea' + id_unico + '">' +
+                '<label class="col-form-label col-sm-4">' + tropa_name + " : " + total_tropas + '</label>' +
+
+                '<a href="#" id="' + id_unico + '" class="boton_del_execute_troops_movements">' +
+                '<img src="' + imagen_del + '" height="30" alt=""> </a>' +
+                '</div>'
+
+            );
             //}
 
 
 
-          crearFuncionalidadBotonDel();
+            crearFuncionalidadBotonDel();
 
 
         }
@@ -303,11 +326,11 @@ function crearFuncionalidadBotonDel() {
 function botonAtacar(ruta_attack) {
     $(".boton_attack").click(
 
-     
-        function (event) {
-               console.log('attack');
 
-               
+        function (event) {
+            console.log('attack');
+
+
             //event.preventDefault();
 
             var id = $(this).attr('id');
@@ -539,7 +562,7 @@ function botonCrearSquad(ruta_create_squad) {
     $("#boton_create_squad").click(
         function (event) {
             event.preventDefault();
-            
+
 
             //Objeto JavaScript que contendra todos los datos a enviar
             var peticion_all = {};
@@ -651,7 +674,7 @@ function pintarSquads(squads, image_del) {
     for (unsquad of squads) {
 
         let id = unsquad.building_id.toString();
-       // let nombre = 
+        // let nombre = 
 
         //console.log(id);
         lista_squads_html.append(
@@ -667,7 +690,7 @@ function pintarSquads(squads, image_del) {
             '</div>' +
             '<div class="card-body">' +
             '<p><span class="subrayado">Troops</span></p>' +
-            '<table id="' +unsquad.building_name+ id + '">' +
+            '<table id="' + unsquad.building_name + id + '">' +
             '</table>' +
             '</div>' +
             '</div>'
@@ -686,18 +709,18 @@ function BotonDelSquad() {
             event.preventDefault();
 
             var id_squad = $(this).attr('id');
-         
-            
+
+
 
             //eliminando del html
             $('#squad' + id_squad).remove();
 
             console.log(id_squad);
-      
+
 
             //eliminando en el servidor
             var peticion_all = {};
-            peticion_all.id_squad= id_squad;
+            peticion_all.id_squad = id_squad;
 
             var datos_enviar = {
                 peticion: JSON.stringify(peticion_all)
@@ -718,20 +741,20 @@ function BotonDelSquad() {
                 }
             ).done(
                 function () {
-                  
+
                     console.log("done");
-                   
+
                 }
 
             ).fail(
                 function (data, textStatus, jqXHR) {
-                   // console.log(textStatus + ' : ' + jqXHR);
+                    // console.log(textStatus + ' : ' + jqXHR);
                 }
 
             ).always(
                 function () {
                     console.log("always");
-                   // location.reload();
+                    // location.reload();
                 }
 
             );
@@ -745,13 +768,13 @@ function BotonDelSquad() {
 
 function dibujarTropasenHTML(buildings) {
 
-   // console.log(buildings);
+    // console.log(buildings);
 
     for (unedificio of buildings) {
 
-       let lista_tropas_html = null;
- 
-       //se crea en cada edificio una tabla con id = "squad1", "squad2"...
+        let lista_tropas_html = null;
+
+        //se crea en cada edificio una tabla con id = "squad1", "squad2"...
         if (unedificio.building_name == "Squad") {
             let id = unedificio.building_name + unedificio.building_id.toString();
             lista_tropas_html = $("#" + id);
@@ -759,7 +782,7 @@ function dibujarTropasenHTML(buildings) {
 
         let tropas = unedificio.troop_location;
 
-        
+
         for (una_tropa of tropas) {
             if (lista_tropas_html != null) {
                 lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.troop_name + ": " + una_tropa.total + "</span></p></td></tr>");

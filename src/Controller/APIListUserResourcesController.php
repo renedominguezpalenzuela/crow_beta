@@ -79,7 +79,7 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         if ($global_config->isTestMode()) {
             //Fake user si testing mode
-            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => $global_config->getTest_user()]);
             $user = $fake_user;
 
         } else {
@@ -109,12 +109,12 @@ class APIListUserResourcesController extends AbstractController
 
         //busco si existe un castillo lv1 para el team de ese usuario
         $castle_type = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'Castle', 'level' => 1]);
-        $castillo = $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType' => $castle_type]);
+        $castillo = $em->getRepository(Building::class)->findOneBy(['kingdom' => $kingdom, 'buildingType' => $castle_type]);
 
         //si no existe un castillo lv1 para el team de ese usuario, lo busco para el level 2
         if ($castillo == null) {
             $castle_type = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'Castle', 'level' => 2]);
-            $castillo = $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType' => $castle_type]);
+            $castillo = $em->getRepository(Building::class)->findOneBy(['kingdom' => $kingdom, 'buildingType' => $castle_type]);
         }
 
         $arreglo_final['castle'] = array(
@@ -139,30 +139,29 @@ class APIListUserResourcesController extends AbstractController
         // }
 
         $arreglo = array();
-        $arreglo_squads = array();
+
+        //Agregando el castillo
+        $arreglo[] = array(
+            'building_id' => $castillo->getID(),
+            'building_name' => $castle_type->getName(),
+            'building_name2' => $castillo->getName2(),
+            'capacity' => $castle_type->getCapacity(),
+            'filled' => 0,
+            'level' => $castle_type->getLevel(),
+            'defense_remaining' => $castillo->getDefenseRemaining(),
+            'kingdom' => $castillo->getKingdom()->getID(),
+        );
 
         foreach ($buildings as $unbuilding) {
-            //if ($building_type->getName() != 'Castle') {
+
             //El castillo tambien se agrega en la lista lo que no se dibuja en el twig junto a los otros edificios
             //Cantidad de tropas en un edificio
 
             $building_type = $unbuilding->getBuildingType();
 
-            //Agregar por ser del mismo kingdom
+            if ($building_type->getName() != 'Castle') {
 
-            $arreglo[] = array(
-                'building_id' => $unbuilding->getID(),
-                'building_name' => $building_type->getName(),
-                'building_name2' => $unbuilding->getName2(),
-                'capacity' => $building_type->getCapacity(),
-                'filled' => 0,
-                'level' => $building_type->getLevel(),
-                'defense_remaining' => $unbuilding->getDefenseRemaining(),
-                'kingdom' => $unbuilding->getKingdom()->getID(),
-            );
-
-            if ($building_type->getName() == 'Squad') {
-                $arreglo_squads[] = array(
+                $arreglo[] = array(
                     'building_id' => $unbuilding->getID(),
                     'building_name' => $building_type->getName(),
                     'building_name2' => $unbuilding->getName2(),
@@ -179,7 +178,6 @@ class APIListUserResourcesController extends AbstractController
         //TODO: agregar los edificios de los otros miembros del team
 
         $arreglo_final['buildings'] = $arreglo;
-        $arreglo_final['squads'] = $arreglo_squads;
 
         //------------------------------------------------------------------------------
         //(4) Troops
@@ -278,7 +276,7 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         if ($global_config->isTestMode()) {
             //Fake user si testing mode
-            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => $global_config->getTest_user()]);
             $user = $fake_user;
 
         } else {
@@ -286,17 +284,9 @@ class APIListUserResourcesController extends AbstractController
             $user = $this->getUser();
         }
 
-        // $peticion_json = $request->get("peticion");
-
-        //$peticion = json_decode($peticion_json);
-
-        // $peticion->listar_kingdom_resources
-
         $arreglo_final = [
             'buildings' => '',
-            'castle_troops'=>'',
-
-    
+            'castle_troops' => '',
         ];
 
         //--------------------------------------------------------------------------
@@ -304,7 +294,7 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         if ($global_config->isTestMode()) {
             //Fake user si testing mode
-            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => 'axl']);
+            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => $global_config->getTest_user()]);
             $user = $fake_user;
 
         } else {
@@ -315,12 +305,8 @@ class APIListUserResourcesController extends AbstractController
         //--------------------------------------------------------------------------
         //(2) busco el castillo del usuario
         //--------------------------------------------------------------------------
-        //2.1) busco el team del usuario
 
-        //$team = $em->getRepository(Team::class)->findOneBy(['user' => $user->getID()]);
-        //var_dump("User id " . $team->getID());
-
-        //2.2) buscar el kingdom del team
+        //2.1) buscar el kingdom del usuario
 
         $kingdom = $user->getKingdom();
 
@@ -329,35 +315,55 @@ class APIListUserResourcesController extends AbstractController
         $arreglo_buildings = array();
 
         foreach ($buildings as $unbuilding) {
-            //if ($building_type->getName() != 'Castle') {
-            //El castillo tambien se agrega en la lista lo que no se dibuja en el twig junto a los otros edificios
-            //Cantidad de tropas en un edificio
 
             $building_type = $unbuilding->getBuildingType();
 
-            //Agregar por ser del mismo kingdom
-
-            if ($building_type->getName() != 'Squad' && $building_type->getName() != 'Barrack') {
+            if ($building_type->getName() != 'Barrack') {
 
                 //Buscar las tropas en este building
                 $troop_buildings = $em->getRepository(TroopBuilding::class)->findBy(['building' => $unbuilding]);
 
                 $arreglo_troops = array();
-                
+
                 foreach ($troop_buildings as $onetroop) {
 
                     $temp_troop = $em->getRepository(Troop::class)->find($onetroop->getTroops());
 
-                    $arreglo_troops[] = array(
-                        'troop_id' => $temp_troop->getID(),
-                        'troop_name' => $temp_troop->getUnitType()->getName(),
-                        'building_id' => $onetroop->getBuilding()->getID(),
-                        'building_name' => $onetroop->getBuilding()->getBuildingType()->getName(),
-                        'kingdom_name'=>$onetroop->getBuilding()->getKingdom()->getName(),
-                        'total' => $onetroop->getTotal(),
-                    );
+                    //Comprobar si ya tengo ese tipo de tropa registrado
+                    //si si sumar, si no crear nueva tupla
+                    $ya_registrada = false;
+                    $indice = -1;
+                    $i = -1;
+                    $total = 0;
+                    foreach ($arreglo_troops as $unatropas_registradas) {
+                        $i = $i + 1;
+                        if ($unatropas_registradas['troop_name'] == $temp_troop->getUnitType()->getName()) {
+                            $indice = $i;
+                            $ya_registrada = true;
+                            $total = $unatropas_registradas['total'];
+                            break;
+                        }
+                    }
 
-                   
+                    if ($ya_registrada) {
+                        $arreglo_troops[$indice] = array(
+                            'troop_id' => $temp_troop->getID(),
+                            'troop_name' => $temp_troop->getUnitType()->getName(),
+                            'building_id' => $onetroop->getBuilding()->getID(),
+                            'building_name' => $onetroop->getBuilding()->getBuildingType()->getName(),
+                            'kingdom_name' => $onetroop->getBuilding()->getKingdom()->getName(),
+                            'total' => $onetroop->getTotal() + $total,
+                        );
+                    } else {
+                        $arreglo_troops[] = array(
+                            'troop_id' => $temp_troop->getID(),
+                            'troop_name' => $temp_troop->getUnitType()->getName(),
+                            'building_id' => $onetroop->getBuilding()->getID(),
+                            'building_name' => $onetroop->getBuilding()->getBuildingType()->getName(),
+                            'kingdom_name' => $onetroop->getBuilding()->getKingdom()->getName(),
+                            'total' => $onetroop->getTotal());
+
+                    }
 
                 }
 
@@ -372,66 +378,57 @@ class APIListUserResourcesController extends AbstractController
                     'defense_remaining' => $unbuilding->getDefenseRemaining(),
                     'kingdom' => $unbuilding->getKingdom()->getID(),
                     'kingdom_name' => $unbuilding->getKingdom()->getName(),
+                    'color_class' => $unbuilding->getKingdom()->getColor_class(),
                     'troops_location' => $arreglo_troops,
                 );
             }
 
         }; //fin del loop
 
-        //Buscar las tropas en el castillo
-           //busco si existe un castillo lv1 para el team de ese usuario
-           $castle_type = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'Castle', 'level' => 1]);
-           $castillo = $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType' => $castle_type]);
-   
-           //si no existe un castillo lv1 para el team de ese usuario, lo busco para el level 2
-           if ($castillo == null) {
-               $castle_type = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'Castle', 'level' => 2]);
-               $castillo = $em->getRepository(Building::class)->findOneBy(['user' => $user, 'buildingType' => $castle_type]);
-           }
-
-           //Busco todas las tropas ubicadas en el castillo
-
-           $troop_buildings = $em->getRepository(TroopBuilding::class)->findBy(['building' => $castillo]);
-
-           $arreglo_troops_on_castle = array();
-                
-           foreach ($troop_buildings as $onetroop) {
-
-               $temp_troop = $em->getRepository(Troop::class)->find($onetroop->getTroops());
-
-               $arreglo_troops_on_castle[] = array(
-                   'troop_id' => $temp_troop->getID(),
-                   'troop_name' => $temp_troop->getUnitType()->getName(),
-                   'building_id' => $onetroop->getBuilding()->getID(),
-                   'building_name' => $onetroop->getBuilding()->getBuildingType()->getName(),
-                   'kingdom_name'=>$onetroop->getBuilding()->getKingdom()->getName(),
-                   'total' => $onetroop->getTotal(),
-               );
-
-              
-
-           }
-
-           
-
-      
-
-
-
-
-        //TODO: agregar los edificios de los otros miembros del team
         $arreglo_final['buildings'] = $arreglo_buildings;
-        $arreglo_final['castle_troops'] =$arreglo_troops_on_castle;
-       // $arreglo_final['squads'] = $arreglo_squads;
 
+        //Buscar las tropas en el castillo
+        //busco si existe un castillo lv1 para el team de ese usuario
+        $castle_type = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'Castle', 'level' => 1]);
+
+        $castillo = $em->getRepository(Building::class)->findOneBy(['kingdom' => $kingdom, 'buildingType' => $castle_type]);
+
+        //si no existe un castillo lv1 para el team de ese usuario, lo busco para el level 2
+        if ($castillo == null) {
+        $castle_type = $em->getRepository(BuildingType::class)->findOneBy(['name' => 'Castle', 'level' => 2]);
+        $castillo = $em->getRepository(Building::class)->findOneBy(['kingdom' => $kingdom, 'buildingType' => $castle_type]);
+        }
+
+        //Busco todas las tropas ubicadas en el castillo
+
+        $troop_buildings = $em->getRepository(TroopBuilding::class)->findBy(['building' => $castillo]);
+
+        $arreglo_troops_on_castle = array();
+
+        foreach ($troop_buildings as $onetroop) {
+
+        $temp_troop = $em->getRepository(Troop::class)->find($onetroop->getTroops());
+
+        $arreglo_troops_on_castle[] = array(
+        'troop_id' => $temp_troop->getID(),
+        'troop_name' => $temp_troop->getUnitType()->getName(),
+        'building_id' => $onetroop->getBuilding()->getID(),
+        'building_name' => $onetroop->getBuilding()->getBuildingType()->getName(),
+        'kingdom_name' => $onetroop->getBuilding()->getKingdom()->getName(),
+        'total' => $onetroop->getTotal(),
+        );
+
+        }
+
+
+        $arreglo_final['castle_troops'] = $arreglo_troops_on_castle;
+        
         //Respuesta
         $respuesta = array(
             'datos' => $arreglo_final,
             'error' => $error,
             'message' => $mensaje_error,
         );
-
-        //return $this->json(Response::HTTP_OK);
 
         return $this->json($respuesta, Response::HTTP_OK);
 

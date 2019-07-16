@@ -27,20 +27,17 @@
 
 
 
-
-
-
-
-
-
-
-
 </div>
 
 {# --- Opcion: World listar todos los edificios enemigos ---- #}
 
 <div class="lineaestrecha row">
     <div class="card-columns" id="lista_edificios_enemigos">
+
+
+    </div>
+
+    <div class="card-columns" id="lista_edificios_alianza">
 
 
     </div>
@@ -87,10 +84,14 @@
 
     // Ejecutar por primera ves al cargar la pagina
     let ruta_edificios_enemigos = "{{ path('list_enemy_buildings') }}";
+ 
+
     let ruta_listar_resources = "{{ path('list_user_resources') }}";
     let ruta_create_squad = "{{ path('create_squad') }}";
     let ruta_delete_squad = "{{ path('delete_squad') }}";
     let ruta_attack = "{{ path('attack') }}";
+ 
+
 
     let imagen_add = "{{ asset('images/iconos/add.png') }}";
     let imagen_del = "{{ asset('images/iconos/delete.png') }}";
@@ -108,7 +109,17 @@
 
       
 
-        pintarEdificiosEnemigos(ruta_edificios_enemigos, imagen_attack, ruta_attack, imagen_add, imagen_del);
+        //pintarEdificiosEnemigos(ruta_edificios_enemigos,ruta_attack, imagen_attack,  imagen_add, imagen_del);
+        //pintarEdificiosAlianza(ruta_edificios_alianza, imagen_mover, ruta_mover, imagen_add, imagen_del);
+
+
+        let id_lista_edificios = 'lista_edificios_enemigos';
+        let id_lista_ventana_ocultas = 'ventanas_atacar_ocultas';
+        let imagen_accion = imagen_attack;
+        
+        
+        pintarEdificios(ruta_edificios_enemigos, ruta_attack, id_lista_edificios,
+         id_lista_ventana_ocultas, imagen_accion, imagen_add, imagen_del)
         
 
        
