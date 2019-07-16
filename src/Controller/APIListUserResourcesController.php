@@ -411,6 +411,7 @@ class APIListUserResourcesController extends AbstractController
 
             $temp_troop = $em->getRepository(Troop::class)->find($onetroop->getTroops());
 
+            
             if ($temp_troop->getUser() == $user) {
 
                 $arreglo_troops_on_castle[] = array(
