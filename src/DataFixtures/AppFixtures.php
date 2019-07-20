@@ -8,9 +8,24 @@ use App\Entity\Kingdom;
 use App\Entity\BuildingType;
 use App\Entity\UnitType;
 use App\Entity\Config;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Entity\User;
+
 
 class AppFixtures extends Fixture
 {
+
+
+    private $encoder;
+
+    public function __construct( UserPasswordEncoderInterface $encoder){
+        $this->encoder = $encoder;
+    }
+
+    //public function crearUsuarioAdmin(ObjectManager $manager, ){
+
+    
+  
     public function load(ObjectManager $manager)
     {
         
@@ -100,6 +115,25 @@ class AppFixtures extends Fixture
         }
 
 
+        //------------------------------------------------------------------------
+        //Usuario Admin
+        //------------------------------------------------------------------------
+        
+       //actualizando el password
+       $user = new User();
+       $user->setUsername("admin");
+       $user->setName("admin");
+       $user->setRole("ROLE_ADMIN");
+       
+       $encoded = $this->encoder->encodePassword($user, "admin");
+       $user->setPassword($encoded);
+       $kingdom = $manager->getRepository(Kingdom::class)->findOneBy(['name' => 'Test Kingdom']);
+       $user->setKingdom($kingdom);
+
+       $manager->persist($user);
+
+
+    
 
         //------------------------------------------------------------------------
         //escribiendo en BD
@@ -108,4 +142,8 @@ class AppFixtures extends Fixture
 
         $manager->flush();
     }
+
+
+   
+
 }

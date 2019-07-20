@@ -8,6 +8,17 @@ function setCastilloData(datos_castillo) {
 };
 
 
+//team, recursos
+
+function dibujarDatosHTML(team, recursos) {
+    $('#kingdom_name').html(team.kingdom_name);
+    $('#kingdom_points').html(team.kingdom_points);
+
+    $('#user_points').html(recursos.user_points);
+    $('#user_gold').html(recursos.gold);
+}
+
+
 //boton_go, realizar el movimiento
 function crearBotonGo(ruta_move_troops) {
     $("#boton_go").click(
@@ -232,7 +243,7 @@ function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
             let id_boton = 'boton_del' + id_unico;
             console.log(id_boton);
 
-           // crearFuncionalidadBotonDelPlanMovements(id_boton);
+            crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico);
 
 
         }
@@ -243,7 +254,7 @@ function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
 
 
 
-function crearFuncionalidadBotonDelPlanMovements(id_boton) {
+function crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico) {
 
     $("#"+id_boton).click(
         function (event) {
@@ -253,7 +264,7 @@ function crearFuncionalidadBotonDelPlanMovements(id_boton) {
             //var id_tropas = $(this).attr('id');
             console.log(id_boton);
             //eliminando
-            $('#' + id_tropas).remove();
+            $('#' + id_unico).remove();
         }
     );
 

@@ -54,10 +54,10 @@ class UserController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            //            $file = $form['file']->getData();
-            //            $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
-            //            $file->move($this->getParameter('kernel.root_dir').'/../public/images/avatars', $filename);
-            //            $user->setPhoto($filename);
+            // $file = $form['file']->getData();
+            // $filename = sha1(md5(uniqid().microtime())).'.'.$file->getClientOriginalExtension();
+            // $file->move($this->getParameter('kernel.root_dir').'/../public/images/avatars', $filename);
+            // $user->setPhoto($filename);
 
             //-----------------------------------------------------
             //  Creando resto de los datos del usuario

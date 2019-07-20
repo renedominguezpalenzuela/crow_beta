@@ -88,7 +88,12 @@ class User implements UserInterface, \Serializable
      */
     private $kingdom;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $userpoints=0;
 
+ 
     
     public function getId(): ?int {
         return $this->id;
@@ -245,6 +250,20 @@ class User implements UserInterface, \Serializable
         return $this;
     }
 
+    public function getUserpoints(): ?int
+    {
+        return $this->userpoints;
+    }
+
+    public function setUserpoints(int $userpoints): self
+    {
+        $this->userpoints = $userpoints;
+
+        return $this;
+    }
+
+    
+    
 
     
 }

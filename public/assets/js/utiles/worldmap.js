@@ -363,6 +363,7 @@ function botonAtacar(ruta_attack) {
 
 
                     location.reload();
+                   // $("#battle_result").append("<h1>HOLA</h1>");
                     //console.log("done");
                     //$('[href="#world"]').removeClass('active');
                     //$('[href="#squads"]').addClass('active');
