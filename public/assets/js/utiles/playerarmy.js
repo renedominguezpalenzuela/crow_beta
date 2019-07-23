@@ -19,70 +19,6 @@ function dibujarDatosHTML(team, recursos) {
 }
 
 
-//boton_go, realizar el movimiento
-function crearBotonGo(ruta_move_troops) {
-    $("#boton_go").click(
-
-        function (event) {
-            event.preventDefault();
-            //Recorrer la tabla de datos
-            //id="execution_troops_movement"
-            //formar el json
-            let cadena = '';
-            var datos = [];
-            $("#execution_troops_movement tr").each(function () {
-                cadena = $(this).attr('cadena_api')
-
-                datos.push(cadena);
-              //datos = datos +cadena;
-            });
-
-           // console.log(datos);
-        
-
-
-         
-            //enviarlo al servidor
-
-            var datos_enviar ={
-                peticion : '['+datos.toString()+']'
-            }
-          
-
-            $.post(ruta_move_troops,
-                datos_enviar
-
-            ,
-                function (data, textStatus, jqXHR) {
-                    //console.log(data);
-                    console.log('ok');
-                    location.reload();
-
-                }
-            ).done(
-                function(){
-                    console.log("done");
-                }
-
-            ).fail(
-                function(data, textStatus,jqXHR ){
-                    console.log(textStatus + ' : '+jqXHR);
-                }
-
-            ).always(
-                function(){
-                    console.log("always");
-                }
-
-            );
-
-              //escribir mensaje de confirmacion al usuario
-            // console.log("sss"+ruta_move_troops);
-
-
-        }
-    );
-}
 
 
 
@@ -241,7 +177,7 @@ function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
 
 
             let id_boton = 'boton_del' + id_unico;
-            console.log(id_boton);
+            //console.log(id_boton);
 
             crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico);
 
@@ -262,7 +198,7 @@ function crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico) {
             
 
             //var id_tropas = $(this).attr('id');
-            console.log(id_boton);
+           // console.log(id_boton);
             //eliminando
             $('#' + id_unico).remove();
         }
@@ -348,6 +284,73 @@ function dibujarTropasenHTML(buildings) {
 
 
 
+}
+
+
+//boton_go, realizar el movimiento
+//datos a enviar
+//[{"troops_id":1,"total":1,"from":1,"to":1}]
+function crearBotonGo(ruta_move_troops) {
+    $("#boton_go").click(
+
+        function (event) {
+            event.preventDefault();
+            //Recorrer la tabla de datos
+            //id="execution_troops_movement"
+            //formar el json
+            let cadena = '';
+            var datos = [];
+            $("#execution_troops_movement tr").each(function () {
+                cadena = $(this).attr('cadena_api')
+
+                datos.push(cadena);
+              
+            });
+
+            console.log(datos);
+        
+
+
+         
+            //enviarlo al servidor
+
+            var datos_enviar ={
+                peticion : '['+datos.toString()+']'
+            }
+          
+
+            $.post(ruta_move_troops,
+                datos_enviar
+
+            ,
+                function (data, textStatus, jqXHR) {
+                  
+
+                }
+            ).done(
+                function(){
+                    //console.log("done");
+                    location.reload();
+                }
+
+            ).fail(
+                function(data, textStatus,jqXHR ){
+                    console.log(textStatus + ' : '+jqXHR);
+                }
+
+            ).always(
+                function(){
+                    //console.log("always");
+                }
+
+            );
+
+              //escribir mensaje de confirmacion al usuario
+            // console.log("sss"+ruta_move_troops);
+
+
+        }
+    );
 }
 
 

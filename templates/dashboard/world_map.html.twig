@@ -13,21 +13,42 @@
 
 
     <div class="col">
-      
+
 
         {#---- Mensages provenientes del servidor ----#}
-      {% if app.request.hasPreviousSession %} 
-            {%  for unmensaje in app.flashes('info')  %}
-                <div class="alert alert-success alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    {{ unmensaje }}
+        {% if app.request.hasPreviousSession %}
+        {%  for unmensaje in app.flashes('info')  %}
 
-                    <div id="battle_result">
-                        {{app.session.get('my_variable')}}
-                    </div>
-                </div>
-            {% endfor %}
-         {% endif %} 
+
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ unmensaje }}
+
+            <div id="battle_result">
+                {{app.session.get('id_edificio')}}
+
+                {#--{{ dump(app.session.get('attacker_troops')) }}--#}
+
+                {%  for unatropa_atacante in app.session.get('attacker_troops')  %}
+                <span>{{unatropa_atacante.name}} {{unatropa_atacante.total}} </span>
+
+
+                {% endfor %}
+
+
+
+                {#--  {{app.session.get('my_variable')}}
+                        {%  for unavar in app.session.get('id_edificio')  %}
+
+                        <p>{{unavar}}</p>
+                        {% endfor %}--#}
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+
+
 
     </div>
 
@@ -52,7 +73,115 @@
 
 
     </div>
+
+
+    {# -- Ventana Oculta: resultados de batalla -- #}
+    <div id="ventana_resultado_ataque" class="modal hide fade" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered" role="document">
+
+
+
+            <div class="card modal-content">
+                <div class="modal-header card-header-primary ">
+                    <h5 class="modal-title">Attack results</h5>
+
+                    <button id="cerrar_resultados2" type="button" class="close cerrar_resultados_ataque"
+                        data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <table class="table-sm">
+                                <tr>
+                                    <td>
+                                        <h4 class="font-weight-bold">Defender</h4>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <span id="attacked_building"></span>
+                                        </p>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <p>Initial Defense:
+                                            <span id="castle_initial_defense"></span>
+                                        </p>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <p>Initial Troops:
+                                            <table id="troops-castle" class="table-sm">
+                                            </table>
+                                        </p>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="col">
+                            <h4 class="font-weight-bold">Attacker</h4>
+
+                            <table id="attacker_squad" class="table-sm">
+
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <span class="subrayado">Results</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <h3 id="resultado_defender" class="font-weight-bold font-italic"> Defeat </h3>
+                        </div>
+                        <div class="col">
+                            <h3 id="resultado_attacker" class="font-weight-bold font-italic"> Victory </h3>
+                        </div>
+                    </div>
+
+                </div> {#card body#}
+
+                <div class="modal-footer">
+
+                    <button id="cerrar_resultados" type="button" class="btn btn-secondary cerrar_resultados_ataque"
+                        data-dismiss="modal">Close</button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div> {#Card 1#}
+
+
+
 </div>
+
+
+
+
+
+
+
 
 
 
@@ -73,6 +202,9 @@
 
 
 <script>
+
+
+
     // -------------------------------------------------------------------------------
     // Declarando variables globales que contendran todos los datos recibidos
     // -------------------------------------------------------------------------------
