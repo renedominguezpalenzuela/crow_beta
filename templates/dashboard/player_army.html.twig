@@ -6,7 +6,27 @@
 {% block body %}
 
 
+<div class="row lineaestrecha">
+    <div class="card">
+        <h5 class="card-header-primary">Kingdom: <span id="kingdom_name"> Blue </span></h5>
+        <div class="card-body">
+            <table class="table-sm">
+                <tr>
+                    <td>
+                        <span>Kingdom points: </span><span id="kingdom_points"> 0 </span>
+                    </td>
+                    <td>
+                        <span>User points: </span><span id="user_points"> 0 </span>
+                    </td>
 
+                    <td>
+                            <span>Gold: </span><span id="user_gold"> 0 </span>
+                        </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
 
 
 
@@ -197,6 +217,8 @@
     let troopLocation = null;
     let buildings = null;
 
+    let team = null;
+
 
     let troops_movements = [];
 
@@ -209,19 +231,24 @@
     // Obtener datos iniciales (se ejecuta al cargar la pagina)
     // ------------------------------------------------------------------------------
     //TODO: Listar edificios propios y los del kingdom
-   /* peticion_all = {}
-    peticion_all.listar_kingdom_resources = 1;
-    var datos_enviar = {
-        peticion: JSON.stringify(peticion_all)
-    }*/
+    /* peticion_all = {}
+     peticion_all.listar_kingdom_resources = 1;
+     var datos_enviar = {
+         peticion: JSON.stringify(peticion_all)
+     }*/
 
-    $.getJSON("{{path('list_user_resources')}}",  function (data) { // obteniendo los datos recibidos de la peticion
+    $.getJSON("{{path('list_user_resources')}}", function (data) { // obteniendo los datos recibidos de la peticion
         datos = data.datos;
         buildings = datos.buildings;
         castillo = datos.castle;
         troopLocation = datos.troops_location;
         troops = datos.troops;
+        team = datos.team;
+        recursos = datos.resources;
 
+
+        //Datos del kingdom y del user
+        dibujarDatosHTML(team, recursos);
 
         //Datos del Castillo
         setCastilloData(castillo);

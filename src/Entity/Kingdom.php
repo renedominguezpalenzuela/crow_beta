@@ -39,6 +39,8 @@ class Kingdom
      */
     private $idKingdomBoss = 0;
 
+   
+
   /**
      * @ORM\Column(type="string", length=255)
      */
@@ -58,6 +60,41 @@ class Kingdom
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="kingdom")
      */
     private $users;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $kingdom_points=0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $officer1=0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $officer2=0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $officer3=0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $officer4=0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $officer5=0;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $main_castle_id=0;
 
     public function __construct()
     {
@@ -189,6 +226,90 @@ class Kingdom
     public function setColor_class($color_class)
     {
         $this->color_class = $color_class;
+
+        return $this;
+    }
+
+    public function getKingdomPoints(): ?int
+    {
+        return $this->kingdom_points;
+    }
+
+    public function setKingdomPoints(?int $kingdom_points): self
+    {
+        $this->kingdom_points = $kingdom_points;
+
+        return $this;
+    }
+
+    public function getOfficer1(): ?int
+    {
+        return $this->officer1;
+    }
+
+    public function setOfficer1(?int $officer1): self
+    {
+        $this->officer1 = $officer1;
+
+        return $this;
+    }
+
+    public function getOfficer2(): ?int
+    {
+        return $this->officer2;
+    }
+
+    public function setOfficer2(?int $officer2): self
+    {
+        $this->officer2 = $officer2;
+
+        return $this;
+    }
+
+    public function getOfficer3(): ?int
+    {
+        return $this->officer3;
+    }
+
+    public function setOfficer3(?int $officer3): self
+    {
+        $this->officer3 = $officer3;
+
+        return $this;
+    }
+
+    public function getOfficer4(): ?int
+    {
+        return $this->officer4;
+    }
+
+    public function setOfficer4(?int $officer4): self
+    {
+        $this->officer4 = $officer4;
+
+        return $this;
+    }
+
+    public function getOfficer5(): ?int
+    {
+        return $this->officer5;
+    }
+
+    public function setOfficer5(?int $officer5): self
+    {
+        $this->officer5 = $officer5;
+
+        return $this;
+    }
+
+    public function getMainCastleId(): ?int
+    {
+        return $this->main_castle_id;
+    }
+
+    public function setMainCastleId(int $main_castle_id): self
+    {
+        $this->main_castle_id = $main_castle_id;
 
         return $this;
     }

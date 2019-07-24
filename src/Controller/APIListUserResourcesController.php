@@ -68,8 +68,7 @@ class APIListUserResourcesController extends AbstractController
             'buildings' => '',
             'troops' => '',
             'troops_location' => '',
-            'resources' => '',
-            'squads' => '',
+            'resources' => ''
         ];
 
         $em = $this->getDoctrine()->getManager();
@@ -98,9 +97,13 @@ class APIListUserResourcesController extends AbstractController
         //2.2) buscar el kingdom del team
         $kingdom = $user->getKingdom();
 
+       
+
         $arreglo_final['team'] = array(
             'team_id' => $kingdom->getID(),
             'kingdom_name' => $kingdom->getName(),
+            'kingdom_points' => $kingdom->getKingdomPoints(),
+            'main_castle_id' => $kingdom->getMainCastleId(),
         );
 
         //2.3) buscar el castle del team
@@ -231,6 +234,7 @@ class APIListUserResourcesController extends AbstractController
 
         $arreglo_final['resources'] = array(
             'gold' => $user->getGold(),
+            'user_points' => $user->getUserPoints()
         );
 
         //Respuesta
@@ -411,7 +415,6 @@ class APIListUserResourcesController extends AbstractController
 
             $temp_troop = $em->getRepository(Troop::class)->find($onetroop->getTroops());
 
-            
             if ($temp_troop->getUser() == $user) {
 
                 $arreglo_troops_on_castle[] = array(

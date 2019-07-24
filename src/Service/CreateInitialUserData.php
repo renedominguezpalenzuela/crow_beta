@@ -21,10 +21,11 @@ use App\Entity\TroopBuilding;
 class CreateInitialUserData
 {
 
-    private $em;
-    private $team;
-    private $kingdom;
-    private $config;
+    private $em=null;
+    private $team=null;
+    private $kingdom=null;
+    private $config=null;
+    private $id_user_boss=0;
 
     public function __construct(EntityManagerInterface $entityManager, GlobalConfig $globalconfig)
     {
@@ -32,11 +33,12 @@ class CreateInitialUserData
         $this->config= $globalconfig;
     }
 
+    //Crear datos de un nuevo usuario
     public function crear(User $user)
     {
 
 
-        //Setear recursor del user
+        //Setear recursos del user
         $gold=$this->config->getUserInitialGold();
         $user->setGold($gold); 
 
@@ -106,8 +108,16 @@ class CreateInitialUserData
             $castillo->setKingdom($this->kingdom);
 
             $this->em->persist($castillo);
+            $this->em->flush();
+
+            $this->kingdom->setMainCastleId($castillo->getId());
+            $this->kingdom->setIdKingdomBoss($user->getId());
+
+            $this->em->persist($this->kingdom);
 
             $this->em->flush();
+
+
 
             //setear el boss del castillo
         }

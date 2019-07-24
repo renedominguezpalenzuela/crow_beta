@@ -8,70 +8,17 @@ function setCastilloData(datos_castillo) {
 };
 
 
-//boton_go, realizar el movimiento
-function crearBotonGo(ruta_move_troops) {
-    $("#boton_go").click(
+//team, recursos
 
-        function (event) {
-            event.preventDefault();
-            //Recorrer la tabla de datos
-            //id="execution_troops_movement"
-            //formar el json
-            let cadena = '';
-            var datos = [];
-            $("#execution_troops_movement tr").each(function () {
-                cadena = $(this).attr('cadena_api')
+function dibujarDatosHTML(team, recursos) {
+    $('#kingdom_name').html(team.kingdom_name);
+    $('#kingdom_points').html(team.kingdom_points);
 
-                datos.push(cadena);
-              //datos = datos +cadena;
-            });
-
-           // console.log(datos);
-        
-
-
-         
-            //enviarlo al servidor
-
-            var datos_enviar ={
-                peticion : '['+datos.toString()+']'
-            }
-          
-
-            $.post(ruta_move_troops,
-                datos_enviar
-
-            ,
-                function (data, textStatus, jqXHR) {
-                    //console.log(data);
-                    console.log('ok');
-                    location.reload();
-
-                }
-            ).done(
-                function(){
-                    console.log("done");
-                }
-
-            ).fail(
-                function(data, textStatus,jqXHR ){
-                    console.log(textStatus + ' : '+jqXHR);
-                }
-
-            ).always(
-                function(){
-                    console.log("always");
-                }
-
-            );
-
-              //escribir mensaje de confirmacion al usuario
-            // console.log("sss"+ruta_move_troops);
-
-
-        }
-    );
+    $('#user_points').html(recursos.user_points);
+    $('#user_gold').html(recursos.gold);
 }
+
+
 
 
 
@@ -230,9 +177,9 @@ function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
 
 
             let id_boton = 'boton_del' + id_unico;
-            console.log(id_boton);
+            //console.log(id_boton);
 
-           // crearFuncionalidadBotonDelPlanMovements(id_boton);
+            crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico);
 
 
         }
@@ -243,7 +190,7 @@ function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
 
 
 
-function crearFuncionalidadBotonDelPlanMovements(id_boton) {
+function crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico) {
 
     $("#"+id_boton).click(
         function (event) {
@@ -251,9 +198,9 @@ function crearFuncionalidadBotonDelPlanMovements(id_boton) {
             
 
             //var id_tropas = $(this).attr('id');
-            console.log(id_boton);
+           // console.log(id_boton);
             //eliminando
-            $('#' + id_tropas).remove();
+            $('#' + id_unico).remove();
         }
     );
 
@@ -337,6 +284,73 @@ function dibujarTropasenHTML(buildings) {
 
 
 
+}
+
+
+//boton_go, realizar el movimiento
+//datos a enviar
+//[{"troops_id":1,"total":1,"from":1,"to":1}]
+function crearBotonGo(ruta_move_troops) {
+    $("#boton_go").click(
+
+        function (event) {
+            event.preventDefault();
+            //Recorrer la tabla de datos
+            //id="execution_troops_movement"
+            //formar el json
+            let cadena = '';
+            var datos = [];
+            $("#execution_troops_movement tr").each(function () {
+                cadena = $(this).attr('cadena_api')
+
+                datos.push(cadena);
+              
+            });
+
+            console.log(datos);
+        
+
+
+         
+            //enviarlo al servidor
+
+            var datos_enviar ={
+                peticion : '['+datos.toString()+']'
+            }
+          
+
+            $.post(ruta_move_troops,
+                datos_enviar
+
+            ,
+                function (data, textStatus, jqXHR) {
+                  
+
+                }
+            ).done(
+                function(){
+                    //console.log("done");
+                    location.reload();
+                }
+
+            ).fail(
+                function(data, textStatus,jqXHR ){
+                    console.log(textStatus + ' : '+jqXHR);
+                }
+
+            ).always(
+                function(){
+                    //console.log("always");
+                }
+
+            );
+
+              //escribir mensaje de confirmacion al usuario
+            // console.log("sss"+ruta_move_troops);
+
+
+        }
+    );
 }
 
 

@@ -22,6 +22,7 @@ class APIMoveTroopsController extends AbstractController
     //TODO: si el edificio From es un SQUAD y se queda vacio borrarlo
     //Extructura nueva
     //["{"troops_id":13,"total":2,from":16,"to":16}"]
+    //
     /**
      * @Route("/move_troops", name="move_troops", methods={"POST"})
      */
@@ -148,7 +149,7 @@ class APIMoveTroopsController extends AbstractController
                 //VALIDAR: si total de tropas a mover es mayor que las que hay en el edificio error
                 if ($total_edificio_old < $total_a_mover) {
 
-                    $nombre_edificio = $tropa_edificio_old->getBuilding()->getName();
+                    $nombre_edificio = $tropa_edificio_old->getBuilding()->getName2();
                     $mensaje_error = "Total Troop on building minor than movement. Building id: " . strval($tropa_edificio_old->getID()) . " " . $nombre_edificio;
                     $error = true;
                     break;

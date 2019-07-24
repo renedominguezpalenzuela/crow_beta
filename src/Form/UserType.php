@@ -39,29 +39,7 @@ class UserType extends AbstractType
 
 
 
-    /*
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder
-            ->add('name', null, ['label_attr' => ['class' => 'bmd-label-floating']])
-            ->add('username', null, ['label_attr' => ['class' => 'bmd-label-floating']])
-            ->add('password', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'first_options' => array('label' => 'Password', 'required' => true, 'label_attr' => ['class' => 'bmd-label-floating']),
-                'second_options' => array('label' => 'Repeat password', 'required' => true, 'label_attr' => ['class' => 'bmd-label-floating']),
-                'invalid_message' => 'They are not the same password',
-            ])
-            ->add('email', EmailType::class, ['label_attr' => ['class' => 'bmd-label-floating']])
-            ->add('kingdom', EntityType::class, [
-                'mapped' => false,
-                'class' => 'App\Entity\Kingdom',
-                'placeholder' => 'select',
-                'query_builder' => function (EntityRepository $er){
-                    return $er->createQueryBuilder('k');
-                }
-            ] )
-        ;
-    }*/
+    
 
     public function configureOptions(OptionsResolver $resolver)
     {

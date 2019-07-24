@@ -11,17 +11,44 @@
 
 <div class="lineaestrecha row">
 
-    
+
     <div class="col">
-        World Map, Kingdom filter
-        
+
+
         {#---- Mensages provenientes del servidor ----#}
+        {% if app.request.hasPreviousSession %}
         {%  for unmensaje in app.flashes('info')  %}
+
+
         <div class="alert alert-success alert-dismissible">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             {{ unmensaje }}
+
+            <div id="battle_result">
+                {{app.session.get('id_edificio')}}
+
+                {#--{{ dump(app.session.get('attacker_troops')) }}--#}
+
+                {%  for unatropa_atacante in app.session.get('attacker_troops')  %}
+                <span>{{unatropa_atacante.name}} {{unatropa_atacante.total}} </span>
+
+
+                {% endfor %}
+
+
+
+                {#--  {{app.session.get('my_variable')}}
+                        {%  for unavar in app.session.get('id_edificio')  %}
+
+                        <p>{{unavar}}</p>
+                        {% endfor %}--#}
+            </div>
         </div>
         {% endfor %}
+        {% endif %}
+
+
+
 
     </div>
 
@@ -42,11 +69,184 @@
 
     </div>
 
-    <div  id="ventanas_atacar_ocultas">
+    <div id="ventanas_atacar_ocultas">
 
-        
+
     </div>
+
+
+    {# -- Ventana Oculta: resultados de batalla -- #}
+    <div id="ventana_resultado_ataque" class="modal hide fade" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered" role="document">
+
+
+
+            <div class="card modal-content">
+                <div class="modal-header card-header-primary ">
+                    <h5 class="modal-title">Attack results</h5>
+
+                    <button id="cerrar_resultados2" type="button" class="close cerrar_resultados_ataque"
+                        data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <table class="table-sm">
+                                <tr>
+                                    <td>
+                                        <h4 class="font-weight-bold">Defender</h4>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <p>
+                                            <span id="attacked_building"></span>
+                                        </p>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <p>Initial Defense:
+                                            <span id="castle_initial_defense"></span>
+                                        </p>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <p>Initial Troops:
+                                            <table id="troops-castle" class="table-sm">
+                                            </table>
+                                        </p>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="col">
+                            <h4 class="font-weight-bold">Attacker</h4>
+
+                            <table id="attacker_squad" class="table-sm">
+
+
+                            </table>
+                        </div>
+                    </div>
+
+
+
+
+                    {# -- Texto del resultado --#}
+
+                    <div class="row">
+                        <div class="col">
+                            <span class="subrayado">Results</span>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col">
+                            <span>
+
+                                Force Strength
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="row  mt-3">
+                        <div class="col">
+
+                            <span id="defending_force_strength"></span>
+
+                        </div>
+                        <div class="col">
+                            <span id="attacking_force_strenght"></span>
+
+                        </div>
+                    </div>
+
+
+                   
+
+                    <div class="row mt-2">
+                        <div class="col">
+                            <h3 id="resultado_defender" class="font-weight-bold font-italic"> Defeat </h3>
+                        </div>
+                        <div class="col">
+                            <h3 id="resultado_attacker" class="font-weight-bold font-italic"> Victory </h3>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col">
+                            <span>Casualties</span>
+                        </div>
+                    </div>
+
+
+                    <div class="row  mt-3">
+                        <div class="col">
+                            <table id="bajas_defender" class="table-sm">
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table id="bajas_attacker" class="table-sm">
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                            <div class="col">
+                                <span>Victory:</span> <span id="victory"></span>
+                            </div>
+                            <div class="col">
+                                <span>Defeat:</span> <span id="defeat"></span>
+                            </div>
+                            <div class="col">
+                                <span>Stalemate:</span> <span id="stalemate"></span>
+                            </div>
+                        </div>
+
+
+
+
+
+                </div> {#card body#}
+
+                <div class="modal-footer">
+
+                    <button id="cerrar_resultados" type="button" class="btn btn-secondary cerrar_resultados_ataque"
+                        data-dismiss="modal">Close</button>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div> {#Card 1#}
+
+
+
 </div>
+
+
+
+
+
+
+
 
 
 
@@ -67,6 +267,9 @@
 
 
 <script>
+
+
+
     // -------------------------------------------------------------------------------
     // Declarando variables globales que contendran todos los datos recibidos
     // -------------------------------------------------------------------------------
@@ -84,13 +287,13 @@
 
     // Ejecutar por primera ves al cargar la pagina
     let ruta_edificios_enemigos = "{{ path('list_enemy_buildings') }}";
- 
+
 
     let ruta_listar_resources = "{{ path('list_user_resources') }}";
     let ruta_create_squad = "{{ path('create_squad') }}";
     let ruta_delete_squad = "{{ path('delete_squad') }}";
     let ruta_attack = "{{ path('attack') }}";
- 
+
 
 
     let imagen_add = "{{ asset('images/iconos/add.png') }}";
@@ -107,7 +310,7 @@
         troops = datos.troops;
         troopLocation = datos.troops_location;
 
-      
+
 
         //pintarEdificiosEnemigos(ruta_edificios_enemigos,ruta_attack, imagen_attack,  imagen_add, imagen_del);
         //pintarEdificiosAlianza(ruta_edificios_alianza, imagen_mover, ruta_mover, imagen_add, imagen_del);
@@ -116,13 +319,13 @@
         let id_lista_edificios = 'lista_edificios_enemigos';
         let id_lista_ventana_ocultas = 'ventanas_atacar_ocultas';
         let imagen_accion = imagen_attack;
-        
-        
-        pintarEdificios(ruta_edificios_enemigos, ruta_attack, id_lista_edificios,
-         id_lista_ventana_ocultas, imagen_accion, imagen_add, imagen_del)
-        
 
-       
+
+        pintarEdificios(ruta_edificios_enemigos, ruta_attack, id_lista_edificios,
+            id_lista_ventana_ocultas, imagen_accion, imagen_add, imagen_del)
+
+
+
 
 
     });
