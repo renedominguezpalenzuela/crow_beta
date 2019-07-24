@@ -9,7 +9,7 @@ let lista_tropas_atacantes=[];            //inicializado en:  botonIniciarAtaque
 $(".cerrar_resultados_ataque").click(
     function (event) {
         event.preventDefault();
-    console.log("Cerrar");
+   // console.log("Cerrar");
     //$('#myModal').modal('hide');
     $('#ventana_resultado_ataque').removeClass('show');
     location.reload();
@@ -529,8 +529,8 @@ function botonAtacar(ruta_attack) {
                 function (data) {
                     
                     //location.reload();
-                    console.log("datos recibidos");
-                    console.log(data);
+                    //console.log("datos recibidos");
+                    //console.log(data);
                     pintarResultadosAtaqueHTML(data);
 
                     //Ocultar ventana preparar ataque
@@ -590,7 +590,37 @@ function pintarResultadosAtaqueHTML(data){
     $("#resultado_defender").html(data.resultados_ataque.texto_resultado_defender);
     $("#resultado_attacker").html(data.resultados_ataque.texto_resultado_attacker);
 
+
+//Force Strength
+    $("#defending_force_strength").html(data.resultados_ataque.defending_force_strength);
+    $("#attacking_force_strenght").html(data.resultados_ataque.attacking_force_strenght);
+
+    //Porcientos
+    
+    $("#victory").html(data.resultados_ataque.defender_chance_of_victory);
+    $("#defeat").html(data.resultados_ataque.attacker_chance_of_victory);
+    $("#stalemate").html(data.resultados_ataque.stale_chance);
+
+    //Tropas bajas    
+    pintarBajasHTML(data.resultados_ataque.bajas_atacante, "bajas_attacker");
+    pintarBajasHTML(data.resultados_ataque.bajas_defensor, "bajas_defender");
+
 }
+
+
+
+function pintarBajasHTML(tropas, id_tabla){
+
+    console.log(tropas);
+    let lista_tropas_html = $("#"+id_tabla);
+
+    lista_tropas_html.text('');
+
+    for (una_tropa of tropas) {
+        lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.name + ": " + una_tropa.total+ ", " +una_tropa.user + "</span></p></td></tr>");
+    }
+}
+
 
 function pintarTropasDefensoras(tropas){
 
@@ -602,7 +632,6 @@ function pintarTropasDefensoras(tropas){
         lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.name + ": " + una_tropa.total + "</span></p></td></tr>");
     }
 }
-
 
 
 function pintarTropasAtacantes(tropas){

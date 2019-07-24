@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class APICreateSquadController
@@ -29,11 +30,13 @@ class APIAttackController extends AbstractController
     private $resultados_string = array("Victory", "Defeat", "Stalemate");
 
     private $session;
+    private $em;
 
     //Inyectando el servicio session
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, EntityManagerInterface $entityManager)
     {
         $this->session = $session;
+        $this->em = $entityManager;
     }
 
     //Extructura datos en la peticion
@@ -78,14 +81,14 @@ class APIAttackController extends AbstractController
         $attacker_troops = $parametersAsArray["troops"];
         $attacked_building_id = $parametersAsArray["attacked_building"];
 
-        $em = $this->getDoctrine()->getManager();
+        //$this->em = $this->getDoctrine()->getManager();
 
         //--------------------------------------------------------------------------
         //(1) Obtengo user() de la peticion
         //--------------------------------------------------------------------------
         if ($global_config->isTestMode()) {
             //Fake user si testing mode
-            $fake_user = $em->getRepository(User::class)->findOneBy(['name' => $global_config->getTest_user()]);
+            $fake_user = $this->em->getRepository(User::class)->findOneBy(['name' => $global_config->getTest_user()]);
             $user = $fake_user;
 
         } else {
@@ -125,7 +128,7 @@ class APIAttackController extends AbstractController
         //-------------------------------------------------------------------------------------------
         // Edificio
         //-------------------------------------------------------------------------------------------
-        $building = $em->getRepository(Building::class)->find($attacked_building_id);
+        $building = $this->em->getRepository(Building::class)->find($attacked_building_id);
         $building_name = $building->getName2() . ", " . $building->getKingdom()->getName();
         $building_initial_defense = $building->getDefenseRemaining();
 
@@ -141,7 +144,7 @@ class APIAttackController extends AbstractController
 
         foreach ($attacker_troops as $unatropa) {
             $id = $unatropa["troops_id"];
-            $tropa = $em->getRepository(Troop::class)->find($id);
+            $tropa = $this->em->getRepository(Troop::class)->find($id);
             $tipoUnidad = $tropa->getUnitType();
             $total = $unatropa["total"];
 
@@ -165,7 +168,7 @@ class APIAttackController extends AbstractController
         //----------------------------------------------------------------------------------------
         $defender_troops = [];
         $tropa_temporal = [];
-        $troops_on_building = $em->getRepository(TroopBuilding::class)->findBy(['building' => $attacked_building_id]);
+        $troops_on_building = $this->em->getRepository(TroopBuilding::class)->findBy(['building' => $attacked_building_id]);
 
         $defending_force_strength = 0;
 
@@ -297,7 +300,7 @@ class APIAttackController extends AbstractController
 
          //Modificar tropas del Atacante en la BD
         // $id_castillo_atacante = $user->getKingdom()->getMainCastleId();
-        // $castillo_del_atacante = $em->getRepository(Building::class)->find($id_castillo_atacante);
+        // $castillo_del_atacante = $this->em->getRepository(Building::class)->find($id_castillo_atacante);
         // $this->modificarBD($lista_tropas_eliminadas_atacante, $castillo_del_atacante );
 
         //----------------------------------------------------------------------------------------
@@ -313,8 +316,8 @@ class APIAttackController extends AbstractController
             'defender_chance_of_victory' => $defender_chance_of_victory,
             'attacker_chance_of_victory' => $attacker_chance_of_victory,
             'stale_chance' => $staleChance,
-            'lista_tropas_eliminadas_atacante' => $lista_tropas_eliminadas_atacante,
-            'lista_tropas_eliminadas_defensor' => $lista_tropas_eliminadas_defensor,
+            'bajas_atacante' => $lista_tropas_eliminadas_atacante,
+            'bajas_defensor' => $lista_tropas_eliminadas_defensor,
         );
 
         $respuesta = array(
@@ -328,7 +331,7 @@ class APIAttackController extends AbstractController
         );
 
         if (!$error) {
-            $em->flush();
+            $this->em->flush();
         }
 
         return $this->json($respuesta, Response::HTTP_OK);
@@ -343,7 +346,7 @@ class APIAttackController extends AbstractController
         $total_a_eliminar = round(($Porciento_a_Eliminar * $total_tropas) / 100);
 
         //Reordenamiento aleatorio
-        //shuffle($tropas_iniciales);
+        shuffle($tropas_iniciales);
 
         //Escogiendo las N primeras al azar
         $lista_tropas_a_eliminar = array_slice($tropas_iniciales, 0, $total_a_eliminar);
@@ -372,7 +375,16 @@ class APIAttackController extends AbstractController
 
             if ($encontrado == false) {
                 $una_tropa["total"] = 1;
+                $id = $una_tropa["troops_id"];
+                //Poner nombre de la tropa
+                $tropa = $this->em->getRepository(Troop::class)->find($id);
+                $una_tropa["name"] = $tropa->getUnitType()->getName();
+                $una_tropa["user"] = $tropa->getUser()->getUsername();
+
                 $lista_tropas_a_eliminar_condensada[] = $una_tropa;
+
+
+
             } else {
                 $lista_tropas_a_eliminar_condensada[$indice]["total"] = $total;
             }
@@ -386,7 +398,7 @@ class APIAttackController extends AbstractController
     public function modificarBD($tropas_a_eliminar, $edificio)
     {
 
-        $em = $this->getDoctrine()->getManager();
+       // $this->em = $this->getDoctrine()->getManager();
 
         foreach ($tropas_a_eliminar as $una_tropa) {
 
@@ -398,10 +410,10 @@ class APIAttackController extends AbstractController
             $troop_id = $una_tropa["troops_id"];
 
             //Busco la tropa en el edificio
-            $tropa_edificio = $em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $edificio]);
+            $tropa_edificio = $this->em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $edificio]);
 
             //busco la tropa en Troops
-            $tropa_Troops = $em->getRepository(Troop::class)->find($troop_id);
+            $tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
 
             //-------------------------------------------
             // Total en el edificio
@@ -423,39 +435,39 @@ class APIAttackController extends AbstractController
 
             if ($total_final_edificio <= 0) {
                 $total_final_edificio = 0;
-                $em->remove($tropa_edificio);
-                $em->flush();
+                $this->em->remove($tropa_edificio);
+                $this->em->flush();
             } else {
                 $tropa_edificio->setTotal($total_final_edificio);
-                $em->persist($tropa_edificio);
+                $this->em->persist($tropa_edificio);
             }
 
             if ($total_final_Troops <= 0) {
                 $total_final_Troops = 0;
-                $em->remove($tropa_Troops);
-                $em->flush();
+                $this->em->remove($tropa_Troops);
+                $this->em->flush();
             } else {
                 $tropa_Troops->setTotal($total_final_edificio);
-                $em->persist($tropa_Troops);
+                $this->em->persist($tropa_Troops);
             }
 
 
         }
 
-        $em->flush();
+        $this->em->flush();
       
 
     }
 
 
     public function ponerNombreTropas($lista_tropas) {
-        $em = $this->getDoctrine()->getManager();
+       // $this->em = $this->getDoctrine()->getManager();
 
         $c = 0;
         foreach ($lista_tropas as $una_tropa) {
 
             $troop_id = $una_tropa["troops_id"];
-            $tropa_Troops = $em->getRepository(Troop::class)->find($troop_id);
+            $tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
              
             $lista_tropas[$c]["name"] =  $tropa_Troops->getUnitType()->getName();
             $c=$c+1;

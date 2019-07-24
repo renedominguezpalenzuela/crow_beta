@@ -143,13 +143,43 @@
                         </div>
                     </div>
 
+
+
+
+                    {# -- Texto del resultado --#}
+
                     <div class="row">
                         <div class="col">
                             <span class="subrayado">Results</span>
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mt-3">
+                        <div class="col">
+                            <span>
+
+                                Force Strength
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="row  mt-3">
+                        <div class="col">
+
+                            <span id="defending_force_strength"></span>
+
+                        </div>
+                        <div class="col">
+                            <span id="attacking_force_strenght"></span>
+
+                        </div>
+                    </div>
+
+
+                   
+
+                    <div class="row mt-2">
                         <div class="col">
                             <h3 id="resultado_defender" class="font-weight-bold font-italic"> Defeat </h3>
                         </div>
@@ -157,6 +187,41 @@
                             <h3 id="resultado_attacker" class="font-weight-bold font-italic"> Victory </h3>
                         </div>
                     </div>
+
+
+                    <div class="row">
+                        <div class="col">
+                            <span>Casualties</span>
+                        </div>
+                    </div>
+
+
+                    <div class="row  mt-3">
+                        <div class="col">
+                            <table id="bajas_defender" class="table-sm">
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table id="bajas_attacker" class="table-sm">
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                            <div class="col">
+                                <span>Victory:</span> <span id="victory"></span>
+                            </div>
+                            <div class="col">
+                                <span>Defeat:</span> <span id="defeat"></span>
+                            </div>
+                            <div class="col">
+                                <span>Stalemate:</span> <span id="stalemate"></span>
+                            </div>
+                        </div>
+
+
+
+
 
                 </div> {#card body#}
 
