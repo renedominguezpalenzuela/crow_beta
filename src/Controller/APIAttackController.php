@@ -2,17 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Building;
-use App\Entity\Troop;
-use App\Entity\TroopBuilding;
 use App\Entity\User;
+use App\Service\Battle;
 use App\Service\GlobalConfig;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Class APICreateSquadController
@@ -22,21 +19,41 @@ use Doctrine\ORM\EntityManagerInterface;
 class APIAttackController extends AbstractController
 {
 
+    // private $session;
+    private $em;
+    private $battle;
+
     //Constantes resultados de attaque
-    const VICTORY = 0;
+    /* const VICTORY = 0;
     const DEFEAT = 1;
     const STALEMATE = 2;
 
-    private $resultados_string = array("Victory", "Defeat", "Stalemate");
+    private $resultados_string = array("Victory", "Defeat", "Stalemate");*/
 
-    private $session;
-    private $em;
+    //Variables de la Batalla Contendran uno de los valores VICTORY, DEFEAT, STALEMAN
+    private $resultado_batalla_attacker;
+    private $resultado_batalla_defender;
+
+    //Contiene el valor de la fuerza de ataque del atacante
+    private $attacking_force_strenght;
+    private $defending_force_strenght;
+
+    //Calculo de bajas
+    private $attacker_chance_of_victory = 0;
+    private $defender_chance_of_victory = 0;
+    private $staleChance = 0;
+
+    //Edificio fuerza de defensa inicial
+    private $building_initial_defense = 0;
+    private $building_final_defense = 0;
+    private $attacker_building_damage_strength = 0;
 
     //Inyectando el servicio session
-    public function __construct(SessionInterface $session, EntityManagerInterface $entityManager)
+    public function __construct( /*SessionInterface $session,*/EntityManagerInterface $entityManager, Battle $battle)
     {
-        $this->session = $session;
+        ///$this->session = $session;
         $this->em = $entityManager;
+        $this->battle = $battle;
     }
 
     //Extructura datos en la peticion
@@ -45,43 +62,11 @@ class APIAttackController extends AbstractController
     /**
      * @Route("/attack", name="attack", methods={"POST"})
      */
-
     public function ataque(Request $request, GlobalConfig $global_config)
     {
         $mensaje_error = "Not error found";
         $error = false;
         $resultado = '';
-
-        //--------------------------------------------------------------------------------------------------
-        // Validando si usuario autenticado correctamente
-        //--------------------------------------------------------------------------------------------------
-
-        /*  if(!$this->isGranted('IS_AUTHENTICATED_FULLY')){
-
-        $respuesta=array(
-        'error'=>false,
-        'message'=>"User not authenticated",
-        );
-
-        return $this->json($respuesta, Response::HTTP_OK);
-
-        }*/
-
-        //-------------------------------------------------------------------------------------------------
-        //(1) Obteniendo los datos que vienen en la peticion
-        //--------------------------------------------------------------------------------------------------
-
-        $parametersAsArray = [];
-        $content = $request->get("peticion");
-
-        //variable que contendra el json como un arreglo
-
-        $parametersAsArray = json_decode($content, true);
-
-        $attacker_troops = $parametersAsArray["troops"];
-        $attacked_building_id = $parametersAsArray["attacked_building"];
-
-        //$this->em = $this->getDoctrine()->getManager();
 
         //--------------------------------------------------------------------------
         //(1) Obtengo user() de la peticion
@@ -92,388 +77,333 @@ class APIAttackController extends AbstractController
             $user = $fake_user;
 
         } else {
+
+            //--------------------------------------------------------------------------------------------------
+            // Validando si usuario autenticado correctamente
+            //--------------------------------------------------------------------------------------------------
+
+            if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+
+                $respuesta = array(
+                    'error' => true,
+                    'message' => "User not authenticated",
+                );
+
+                return $this->json($respuesta, Response::HTTP_OK);
+
+            }
             //usuario real si testing mode = false
             $user = $this->getUser();
         }
 
+        //-------------------------------------------------------------------------------------------------
+        //(2) Obteniendo los datos que vienen en la peticion
+        //--------------------------------------------------------------------------------------------------
+        $parametersAsArray = [];
+        $content = $request->get("peticion");
+
+        //variable que contendra el json como un arreglo
+        $parametersAsArray = json_decode($content, true);
+
+        //Datos del ataque: arreglo con tropas atacantes, id del edificio a atacar
+        $attacker_troops = $parametersAsArray["troops"];
+
+        $attacked_building_id = $parametersAsArray["attacked_building"];
+        $this->datos_resultados_ataque = array();
+
+        //----------------------------------------------------------------------------------------
+        // Tropas atacantes, calculando fuerza total
+        //----------------------------------------------------------------------------------------
+
+        $this->attacking_force_strenght = $this->battle->getAttackerForceStrength($attacker_troops, $this->attacker_building_damage_strength);
+
+        //Si tropas atacantes <=0 no puede realizarse el ataque
+        if ($this->attacking_force_strenght <= 0) {
+
+            $respuesta = array(
+                'error' => true,
+                'message' => "Attacker Troops < 0",
+            );
+
+            return $this->json($respuesta, Response::HTTP_OK);
+        }
+
+        //--------------------------------------------------------------------------------------------
+        // Tropas defensoras, calculando fuerza total
+        //--------------------------------------------------------------------------------------------
+        $building_name = '';
+        $defender_troops = [];
+        $this->defending_force_strenght = $this->battle->getDefenderForceStrength($attacked_building_id, $building_name, $defender_troops, $this->building_initial_defense);
+
+       // var_dump("Defensas ".$this->building_initial_defense);
         //---------------------------------------------------------------------------------------------
         //Calculando resultado de la batalla
         //---------------------------------------------------------------------------------------------
 
-        $resultado_batalla_attacker = mt_rand(0, 2);
-        $resultado_batalla_defender = null;
+        //Valores numericos
+        $this->resultado_batalla_attacker = $this->battle->getRamdomBattleResultforAttacker($this->attacking_force_strenght, $this->defending_force_strenght);
+        $this->resultado_batalla_defender = $this->battle->getOtherSideResult($this->resultado_batalla_attacker);
 
-        $texto_resultado_attacker = $this->resultados_string[$resultado_batalla_attacker];
-        $texto_resultado_defender = '';
+        if ($this->resultado_batalla_attacker == Battle::UNDEFINED) {
 
-        switch ($resultado_batalla_attacker) {
-            case self::VICTORY:
-                $resultado_batalla_defender = self::DEFEAT;
-                break;
-            case self::DEFEAT:
-                $resultado_batalla_defender = self::VICTORY;
-                break;
-            case self::STALEMATE:
-                $resultado_batalla_defender = self::STALEMATE;
-                break;
-            default:
-                $texto_resultado_defender = "not defined";
+            $respuesta = array(
+                'error' => true,
+                'message' => "Battle result undefined",
+            );
 
+            return $this->json($respuesta, Response::HTTP_OK);
         }
 
-        $texto_resultado_defender = $this->resultados_string[$resultado_batalla_defender];
+        //Valores de Texto
+        $this->texto_resultado_attacker = $this->battle->getResultadoString($this->resultado_batalla_attacker);
+        $this->texto_resultado_defender = $this->battle->getResultadoString($this->resultado_batalla_defender);
 
-        $datos_resultados_ataque = array();
-
-        //-------------------------------------------------------------------------------------------
-        // Edificio
-        //-------------------------------------------------------------------------------------------
-        $building = $this->em->getRepository(Building::class)->find($attacked_building_id);
-        $building_name = $building->getName2() . ", " . $building->getKingdom()->getName();
-        $building_initial_defense = $building->getDefenseRemaining();
-
-        //Buscando nombre de tropas para mostrar en reporte final
-        //Calculando fuerza total de ataque
-
-        //----------------------------------------------------------------------------------------
-        // Tropas atacantes
-        //----------------------------------------------------------------------------------------
-        $new_attacker_troops = array();
-
-        $attacking_force_strenght = 0;
-
-        foreach ($attacker_troops as $unatropa) {
-            $id = $unatropa["troops_id"];
-            $tropa = $this->em->getRepository(Troop::class)->find($id);
-            $tipoUnidad = $tropa->getUnitType();
-            $total = $unatropa["total"];
-
-            $unatropa["name"] = $tipoUnidad->getName();
-
-            $new_attacker_troops[] = $unatropa;
-
-            $speed = $tipoUnidad->getSpeed();
-            $attack = $tipoUnidad->getAttack();
-            $defense = $tipoUnidad->getDefense();
-            $damage = $tipoUnidad->getDamage();
-
-            $attacking_force_strenght = $attacking_force_strenght + ($speed * $total * ($attack + $defense));
-
-        }
-
-        // var_dump($attacking_force_strenght);
-
-        //----------------------------------------------------------------------------------------
-        //  Tropas defensoras
-        //----------------------------------------------------------------------------------------
-        $defender_troops = [];
-        $tropa_temporal = [];
-        $troops_on_building = $this->em->getRepository(TroopBuilding::class)->findBy(['building' => $attacked_building_id]);
-
-        $defending_force_strength = 0;
-
-        foreach ($troops_on_building as $unatropa) {
-
-            $tropa = $unatropa->getTroops();
-
-            $tipoUnidad = $tropa->getUnitType();
-            $total = $unatropa->getTotal();
-
-            $tropa_temporal["name"] = $tipoUnidad->getName();
-            $tropa_temporal["total"] = $total;
-            $defender_troops[] = $tropa_temporal;
-
-            $speed = $tipoUnidad->getSpeed();
-            $attack = $tipoUnidad->getAttack();
-            $defense = $tipoUnidad->getDefense();
-            $damage = $tipoUnidad->getDamage();
-
-            $defending_force_strength = $defending_force_strength + ($total * ($attack + $defense));
-        }
-
-        //TODO: sumarle la fuerza defensiva del edificio
-        //$defending_force_strength =  $defending_force_strength + $defensa_edificio;
-
-        $BF = 0;
-        $LF = 0;
-        $attacker_chance_of_victory = 0;
-        $defender_chance_of_victory = 0;
-        $staleChance = 0;
-
-        //TODO: attacking_force_strenght>0, defending_force_strength>0
-
-        //Determinando Porcientos
-        if ($defending_force_strength > $attacking_force_strenght) { //Defensor mayor
-            $BF = $defending_force_strength;
-            $LF = $attacking_force_strenght;
-            if ($LF <= 0) {$LF = 1;}
-
-            $attacker_chance_of_victory = round(100 / (($BF / $LF) + 2), 2);
-
-            $defender_chance_of_victory = round(($BF / $LF) * $attacker_chance_of_victory, 2);
-            $staleChance = round(100 - $defender_chance_of_victory - $attacker_chance_of_victory, 2);
-
-        } else { //Atacante mayor
-
-            $BF = $attacking_force_strenght;
-            $LF = $defending_force_strength;
-
-            if ($LF <= 0) {$LF = 1;}
-
-            $defender_chance_of_victory = round(100 / (($BF / $LF) + 2), 2);
-            $attacker_chance_of_victory = round(($BF / $LF) * $defender_chance_of_victory, 2);
-            $staleChance = round(100 - $attacker_chance_of_victory - $defender_chance_of_victory, 2);
-
-        }
-
-        //----------------------------------------------------------------------------------------
-        // Eliminando tropas
-        //----------------------------------------------------------------------------------------
-        $lista_tropas_atacante = array();
-        $lista_tropas_defensor = array();
-
-        //------------------------------------------------------------------------------------------
-        // lista_tropas_atacante
-        //------------------------------------------------------------------------------------------
-        $c = 0;
-        foreach ($attacker_troops as $ungrupotropas) {
-
-            $total = $ungrupotropas["total"];
-
-            for ($i = 0; $i < $total; $i++) {
-                $unaTropa["troops_id"] = $ungrupotropas["troops_id"];
-                $lista_tropas_atacante[] = $unaTropa;
-            }
-
-        }
-
-        //------------------------------------------------------------------------------------------
-        // lista_tropas_defensores
-        //------------------------------------------------------------------------------------------
-        $c = 0;
-        foreach ($troops_on_building as $unatropa) {
-
-            $total = $unatropa->getTotal();
-
-            for ($i = 0; $i < $total; $i++) {
-                $unaTropa["troops_id"] = $unatropa->getTroops()->getId();
-                $lista_tropas_defensor[] = $unaTropa;
-            }
-
-        }
-
-        //------------------------------------------------------------------------------------------
-        // encontrar el total de tropas a eliminar de los atacantes
-        //------------------------------------------------------------------------------------------
-
+        //--------------------------------------------------------------------------------------------
+        // Calculo de Porcientos
+        //--------------------------------------------------------------------------------------------
         $porciento_tropas_eliminar_atacante = 0;
         $porciento_tropas_eliminar_defensor = 0;
+        $danos_a_edificios = 0; //Valor numerico de danos a edificios
 
-        if ($resultado_batalla_attacker != self::STALEMATE) {
-            $porciento_tropas_eliminar_atacante = $defender_chance_of_victory;
-            $porciento_tropas_eliminar_defensor = $attacker_chance_of_victory;
-        } else {
-            $porciento_tropas_eliminar_atacante = $staleChance;
-            $porciento_tropas_eliminar_defensor = $staleChance;
+        $this->battle->getPorcientos(
+            $this->attacking_force_strenght,
+            $this->defending_force_strenght,
+            $this->attacker_chance_of_victory,
+            $this->defender_chance_of_victory,
+            $this->staleChance,
+            $this->resultado_batalla_attacker,
+            $porciento_tropas_eliminar_atacante,
+            $porciento_tropas_eliminar_defensor,
+            $this->attacker_building_damage_strength,
+            $danos_a_edificios
+        );
 
+
+        //Calculo del damage al edificio
+        $this->building_final_defense = $this->building_initial_defense - $danos_a_edificios;
+        if ($this->building_final_defense <0) {
+            $this->building_final_defense = 0;
         }
 
-        $lista_tropas_eliminadas_atacante = array();
-        $lista_tropas_eliminadas_defensor = array();
 
-        $lista_tropas_eliminadas_atacante = $this->eliminarTropas($lista_tropas_atacante, $porciento_tropas_eliminar_atacante);
-        $lista_tropas_eliminadas_defensor = $this->eliminarTropas($lista_tropas_defensor, $porciento_tropas_eliminar_defensor);
+     //   var_dump("Attacker Strength ".$this->attacking_force_strenght." Defender Strength ". $this->defending_force_strenght);
+     //   var_dump("Attacker Chance Victory ".$this->attacker_chance_of_victory." Defender Chance Victory ".$this->defender_chance_of_victory." Stalemate ".$this->staleChance);
 
-        //Buscando el nombre de las tropas a eliminar para mostrar al usuario
+      
 
-       // $lista_tropas_eliminadas_atacante = $this->ponerNombreTropas($lista_tropas_eliminadas_atacante);
-       // $lista_tropas_eliminadas_defensor = $this->ponerNombreTropas($lista_tropas_eliminadas_defensor);
+
+        //--------------------------------------------------------------------------------------------
+        // Buscando Tropas a eliminar
+        //--------------------------------------------------------------------------------------------
+        $attacker_troops_a_eliminar = array();
+        $defender_troops_a_eliminar = array();
+
+       // var_dump("Atacante " . $this->texto_resultado_attacker . " Tropas Perdidas " . round($porciento_tropas_eliminar_atacante) . " %");
+       // var_dump("Defender " .  $this->texto_resultado_defender . " Tropas Perdidas " . round($porciento_tropas_eliminar_defensor) . " %");
+
+        //var_dump("Attacker ");
+        // var_dump($attacker_troops);
+         $this->battle->getListaTropasAeliminar($attacker_troops, $porciento_tropas_eliminar_atacante, $attacker_troops_a_eliminar, $total_a_eliminar);
+        // var_dump($attacker_troops_a_eliminar);
+
+        //var_dump("Defender ");
+        //var_dump($defender_troops);
+        $this->battle->getListaTropasAeliminar($defender_troops, $porciento_tropas_eliminar_defensor, $defender_troops_a_eliminar, $total_a_eliminar);
+        //var_dump($defender_troops_a_eliminar);
+
+
+        $attacker_lista_condensada_a_eliminar = array();
+        $this->battle->getListaCondensada($attacker_troops_a_eliminar, $attacker_lista_condensada_a_eliminar);
         
- 
-        //-----------------------------------------------------------------------
-        //  Modificar la BD
-        //-----------------------------------------------------------------------
-
-        //Modificar tropas del defensor en la BD
-       // $this->modificarBD($lista_tropas_eliminadas_defensor, $building);
+        $defender_lista_condensada_a_eliminar = array();
+        $this->battle->getListaCondensada($defender_troops_a_eliminar, $defender_lista_condensada_a_eliminar);
+        //var_dump( $defender_lista_condensada_a_eliminar);
 
 
-         //Modificar tropas del Atacante en la BD
-        // $id_castillo_atacante = $user->getKingdom()->getMainCastleId();
-        // $castillo_del_atacante = $this->em->getRepository(Building::class)->find($id_castillo_atacante);
-        // $this->modificarBD($lista_tropas_eliminadas_atacante, $castillo_del_atacante );
+        //--------------------------------------------------------------------------------------------
+        // Eliminando tropas, Actualizando BD
+        //--------------------------------------------------------------------------------------------
+
+
+
 
         //----------------------------------------------------------------------------------------
         //  Enviando datos al cliente
         //----------------------------------------------------------------------------------------
 
+
+
+      
+
         $datos_resultados_ataque = array(
-            'building_initial_defense' => $building_initial_defense,
-            'texto_resultado_defender' => $texto_resultado_defender,
-            'texto_resultado_attacker' => $texto_resultado_attacker,
-            'defending_force_strength' => $defending_force_strength,
-            'attacking_force_strenght' => $attacking_force_strenght,
-            'defender_chance_of_victory' => $defender_chance_of_victory,
-            'attacker_chance_of_victory' => $attacker_chance_of_victory,
-            'stale_chance' => $staleChance,
-            'bajas_atacante' => $lista_tropas_eliminadas_atacante,
-            'bajas_defensor' => $lista_tropas_eliminadas_defensor,
+            'building_initial_defense' => $this->building_initial_defense,
+            'building_final_defense' => $this->building_final_defense,
+            'attacker_building_damage_strength' => $this->attacker_building_damage_strength,
+            'building_damage' => $danos_a_edificios,
+            'texto_resultado_attacker' => $this->texto_resultado_attacker,
+            'texto_resultado_defender' => $this->texto_resultado_defender,
+            'attacking_force_strenght' =>  $this->attacking_force_strenght,            
+            'defending_force_strength' =>  $this->defending_force_strenght,
+            'attacker_chance_of_victory' => $this->attacker_chance_of_victory,            
+            'defender_chance_of_victory' => $this->defender_chance_of_victory,            
+            'stale_chance' =>  $this->staleChance,
+            'bajas_atacante' => $attacker_lista_condensada_a_eliminar,
+            'bajas_defensor' => $defender_lista_condensada_a_eliminar,
         );
 
         $respuesta = array(
             'error' => $error,
             'message' => $mensaje_error,
-            'result' => $texto_resultado_attacker,
-            'troops_attacker' => $new_attacker_troops,
+            'result' => $this->resultado_batalla_attacker,
+            'troops_attacker' => $attacker_troops,
             'troops_defenders' => $defender_troops,
             'attacked_building' => $building_name,
             'resultados_ataque' => $datos_resultados_ataque,
         );
 
         if (!$error) {
-            $this->em->flush();
+           // $this->em->flush();
         }
 
         return $this->json($respuesta, Response::HTTP_OK);
 
     }
 
+    /*
     public function eliminarTropas($tropas_iniciales, $Porciento_a_Eliminar)
     {
 
-        //Encontrando total a eliminar
-        $total_tropas = count($tropas_iniciales);
-        $total_a_eliminar = round(($Porciento_a_Eliminar * $total_tropas) / 100);
+    //Encontrando total a eliminar
+    $total_tropas = count($tropas_iniciales);
+    $total_a_eliminar = round(($Porciento_a_Eliminar * $total_tropas) / 100);
 
-        //Reordenamiento aleatorio
-        shuffle($tropas_iniciales);
+    //Reordenamiento aleatorio
+    shuffle($tropas_iniciales);
 
-        //Escogiendo las N primeras al azar
-        $lista_tropas_a_eliminar = array_slice($tropas_iniciales, 0, $total_a_eliminar);
+    //Escogiendo las N primeras al azar
+    $lista_tropas_a_eliminar = array_slice($tropas_iniciales, 0, $total_a_eliminar);
 
-        $lista_tropas_a_eliminar_condensada = array();
+    $lista_tropas_a_eliminar_condensada = array();
 
-        //agrupar por id
-        foreach ($lista_tropas_a_eliminar as $una_tropa) {
+    //agrupar por id
+    foreach ($lista_tropas_a_eliminar as $una_tropa) {
 
-            $encontrado = false;
-            $indice = 0;
-            $total = 0;
-            foreach ($lista_tropas_a_eliminar_condensada as $una_tropa_condensada) {
+    $encontrado = false;
+    $indice = 0;
+    $total = 0;
+    foreach ($lista_tropas_a_eliminar_condensada as $una_tropa_condensada) {
 
-                if ($una_tropa_condensada["troops_id"] === $una_tropa["troops_id"]) {
+    if ($una_tropa_condensada["troops_id"] === $una_tropa["troops_id"]) {
 
-                    // $una_tropa_condensada["total"] = $una_tropa_condensada["total"] + 1;
-                    // $lista_tropas_a_eliminar_condensada["total"]= $lista_tropas_a_eliminar_condensada["total"]+1;
-                    //var_dump($una_tropa_condensada);
-                    $total = $una_tropa_condensada["total"] + 1;
-                    $encontrado = true;
-                    break;
-                }
-                $indice = $indice + 1;
-            }
-
-            if ($encontrado == false) {
-                $una_tropa["total"] = 1;
-                $id = $una_tropa["troops_id"];
-                //Poner nombre de la tropa
-                $tropa = $this->em->getRepository(Troop::class)->find($id);
-                $una_tropa["name"] = $tropa->getUnitType()->getName();
-                $una_tropa["user"] = $tropa->getUser()->getUsername();
-
-                $lista_tropas_a_eliminar_condensada[] = $una_tropa;
-
-
-
-            } else {
-                $lista_tropas_a_eliminar_condensada[$indice]["total"] = $total;
-            }
-
-        }
-
-        //devolver arreglo para mostrar al cliente
-        return $lista_tropas_a_eliminar_condensada;
+    // $una_tropa_condensada["total"] = $una_tropa_condensada["total"] + 1;
+    // $lista_tropas_a_eliminar_condensada["total"]= $lista_tropas_a_eliminar_condensada["total"]+1;
+    //var_dump($una_tropa_condensada);
+    $total = $una_tropa_condensada["total"] + 1;
+    $encontrado = true;
+    break;
+    }
+    $indice = $indice + 1;
     }
 
+    if ($encontrado == false) {
+    $una_tropa["total"] = 1;
+    $id = $una_tropa["troops_id"];
+    //Poner nombre de la tropa
+    $tropa = $this->em->getRepository(Troop::class)->find($id);
+    $una_tropa["name"] = $tropa->getUnitType()->getName();
+    $una_tropa["user"] = $tropa->getUser()->getUsername();
+
+    $lista_tropas_a_eliminar_condensada[] = $una_tropa;
+
+    } else {
+    $lista_tropas_a_eliminar_condensada[$indice]["total"] = $total;
+    }
+
+    }
+
+    //devolver arreglo para mostrar al cliente
+    return $lista_tropas_a_eliminar_condensada;
+    }*/
+
+    /*
     public function modificarBD($tropas_a_eliminar, $edificio)
     {
 
-       // $this->em = $this->getDoctrine()->getManager();
+    // $this->em = $this->getDoctrine()->getManager();
 
-        foreach ($tropas_a_eliminar as $una_tropa) {
+    foreach ($tropas_a_eliminar as $una_tropa) {
 
-           // var_dump($una_tropa);
+    // var_dump($una_tropa);
 
-            //Total a eliminar
-            $total_eliminar = $una_tropa["total"];
+    //Total a eliminar
+    $total_eliminar = $una_tropa["total"];
 
-            $troop_id = $una_tropa["troops_id"];
+    $troop_id = $una_tropa["troops_id"];
 
-            //Busco la tropa en el edificio
-            $tropa_edificio = $this->em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $edificio]);
+    //Busco la tropa en el edificio
+    $tropa_edificio = $this->em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $edificio]);
 
-            //busco la tropa en Troops
-            $tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
+    //busco la tropa en Troops
+    $tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
 
-            //-------------------------------------------
-            // Total en el edificio
-            //-------------------------------------------
-            $total_edificio = $tropa_edificio->getTotal();
+    //-------------------------------------------
+    // Total en el edificio
+    //-------------------------------------------
+    $total_edificio = $tropa_edificio->getTotal();
 
-            //Total final en edificio
-            $total_final_edificio = $total_edificio - $total_eliminar;
+    //Total final en edificio
+    $total_final_edificio = $total_edificio - $total_eliminar;
 
-            //-------------------------------------------
-            // Total en Troops
-            //-------------------------------------------
-            $total_Troops = $tropa_Troops->getTotal();
+    //-------------------------------------------
+    // Total en Troops
+    //-------------------------------------------
+    $total_Troops = $tropa_Troops->getTotal();
 
-            //total final en Troops
-            $total_final_Troops = $total_Troops - $total_eliminar;
+    //total final en Troops
+    $total_final_Troops = $total_Troops - $total_eliminar;
 
-            //Modificar BD
+    //Modificar BD
 
-            if ($total_final_edificio <= 0) {
-                $total_final_edificio = 0;
-                $this->em->remove($tropa_edificio);
-                $this->em->flush();
-            } else {
-                $tropa_edificio->setTotal($total_final_edificio);
-                $this->em->persist($tropa_edificio);
-            }
+    if ($total_final_edificio <= 0) {
+    $total_final_edificio = 0;
+    $this->em->remove($tropa_edificio);
+    $this->em->flush();
+    } else {
+    $tropa_edificio->setTotal($total_final_edificio);
+    $this->em->persist($tropa_edificio);
+    }
 
-            if ($total_final_Troops <= 0) {
-                $total_final_Troops = 0;
-                $this->em->remove($tropa_Troops);
-                $this->em->flush();
-            } else {
-                $tropa_Troops->setTotal($total_final_edificio);
-                $this->em->persist($tropa_Troops);
-            }
-
-
-        }
-
-        $this->em->flush();
-      
+    if ($total_final_Troops <= 0) {
+    $total_final_Troops = 0;
+    $this->em->remove($tropa_Troops);
+    $this->em->flush();
+    } else {
+    $tropa_Troops->setTotal($total_final_edificio);
+    $this->em->persist($tropa_Troops);
+    }
 
     }
 
+    $this->em->flush();
 
-    public function ponerNombreTropas($lista_tropas) {
-       // $this->em = $this->getDoctrine()->getManager();
+    }*/
 
-        $c = 0;
-        foreach ($lista_tropas as $una_tropa) {
+    /*
+public function ponerNombreTropas($lista_tropas)
+{
+// $this->em = $this->getDoctrine()->getManager();
 
-            $troop_id = $una_tropa["troops_id"];
-            $tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
-             
-            $lista_tropas[$c]["name"] =  $tropa_Troops->getUnitType()->getName();
-            $c=$c+1;
+$c = 0;
+foreach ($lista_tropas as $una_tropa) {
 
-        }
+$troop_id = $una_tropa["troops_id"];
+$tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
 
-    }
+$lista_tropas[$c]["name"] = $tropa_Troops->getUnitType()->getName();
+$c = $c + 1;
+
+}
+
+}*/
 
 }
