@@ -68,8 +68,7 @@ class Battle
 
 
         $n100 = mt_rand(1, 100);
-
-        
+      
 
         /*
         si $n100 de 1 a $nAtacanteVictoria --> victoria del atacante
@@ -270,6 +269,8 @@ class Battle
             $tropa_temporal["name"] = $tipoUnidad->getName();
             $tropa_temporal["total"] = $total;
             $tropa_temporal["user"] = $tropa->getUser()->getName();
+
+            
 
             $defender_troops[] = $tropa_temporal;
 
