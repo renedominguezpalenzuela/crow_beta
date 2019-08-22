@@ -50,7 +50,77 @@ class Battle
     //-------------------------------------------------------------------------------------------------
     // Devuelve un numero al azar del 0 al 2 que simboliza uno de los resultados del ataque
     //-------------------------------------------------------------------------------------------------
-    public function getRamdomBattleResultforAttacker($attacking_force_strenght, $defending_force_strenght)
+    public function getRamdomBattleResultforAttacker($attacking_force_strenght, $defending_force_strenght,
+        $attacker_chance_of_victory, $defender_chance_of_victory, $staleChance) {
+
+
+   
+    // +" "+ $defending_force_strenght +" "+
+    //$attacker_chance_of_victory+" "+ $defender_chance_of_victory+" "+ $staleChance);
+
+        $nAtacanteVictoria = round ($attacker_chance_of_victory);
+        $nDefenderVictoria = $nAtacanteVictoria + round ($defender_chance_of_victory);
+        $nStaleMate = $nDefenderVictoria + round ($staleChance);
+
+     /*   var_dump("Atacante de 0 a " +$nAtacanteVictoria );
+        var_dump("Defensor de "+ $nAtacanteVictoria +" a " +$nDefenderVictoria );
+        var_dump("Empate "+ $nDefenderVictoria +" a  100"  );*/
+
+
+        $n100 = mt_rand(1, 100);
+
+        
+
+        /*
+        si $n100 de 1 a $nAtacanteVictoria --> victoria del atacante
+        si $n100 de $nAtacanteVictoria a $nAtacanteVictoria +$nDefenderVictoria  --> victoria del defensor
+        si $n100 de $nDefenderVictoria a 100  --> stalemate
+        */
+  
+        $resultado = Battle::UNDEFINED;
+
+        if ($attacking_force_strenght > 0 && $defending_force_strenght > 0) {
+           
+            if ($n100>=1 && $n100 <$nAtacanteVictoria ) {
+                $resultado = Battle::VICTORY;
+            }
+
+            if ($n100>=$nAtacanteVictoria && $n100 <$nDefenderVictoria ) {
+                $resultado = Battle::DEFEAT;
+            }
+
+            if ($n100>=$nDefenderVictoria && $n100 <=100 ) {
+                $resultado = Battle::STALEMATE;
+            }
+         
+
+        } else {
+
+            if ($attacking_force_strenght <= 0 && $defending_force_strenght <= 0) {
+                $resultado = Battle::UNDEFINED;
+
+            } else {
+
+                if ($defending_force_strenght <= 0) {
+                    $resultado = Battle::VICTORY;
+
+                }
+
+                if ($attacking_force_strenght <= 0) {
+                    $resultado = Battle::DEFEAT;
+
+                }
+            }
+
+        }
+
+        return $resultado;
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    // Devuelve un numero al azar del 0 al 2 que simboliza uno de los resultados del ataque
+    //-------------------------------------------------------------------------------------------------
+    public function getRamdomBattleResultforAttackerOLD($attacking_force_strenght, $defending_force_strenght)
     {
         $resultado = Battle::UNDEFINED;
 
@@ -156,7 +226,7 @@ class Battle
             $damage = $tipoUnidad->getDamage();
             $speed = $tipoUnidad->getSpeed();
 
-            $attacker_building_damage_strength = $attacker_building_damage_strength + $damage *  $total;
+            $attacker_building_damage_strength = $attacker_building_damage_strength + $damage * $total;
 
             //var_dump($unatropa["name"] ." : ".$attack." : ".$defense." : ". $damage." : ".$speed );
 
@@ -177,8 +247,6 @@ class Battle
         $building = $this->em->getRepository(Building::class)->find($attacked_building_id);
         $building_name = $building->getName2() . ", " . $building->getKingdom()->getName();
         $building_initial_defense = $building->getDefenseRemaining();
-
-       
 
         //----------------------------------------------------------------------------------------
         //  Tropas defensoras
@@ -232,10 +300,162 @@ class Battle
     //5) DEF_F = 0 and ATTACK_F <> 0
     //6) DEF_F <> 0 and ATTACK_F = 0
 
-    
-    public function getPorcientos($attacking_force, $defending_force, &$attacker_chance_of_victory, &$defender_chance_of_victory, &$staleChance,
+    //--------------------------------------------------------------------------------------------
+    // Calculo de Porcientos en funcion de las tropas de cada bando
+    //--------------------------------------------------------------------------------------------
+
+    public function getPorcientos($attacking_force, $defending_force,
+        &$attacker_chance_of_victory, &$defender_chance_of_victory, &$staleChance
+    ) {
+
+        $BF = 0; //Biggest Force
+        $LF = 0; //Lowest Force
+
+        $LFCV = 0; //Lesser Force Chance of Victory
+        $BFCV = 0; //Biggest Force Chance of Victory
+        $staleChance = 0; //StaleMate Chance of Victory
+
+        if ($defending_force > $attacking_force) {
+            $BF = $defending_force;
+            $LF = $attacking_force;
+        } else {
+            $BF = $attacking_force;
+            $LF = $defending_force;
+        }
+
+        if ($BF > 0 && $LF > 0) {
+            $LFCV = 100 / (($BF / $LF) + 2);
+            $BFCV = ($BF / $LF) * $LFCV;
+        } else {
+
+            if ($LF <= 0) {
+                $LFCV = 0;
+                $BFCV = 100;
+            }
+
+            if ($BF <= 0) {
+                $BFCV = 0;
+                $LFCV = 100;
+            }
+
+        }
+
+        //si BFCV<0 o LFCV <0 nunca sera $staleChance
+        if ($BF <= 0 && $LF <= 0) {
+            $BFCV = 0;
+            $LFCV = 0;
+            $staleChance = 0;
+        } else {
+            $staleChance = 100 - $BFCV - $LFCV;
+        }
+
+        $BFCV = round($BFCV, 2);
+        $LFCV = round($LFCV, 2);
+        $staleChance = round($staleChance, 2);
+
+        //&$defender_chance_of_victor, &$attacker_chance_of_victory, &$staleChance
+
+        if ($defending_force > $attacking_force) {
+            $defender_chance_of_victory = $BFCV;
+            $attacker_chance_of_victory = $LFCV;
+        } else {
+            $defender_chance_of_victory = $LFCV;
+            $attacker_chance_of_victory = $BFCV;
+        }
+
+        //realizar aproximacion dentro con un margen de 50 o 100 puntos
+
+        $margen = 100; //TODO: modificar este valor para ver aumentar el error
+        //grado de diferencia entre valores para considerarlos iguales
+        $numeros_iguales = $this->compararNumerosconMargen($attacking_force, $defending_force, $margen);
+        if ($numeros_iguales == true && $defending_force != 0 && $attacking_force != 0) {
+            $staleChance = 33.34;
+            //$BFCV = 10;
+            //$LFCV = 10;
+            $defender_chance_of_victory = 33.33;
+            $attacker_chance_of_victory = 33.33;
+        }
+    }
+
+    //Compara dos numeros con un margen de error
+    public function compararNumerosconMargen($N1, $N2, $Margen)
+    {
+        $resultado = false;
+
+        $nivel_inferior = $N2 - $Margen;
+        if ($nivel_inferior < 0) {
+            $nivel_inferior = 0;}
+
+        $nivel_superior = $N2 + $Margen;
+
+        if ($nivel_inferior <= $N1 && $nivel_superior >= $N1) {
+            $resultado = true;
+        }
+
+        return $resultado;
+
+    }
+
+    public function getPorcientoTropasaEliminar($attacker_chance_of_victory, $defender_chance_of_victory, $staleChance, $resultado_batalla_attacker, &$porciento_tropas_eliminar_atacante, &$porciento_tropas_eliminar_defensor)
+    {
+
+        if ($resultado_batalla_attacker != Battle::STALEMATE) {
+
+            $porciento_tropas_eliminar_atacante = $defender_chance_of_victory;
+            $porciento_tropas_eliminar_defensor = $attacker_chance_of_victory;
+
+        } else {
+            $porciento_tropas_eliminar_atacante = $staleChance;
+            $porciento_tropas_eliminar_defensor = $staleChance;
+        }
+
+    }
+
+    public function getDannos_a_edificios($resultado_batalla_attacker, $attacker_building_damage_strength)
+    {
+
+        //$attacker_building_damage_strength
+        //$danos_a_edificios
+        $porciento_a_aplicar = 0;
+
+        //$porcientos_danos_a_edificios
+        switch ($resultado_batalla_attacker) {
+            case self::VICTORY:
+                $porciento_a_aplicar = 100;
+                break;
+            case self::DEFEAT:
+                $porciento_a_aplicar = 25;
+                break;
+            case self::STALEMATE:
+                $porciento_a_aplicar = 50;
+                break;
+            default:
+                $porciento_a_aplicar = 0;
+        }
+
+        // var_dump("Porciento ".$porciento_a_aplicar);
+        // var_dump("Fuerza ataque a edificios ".$attacker_building_damage_strength);
+
+        $danos_a_edificios = round(($porciento_a_aplicar * $attacker_building_damage_strength) / 100);
+
+        //var_dump("Danno final ".$danos_a_edificios);
+
+        return $danos_a_edificios;
+
+    }
+
+    //Casos de uso
+
+    //1) DEF_F > ATTACK_F
+    //2) DEF_F < ATTACK_F
+    //3) DEF_F  = ATTACK_F
+    //4) DEF_F = 0 and ATTACK_F = 0
+    //5) DEF_F = 0 and ATTACK_F <> 0
+    //6) DEF_F <> 0 and ATTACK_F = 0
+
+    public function getPorcientosOLD($attacking_force, $defending_force, &$attacker_chance_of_victory, &$defender_chance_of_victory, &$staleChance,
         $resultado_batalla_attacker, &$porciento_tropas_eliminar_atacante, &$porciento_tropas_eliminar_defensor,
-         $attacker_building_damage_strength,   &$danos_a_edificios) {
+        $attacker_building_damage_strength, &$danos_a_edificios) {
 
         $BF = 0; //Biggest Force
         $LF = 0; //Lowest Force
@@ -312,8 +532,6 @@ class Battle
             $porciento_tropas_eliminar_defensor = $staleChance;
         }
 
-
-
         //$attacker_building_damage_strength
         //$danos_a_edificios
         $porciento_a_aplicar = 0;
@@ -333,63 +551,12 @@ class Battle
                 $porciento_a_aplicar = 0;
         }
 
-       // var_dump("Porciento ".$porciento_a_aplicar);
-       // var_dump("Fuerza ataque a edificios ".$attacker_building_damage_strength);
+        // var_dump("Porciento ".$porciento_a_aplicar);
+        // var_dump("Fuerza ataque a edificios ".$attacker_building_damage_strength);
 
         $danos_a_edificios = round(($porciento_a_aplicar * $attacker_building_damage_strength) / 100);
 
         //var_dump("Danno final ".$danos_a_edificios);
-
-
-
-    }
-
-    //Crea arreglo uniforme para eliminar tropas
-    public function eliminarTropasAtacantes($attacker_troops, $porciento_a_eliminar)
-    {
-
-        $lista_tropas_atacante = array();
-
-        //------------------------------------------------------------------------------------------
-        // lista_tropas_atacante -- Todas las tropas
-        //------------------------------------------------------------------------------------------
-        $c = 0;
-        foreach ($attacker_troops as $ungrupotropas) {
-
-            $total = $ungrupotropas["total"];
-
-            for ($i = 0; $i < $total; $i++) {
-                $unaTropa["troops_id"] = $ungrupotropas["troops_id"];
-                $lista_tropas_atacante[] = $unaTropa;
-            }
-
-        }
-
-        $this->eliminarTropas($lista_tropas_atacante, $porciento_a_eliminar);
-
-    }
-
-    //Crea arreglo uniforme para eliminar tropas
-    public function eliminarTropasDefensores($troops_on_building, $porciento_a_eliminar)
-    {
-        $lista_tropas_defensor = array();
-
-        //------------------------------------------------------------------------------------------
-        // lista_tropas_defensores -- Todas las tropas
-        //------------------------------------------------------------------------------------------
-        $c = 0;
-        foreach ($troops_on_building as $unatropa) {
-
-            $total = $unatropa->getTotal();
-
-            for ($i = 0; $i < $total; $i++) {
-                $unaTropa["troops_id"] = $unatropa->getTroops()->getId();
-                $lista_tropas_defensor[] = $unaTropa;
-            }
-
-        }
-
-        $this->eliminarTropas($lista_tropas_defensor, $porciento_a_eliminar);
 
     }
 
@@ -433,10 +600,10 @@ class Battle
             $encontrada = false;
             $indice = -1;
             for ($i = 0; $i < $total_tropas; $i++) {
-                $unatropa_condensada =$lista_condensada[$i];
-                if ($unatropa_condensada["troops_id"]==$unatropa["troops_id"]){
+                $unatropa_condensada = $lista_condensada[$i];
+                if ($unatropa_condensada["troops_id"] == $unatropa["troops_id"]) {
                     $encontrada = true;
-                    $unatropa_condensada["total"]=$unatropa_condensada["total"]+1;
+                    $unatropa_condensada["total"] = $unatropa_condensada["total"] + 1;
                     $indice = $i;
                     break;
                 }
@@ -452,19 +619,26 @@ class Battle
 
     }
 
+    //Dar lista agrupada por tipo de tropa y por usuario
+    public function eliminarTroopsFromDB($lista_condensada_tropas_a_eliminar)
+    {
+        //Recorro la lista
+
+        //busco la tropa en BUILDINGS -- RESTO EL TOTAL (SI LLEGA A CERO LA ELIMINO)
+        //BUSCO LA TROPA EN TROOPS -- RESTO EL TOTAL (SI LLEGA A CERO LA ELIMINO)
+
+    }
+
 }
 
-/**
+/*
 //----------------------------------------------------------------------------------------
 // Eliminando tropas
 //----------------------------------------------------------------------------------------
 
-
 //------------------------------------------------------------------------------------------
 // encontrar el total de tropas a eliminar de los atacantes
 //------------------------------------------------------------------------------------------
-
-
 
 $lista_tropas_eliminadas_atacante = array();
 $lista_tropas_eliminadas_defensor = array();
@@ -488,5 +662,54 @@ $lista_tropas_eliminadas_defensor = $this->eliminarTropas($lista_tropas_defensor
 // $id_castillo_atacante = $user->getKingdom()->getMainCastleId();
 // $castillo_del_atacante = $this->em->getRepository(Building::class)->find($id_castillo_atacante);
 // $this->modificarBD($lista_tropas_eliminadas_atacante, $castillo_del_atacante );
+
+//Crea arreglo uniforme para eliminar tropas
+public function eliminarTropasAtacantes($attacker_troops, $porciento_a_eliminar)
+{
+
+$lista_tropas_atacante = array();
+
+//------------------------------------------------------------------------------------------
+// lista_tropas_atacante -- Todas las tropas
+//------------------------------------------------------------------------------------------
+$c = 0;
+foreach ($attacker_troops as $ungrupotropas) {
+
+$total = $ungrupotropas["total"];
+
+for ($i = 0; $i < $total; $i++) {
+$unaTropa["troops_id"] = $ungrupotropas["troops_id"];
+$lista_tropas_atacante[] = $unaTropa;
+}
+
+}
+
+$this->eliminarTropas($lista_tropas_atacante, $porciento_a_eliminar);
+
+}
+
+//Crea arreglo uniforme para eliminar tropas
+public function eliminarTropasDefensores($troops_on_building, $porciento_a_eliminar)
+{
+$lista_tropas_defensor = array();
+
+//------------------------------------------------------------------------------------------
+// lista_tropas_defensores -- Todas las tropas
+//------------------------------------------------------------------------------------------
+$c = 0;
+foreach ($troops_on_building as $unatropa) {
+
+$total = $unatropa->getTotal();
+
+for ($i = 0; $i < $total; $i++) {
+$unaTropa["troops_id"] = $unatropa->getTroops()->getId();
+$lista_tropas_defensor[] = $unaTropa;
+}
+
+}
+
+$this->eliminarTropas($lista_tropas_defensor, $porciento_a_eliminar);
+
+}
 
  */

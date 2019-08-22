@@ -1,6 +1,19 @@
 
 
+//-------------------------------------------------------------------------
+// Datos del kingdom y del user
+//-------------------------------------------------------------------------
+function dibujarDatosHTML(team, recursos) {
+    $('#kingdom_name').html(team.kingdom_name);
+    $('#kingdom_points').html(team.kingdom_points);
+    $('#user_points').html(recursos.user_points);
+    $('#user_gold').html(recursos.gold);
+}
 
+
+//-------------------------------------------------------------------------
+// Datos del Castillo
+//-------------------------------------------------------------------------
 function setCastilloData(datos_castillo) {
     $('#level-castle').html(datos_castillo.level);
     $('#defense-castle').html(datos_castillo.defense_remaining);
@@ -8,21 +21,44 @@ function setCastilloData(datos_castillo) {
 };
 
 
-//team, recursos
+function dibujarEdificiosenHTML(buildings) {
+    lista_edificios_html = $("#lista_edificios");
 
-function dibujarDatosHTML(team, recursos) {
-    $('#kingdom_name').html(team.kingdom_name);
-    $('#kingdom_points').html(team.kingdom_points);
+    //limpiar contenido 
 
-    $('#user_points').html(recursos.user_points);
-    $('#user_gold').html(recursos.gold);
+    //console.log(buildings);
+
+    for (unedificio of buildings) {
+
+        if (unedificio.building_name != "Castle" && unedificio.building_name != "Barrack") {
+
+            let id = unedificio.building_name + unedificio.building_id.toString();
+
+            //console.log(id);
+            lista_edificios_html.append(
+                '<div class="card">' +
+                '<div class="card-header-primary">' +
+                '<h5>' + unedificio.building_name2 + '</h5>' +
+                '</div>' +
+                '<div class="card-body">' +
+                '<p><span class="subrayado">Troops</span></p>' +
+                '<table id="' + id + '">' +
+
+                '</table>' +
+                '</div>' +
+                '</div>'
+            );
+
+        }
+
+    }
+
 }
 
 
-
-
-
-
+//-------------------------------------------------------------------------
+// formulario de mover tropas: Troops Movement
+//-------------------------------------------------------------------------
 function crearFormularioMoverTropas(troops, buildings, imagen_add, imagen_del) {
 
     lista_tropas_html = $("#form_planning_troops");
@@ -34,21 +70,13 @@ function crearFormularioMoverTropas(troops, buildings, imagen_add, imagen_del) {
             '<option value="' + unabuilding.building_id + '">' + unabuilding.building_name2.trim() + '</option>';
     }
 
-
-
    // lista_tropas_html.append
     for (unatropa of troops) {
-
         //let id = unedificio.building_name+unedificio.building_id.toString();
-
         //console.log(id);
-
         let troop_id = unatropa.troop_id;
-
-
         //unatropa.troop_id
         //unatropa.troop_name
-        //
         lista_tropas_html.append(
             '<form class="form">' +
             '<div class="form-row">' +
@@ -71,10 +99,8 @@ function crearFormularioMoverTropas(troops, buildings, imagen_add, imagen_del) {
             '</select>' +
             '</span>' +
 
-
             '<a href="#" id="boton_add' + troop_id + '" tropa_id="' + troop_id + '" class="boton_plan_troops_movements">' +
             '<img src="' + imagen_add + '" height="30" alt=""> </a>' +
-
 
 
             '</div>' +
@@ -83,9 +109,6 @@ function crearFormularioMoverTropas(troops, buildings, imagen_add, imagen_del) {
         );
 
         //crearFuncionalidadBotonFormularioPlanMovements(imagen_del);
-
-
-
 
     }
 }
@@ -208,44 +231,6 @@ function crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico) {
 
 
 
-function dibujarEdificiosenHTML(buildings) {
-    lista_edificios_html = $("#lista_edificios");
-
-    //limpiar contenido 
-
-    //console.log(buildings);
-
-    for (unedificio of buildings) {
-
-
-
-        if (unedificio.building_name != "Castle" && unedificio.building_name != "Barrack") {
-
-            let id = unedificio.building_name + unedificio.building_id.toString();
-
-            //console.log(id);
-            lista_edificios_html.append(
-                '<div class="card">' +
-                '<div class="card-header-primary">' +
-                '<h5>' + unedificio.building_name2 + '</h5>' +
-                '</div>' +
-                '<div class="card-body">' +
-                '<p><span class="subrayado">Troops</span></p>' +
-                '<table id="' + id + '">' +
-
-                '</table>' +
-                '</div>' +
-                '</div>'
-            );
-
-
-
-        }
-
-
-    }
-
-}
 
 function dibujarTropasenHTML(buildings) {
 

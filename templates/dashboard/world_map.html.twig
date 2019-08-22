@@ -267,7 +267,10 @@
 
 
 <script>
-
+   //--------------------------------------------------------------------------
+   // Cambiando imagen de fondo
+   //--------------------------------------------------------------------------
+    $('.main-panel > .content').css('background-image', 'url("{{ asset('images/interface/mapa.jpg') }}")');
 
 
     // -------------------------------------------------------------------------------
@@ -310,23 +313,15 @@
         troops = datos.troops;
         troopLocation = datos.troops_location;
 
-
-
         //pintarEdificiosEnemigos(ruta_edificios_enemigos,ruta_attack, imagen_attack,  imagen_add, imagen_del);
         //pintarEdificiosAlianza(ruta_edificios_alianza, imagen_mover, ruta_mover, imagen_add, imagen_del);
-
 
         let id_lista_edificios = 'lista_edificios_enemigos';
         let id_lista_ventana_ocultas = 'ventanas_atacar_ocultas';
         let imagen_accion = imagen_attack;
 
-
         pintarEdificios(ruta_edificios_enemigos, ruta_attack, id_lista_edificios,
             id_lista_ventana_ocultas, imagen_accion, imagen_add, imagen_del)
-
-
-
-
 
     });
 
