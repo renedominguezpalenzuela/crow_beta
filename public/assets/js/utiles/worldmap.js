@@ -576,6 +576,7 @@ function pintarResultadosAtaqueHTML(data){
     $("#attacked_building").html(data.attacked_building);
 
     //Tropas defensoras
+   
     pintarTropasDefensoras(data.troops_defenders);
 
     //Tropas atacantes
@@ -611,7 +612,7 @@ function pintarResultadosAtaqueHTML(data){
 
 function pintarBajasHTML(tropas, id_tabla){
 
-    console.log(tropas);
+   
     let lista_tropas_html = $("#"+id_tabla);
 
     lista_tropas_html.text('');
@@ -624,12 +625,55 @@ function pintarBajasHTML(tropas, id_tabla){
 
 function pintarTropasDefensoras(tropas){
 
+    //Condensar las tropas a mostrar
+
+  
+
+    lista_tropas_condensadas = new Array();
+   for (una_tropa of tropas) {
+
+       
+        //buscar
+        indice = 0;
+        encontrado = false;
+        //console.log("Buscando "+una_tropa.name);
+        for (una_tropa_condensada of lista_tropas_condensadas ) {
+           
+           
+            if (una_tropa.name == una_tropa_condensada.name) {
+               // console.log(indice);
+                encontrado = true;
+                //console.log("Encontrado");
+            }
+
+            if (encontrado) {break;}
+
+            indice = indice + 1;
+        }
+
+        //console.log("una_tropa.name "+una_tropa.name);
+        if (!encontrado) {
+            //console.log("Agregando "+una_tropa.name);
+            lista_tropas_condensadas.push(una_tropa);
+        } else {
+            
+            lista_tropas_condensadas [indice].total = lista_tropas_condensadas [indice].total + una_tropa.total; 
+            /*console.log("Modificando "+una_tropa.name);
+            console.log(indice);
+            console.log( lista_tropas_condensadas [indice].total);*/
+        }
+    }
+
+
+
+
     lista_tropas_html = $("#troops-castle");
 
     lista_tropas_html.text('');
 
-    for (una_tropa of tropas) {
-        lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.name + ": " + una_tropa.total + "</span></p></td></tr>");
+    for (una_tropa_condensada of lista_tropas_condensadas) {
+    //for (una_tropa of tropas) {
+        lista_tropas_html.append("<tr><td><p> <span>" + una_tropa_condensada.name + ": " + una_tropa_condensada.total + "</span></p></td></tr>");
     }
 }
 

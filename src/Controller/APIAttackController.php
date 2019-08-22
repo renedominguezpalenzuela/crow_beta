@@ -132,8 +132,14 @@ class APIAttackController extends AbstractController
         // Tropas defensoras, calculando fuerza total
         //--------------------------------------------------------------------------------------------
         $building_name = '';
-        $defender_troops = [];
+       
+        $defender_troops = array();
         $this->defending_force_strenght = $this->battle->getDefenderForceStrength($attacked_building_id, $building_name, $defender_troops, $this->building_initial_defense);
+
+
+
+
+        
 
         //--------------------------------------------------------------------------------------------
         // Calculo de Porcientos en funcion de las tropas de cada bando
