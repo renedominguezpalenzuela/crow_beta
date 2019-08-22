@@ -135,13 +135,36 @@ class APIAttackController extends AbstractController
         $defender_troops = [];
         $this->defending_force_strenght = $this->battle->getDefenderForceStrength($attacked_building_id, $building_name, $defender_troops, $this->building_initial_defense);
 
-       // var_dump("Defensas ".$this->building_initial_defense);
+        //--------------------------------------------------------------------------------------------
+        // Calculo de Porcientos en funcion de las tropas de cada bando
+        //--------------------------------------------------------------------------------------------
+        $porciento_tropas_eliminar_atacante = 0;
+        $porciento_tropas_eliminar_defensor = 0;
+        $danos_a_edificios = 0; //Valor numerico de danos a edificios
+
+        $this->battle->getPorcientos(
+            $this->attacking_force_strenght,
+            $this->defending_force_strenght,
+            $this->attacker_chance_of_victory,
+            $this->defender_chance_of_victory,
+            $this->staleChance
+        );
+
+        // var_dump("Defensas ".$this->building_initial_defense);
         //---------------------------------------------------------------------------------------------
-        //Calculando resultado de la batalla
+        //Calculando resultado de la batalla en funcion de los porcientos
         //---------------------------------------------------------------------------------------------
 
         //Valores numericos
-        $this->resultado_batalla_attacker = $this->battle->getRamdomBattleResultforAttacker($this->attacking_force_strenght, $this->defending_force_strenght);
+        $this->resultado_batalla_attacker = $this->battle->getRamdomBattleResultforAttacker(
+            $this->attacking_force_strenght, 
+            $this->defending_force_strenght,
+            $this->attacker_chance_of_victory,
+            $this->defender_chance_of_victory,
+            $this->staleChance
+        );
+
+        
         $this->resultado_batalla_defender = $this->battle->getOtherSideResult($this->resultado_batalla_attacker);
 
         if ($this->resultado_batalla_attacker == Battle::UNDEFINED) {
@@ -158,39 +181,31 @@ class APIAttackController extends AbstractController
         $this->texto_resultado_attacker = $this->battle->getResultadoString($this->resultado_batalla_attacker);
         $this->texto_resultado_defender = $this->battle->getResultadoString($this->resultado_batalla_defender);
 
-        //--------------------------------------------------------------------------------------------
-        // Calculo de Porcientos
-        //--------------------------------------------------------------------------------------------
-        $porciento_tropas_eliminar_atacante = 0;
-        $porciento_tropas_eliminar_defensor = 0;
-        $danos_a_edificios = 0; //Valor numerico de danos a edificios
+        //---------------------------------------------------------------------------------------------
+        //Calculando Danos a edificios
+        //---------------------------------------------------------------------------------------------
 
-        $this->battle->getPorcientos(
-            $this->attacking_force_strenght,
-            $this->defending_force_strenght,
-            $this->attacker_chance_of_victory,
+        $danos_a_edificios = $this->battle->getDannos_a_edificios($this->resultado_batalla_attacker, $this->attacker_building_damage_strength);
+
+        //Calculo del damage al edificio
+        $this->building_final_defense = $this->building_initial_defense - $danos_a_edificios;
+        if ($this->building_final_defense < 0) {
+            $this->building_final_defense = 0;
+        }
+
+        //---------------------------------------------------------------------------------------------
+        //Calculando Tropas a eliminar
+        //---------------------------------------------------------------------------------------------
+
+        $this->battle->getPorcientoTropasaEliminar($this->attacker_chance_of_victory,
             $this->defender_chance_of_victory,
             $this->staleChance,
             $this->resultado_batalla_attacker,
             $porciento_tropas_eliminar_atacante,
-            $porciento_tropas_eliminar_defensor,
-            $this->attacker_building_damage_strength,
-            $danos_a_edificios
-        );
+            $porciento_tropas_eliminar_defensor);
 
-
-        //Calculo del damage al edificio
-        $this->building_final_defense = $this->building_initial_defense - $danos_a_edificios;
-        if ($this->building_final_defense <0) {
-            $this->building_final_defense = 0;
-        }
-
-
-     //   var_dump("Attacker Strength ".$this->attacking_force_strenght." Defender Strength ". $this->defending_force_strenght);
-     //   var_dump("Attacker Chance Victory ".$this->attacker_chance_of_victory." Defender Chance Victory ".$this->defender_chance_of_victory." Stalemate ".$this->staleChance);
-
-      
-
+        //   var_dump("Attacker Strength ".$this->attacking_force_strenght." Defender Strength ". $this->defending_force_strenght);
+        //   var_dump("Attacker Chance Victory ".$this->attacker_chance_of_victory." Defender Chance Victory ".$this->defender_chance_of_victory." Stalemate ".$this->staleChance);
 
         //--------------------------------------------------------------------------------------------
         // Buscando Tropas a eliminar
@@ -198,12 +213,12 @@ class APIAttackController extends AbstractController
         $attacker_troops_a_eliminar = array();
         $defender_troops_a_eliminar = array();
 
-       // var_dump("Atacante " . $this->texto_resultado_attacker . " Tropas Perdidas " . round($porciento_tropas_eliminar_atacante) . " %");
-       // var_dump("Defender " .  $this->texto_resultado_defender . " Tropas Perdidas " . round($porciento_tropas_eliminar_defensor) . " %");
+        // var_dump("Atacante " . $this->texto_resultado_attacker . " Tropas Perdidas " . round($porciento_tropas_eliminar_atacante) . " %");
+        // var_dump("Defender " .  $this->texto_resultado_defender . " Tropas Perdidas " . round($porciento_tropas_eliminar_defensor) . " %");
 
         //var_dump("Attacker ");
         // var_dump($attacker_troops);
-         $this->battle->getListaTropasAeliminar($attacker_troops, $porciento_tropas_eliminar_atacante, $attacker_troops_a_eliminar, $total_a_eliminar);
+        $this->battle->getListaTropasAeliminar($attacker_troops, $porciento_tropas_eliminar_atacante, $attacker_troops_a_eliminar, $total_a_eliminar);
         // var_dump($attacker_troops_a_eliminar);
 
         //var_dump("Defender ");
@@ -211,29 +226,23 @@ class APIAttackController extends AbstractController
         $this->battle->getListaTropasAeliminar($defender_troops, $porciento_tropas_eliminar_defensor, $defender_troops_a_eliminar, $total_a_eliminar);
         //var_dump($defender_troops_a_eliminar);
 
-
         $attacker_lista_condensada_a_eliminar = array();
         $this->battle->getListaCondensada($attacker_troops_a_eliminar, $attacker_lista_condensada_a_eliminar);
-        
+
         $defender_lista_condensada_a_eliminar = array();
         $this->battle->getListaCondensada($defender_troops_a_eliminar, $defender_lista_condensada_a_eliminar);
         //var_dump( $defender_lista_condensada_a_eliminar);
 
-
         //--------------------------------------------------------------------------------------------
         // Eliminando tropas, Actualizando BD
         //--------------------------------------------------------------------------------------------
-
-
+        $this->battle->eliminarTroopsFromDB($attacker_lista_condensada_a_eliminar);
+        $this->battle->eliminarTroopsFromDB($defender_lista_condensada_a_eliminar);
 
 
         //----------------------------------------------------------------------------------------
         //  Enviando datos al cliente
         //----------------------------------------------------------------------------------------
-
-
-
-      
 
         $datos_resultados_ataque = array(
             'building_initial_defense' => $this->building_initial_defense,
@@ -242,11 +251,11 @@ class APIAttackController extends AbstractController
             'building_damage' => $danos_a_edificios,
             'texto_resultado_attacker' => $this->texto_resultado_attacker,
             'texto_resultado_defender' => $this->texto_resultado_defender,
-            'attacking_force_strenght' =>  $this->attacking_force_strenght,            
-            'defending_force_strength' =>  $this->defending_force_strenght,
-            'attacker_chance_of_victory' => $this->attacker_chance_of_victory,            
-            'defender_chance_of_victory' => $this->defender_chance_of_victory,            
-            'stale_chance' =>  $this->staleChance,
+            'attacking_force_strenght' => $this->attacking_force_strenght,
+            'defending_force_strength' => $this->defending_force_strenght,
+            'attacker_chance_of_victory' => $this->attacker_chance_of_victory,
+            'defender_chance_of_victory' => $this->defender_chance_of_victory,
+            'stale_chance' => $this->staleChance,
             'bajas_atacante' => $attacker_lista_condensada_a_eliminar,
             'bajas_defensor' => $defender_lista_condensada_a_eliminar,
         );
@@ -262,7 +271,7 @@ class APIAttackController extends AbstractController
         );
 
         if (!$error) {
-           // $this->em->flush();
+            // $this->em->flush();
         }
 
         return $this->json($respuesta, Response::HTTP_OK);
