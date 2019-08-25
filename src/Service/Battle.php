@@ -53,45 +53,40 @@ class Battle
     public function getRamdomBattleResultforAttacker($attacking_force_strenght, $defending_force_strenght,
         $attacker_chance_of_victory, $defender_chance_of_victory, $staleChance) {
 
+        // +" "+ $defending_force_strenght +" "+
+        //$attacker_chance_of_victory+" "+ $defender_chance_of_victory+" "+ $staleChance);
 
-   
-    // +" "+ $defending_force_strenght +" "+
-    //$attacker_chance_of_victory+" "+ $defender_chance_of_victory+" "+ $staleChance);
+        $nAtacanteVictoria = round($attacker_chance_of_victory);
+        $nDefenderVictoria = $nAtacanteVictoria + round($defender_chance_of_victory);
+        $nStaleMate = $nDefenderVictoria + round($staleChance);
 
-        $nAtacanteVictoria = round ($attacker_chance_of_victory);
-        $nDefenderVictoria = $nAtacanteVictoria + round ($defender_chance_of_victory);
-        $nStaleMate = $nDefenderVictoria + round ($staleChance);
-
-     /*   var_dump("Atacante de 0 a " +$nAtacanteVictoria );
+        /*   var_dump("Atacante de 0 a " +$nAtacanteVictoria );
         var_dump("Defensor de "+ $nAtacanteVictoria +" a " +$nDefenderVictoria );
         var_dump("Empate "+ $nDefenderVictoria +" a  100"  );*/
 
-
         $n100 = mt_rand(1, 100);
-      
 
         /*
         si $n100 de 1 a $nAtacanteVictoria --> victoria del atacante
         si $n100 de $nAtacanteVictoria a $nAtacanteVictoria +$nDefenderVictoria  --> victoria del defensor
         si $n100 de $nDefenderVictoria a 100  --> stalemate
-        */
-  
+         */
+
         $resultado = Battle::UNDEFINED;
 
         if ($attacking_force_strenght > 0 && $defending_force_strenght > 0) {
-           
-            if ($n100>=1 && $n100 <$nAtacanteVictoria ) {
+
+            if ($n100 >= 1 && $n100 < $nAtacanteVictoria) {
                 $resultado = Battle::VICTORY;
             }
 
-            if ($n100>=$nAtacanteVictoria && $n100 <$nDefenderVictoria ) {
+            if ($n100 >= $nAtacanteVictoria && $n100 < $nDefenderVictoria) {
                 $resultado = Battle::DEFEAT;
             }
 
-            if ($n100>=$nDefenderVictoria && $n100 <=100 ) {
+            if ($n100 >= $nDefenderVictoria && $n100 <= 100) {
                 $resultado = Battle::STALEMATE;
             }
-         
 
         } else {
 
@@ -269,8 +264,6 @@ class Battle
             $tropa_temporal["name"] = $tipoUnidad->getName();
             $tropa_temporal["total"] = $total;
             $tropa_temporal["user"] = $tropa->getUser()->getName();
-
-            
 
             $defender_troops[] = $tropa_temporal;
 
@@ -621,96 +614,77 @@ class Battle
     }
 
     //Dar lista agrupada por tipo de tropa y por usuario
-    public function eliminarTroopsFromDB($lista_condensada_tropas_a_eliminar)
+    public function eliminarTroopsFromDB($lista_condensada_tropas_a_eliminar, $edificio)
     {
         //Recorro la lista
 
         //busco la tropa en BUILDINGS -- RESTO EL TOTAL (SI LLEGA A CERO LA ELIMINO)
         //BUSCO LA TROPA EN TROOPS -- RESTO EL TOTAL (SI LLEGA A CERO LA ELIMINO)
 
+        // $this->em = $this->getDoctrine()->getManager();
+
+        foreach ($lista_condensada_tropas_a_eliminar as $una_tropa) {
+
+            // var_dump($una_tropa);
+
+            //Total a eliminar
+            $total_eliminar = $una_tropa["total"];
+
+            $troop_id = $una_tropa["troops_id"];
+
+           
+            //-------------------------------------------
+            // Total en el edificio
+            //-------------------------------------------
+            
+            //Busco la tropa en el edificio
+            $tropa_edificio = $this->em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $edificio]);
+
+            $total_edificio = $tropa_edificio->getTotal();
+
+            //Total final en edificio
+            $total_final_edificio = $total_edificio - $total_eliminar;
+
+             //Modificar BD
+
+             if ($total_final_edificio <= 0) {
+                $total_final_edificio = 0;
+                $this->em->remove($tropa_edificio);
+                $this->em->flush();
+            } else {
+                $tropa_edificio->setTotal($total_final_edificio);
+                $this->em->persist($tropa_edificio);
+            }
+
+
+            //-------------------------------------------
+            // Total en Troops
+            //-------------------------------------------
+
+             //busco la tropa en Troops
+            $tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
+
+            $total_Troops = $tropa_Troops->getTotal();
+
+            //total final en Troops
+            $total_final_Troops = $total_Troops - $total_eliminar;
+
+          
+            //Modificar BD
+            if ($total_final_Troops <= 0) {
+                $total_final_Troops = 0;
+                $this->em->remove($tropa_Troops);   
+                $this->em->flush();           
+            } else {
+                $tropa_Troops->setTotal($total_final_Troops);
+                $this->em->persist($tropa_Troops);
+            }
+
+        }
+
+        $this->em->flush();
+
     }
 
 }
 
-/*
-//----------------------------------------------------------------------------------------
-// Eliminando tropas
-//----------------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------------------
-// encontrar el total de tropas a eliminar de los atacantes
-//------------------------------------------------------------------------------------------
-
-$lista_tropas_eliminadas_atacante = array();
-$lista_tropas_eliminadas_defensor = array();
-
-$lista_tropas_eliminadas_atacante = $this->eliminarTropas($lista_tropas_atacante, $porciento_tropas_eliminar_atacante);
-$lista_tropas_eliminadas_defensor = $this->eliminarTropas($lista_tropas_defensor, $porciento_tropas_eliminar_defensor);
-
-//Buscando el nombre de las tropas a eliminar para mostrar al usuario
-
-// $lista_tropas_eliminadas_atacante = $this->ponerNombreTropas($lista_tropas_eliminadas_atacante);
-// $lista_tropas_eliminadas_defensor = $this->ponerNombreTropas($lista_tropas_eliminadas_defensor);
-
-//-----------------------------------------------------------------------
-//  Modificar la BD
-//-----------------------------------------------------------------------
-
-//Modificar tropas del defensor en la BD
-// $this->modificarBD($lista_tropas_eliminadas_defensor, $building);
-
-//Modificar tropas del Atacante en la BD
-// $id_castillo_atacante = $user->getKingdom()->getMainCastleId();
-// $castillo_del_atacante = $this->em->getRepository(Building::class)->find($id_castillo_atacante);
-// $this->modificarBD($lista_tropas_eliminadas_atacante, $castillo_del_atacante );
-
-//Crea arreglo uniforme para eliminar tropas
-public function eliminarTropasAtacantes($attacker_troops, $porciento_a_eliminar)
-{
-
-$lista_tropas_atacante = array();
-
-//------------------------------------------------------------------------------------------
-// lista_tropas_atacante -- Todas las tropas
-//------------------------------------------------------------------------------------------
-$c = 0;
-foreach ($attacker_troops as $ungrupotropas) {
-
-$total = $ungrupotropas["total"];
-
-for ($i = 0; $i < $total; $i++) {
-$unaTropa["troops_id"] = $ungrupotropas["troops_id"];
-$lista_tropas_atacante[] = $unaTropa;
-}
-
-}
-
-$this->eliminarTropas($lista_tropas_atacante, $porciento_a_eliminar);
-
-}
-
-//Crea arreglo uniforme para eliminar tropas
-public function eliminarTropasDefensores($troops_on_building, $porciento_a_eliminar)
-{
-$lista_tropas_defensor = array();
-
-//------------------------------------------------------------------------------------------
-// lista_tropas_defensores -- Todas las tropas
-//------------------------------------------------------------------------------------------
-$c = 0;
-foreach ($troops_on_building as $unatropa) {
-
-$total = $unatropa->getTotal();
-
-for ($i = 0; $i < $total; $i++) {
-$unaTropa["troops_id"] = $unatropa->getTroops()->getId();
-$lista_tropas_defensor[] = $unaTropa;
-}
-
-}
-
-$this->eliminarTropas($lista_tropas_defensor, $porciento_a_eliminar);
-
-}
-
- */

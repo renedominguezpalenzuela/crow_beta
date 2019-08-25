@@ -96,6 +96,10 @@ class APIAttackController extends AbstractController
             $user = $this->getUser();
         }
 
+        $id_attacker_castle = $user->getKingdom()->getMainCastleId();
+
+       
+
         //-------------------------------------------------------------------------------------------------
         //(2) Obteniendo los datos que vienen en la peticion
         //--------------------------------------------------------------------------------------------------
@@ -135,12 +139,7 @@ class APIAttackController extends AbstractController
        
         $defender_troops = array();
         $this->defending_force_strenght = $this->battle->getDefenderForceStrength($attacked_building_id, $building_name, $defender_troops, $this->building_initial_defense);
-
-
-
-
-        
-
+     
         //--------------------------------------------------------------------------------------------
         // Calculo de Porcientos en funcion de las tropas de cada bando
         //--------------------------------------------------------------------------------------------
@@ -169,7 +168,6 @@ class APIAttackController extends AbstractController
             $this->defender_chance_of_victory,
             $this->staleChance
         );
-
         
         $this->resultado_batalla_defender = $this->battle->getOtherSideResult($this->resultado_batalla_attacker);
 
@@ -242,8 +240,30 @@ class APIAttackController extends AbstractController
         //--------------------------------------------------------------------------------------------
         // Eliminando tropas, Actualizando BD
         //--------------------------------------------------------------------------------------------
-        $this->battle->eliminarTroopsFromDB($attacker_lista_condensada_a_eliminar);
-        $this->battle->eliminarTroopsFromDB($defender_lista_condensada_a_eliminar);
+       // $this->battle->eliminarTroopsFromDB($attacker_lista_condensada_a_eliminar, $id_attacker_castle );
+        $this->battle->eliminarTroopsFromDB($defender_lista_condensada_a_eliminar, $attacked_building_id);
+
+        
+
+
+        //----------------------------------------------------------------------------------------
+        //  TODO: Captura de edificios
+        //----------------------------------------------------------------------------------------
+        //Determinar si no quedan tropas defensoras
+        //--seleccionar y contar el total de tropas en el edificio en troop_building
+        //Cambiar en building, el building id
+
+
+
+        //----------------------------------------------------------------------------------------
+        //  TODO: Damage a edificios
+        //----------------------------------------------------------------------------------------
+
+       
+
+        //----------------------------------------------------------------------------------------
+        //  TODO: Puntos
+        //----------------------------------------------------------------------------------------
 
 
         //----------------------------------------------------------------------------------------
@@ -284,141 +304,6 @@ class APIAttackController extends AbstractController
 
     }
 
-    /*
-    public function eliminarTropas($tropas_iniciales, $Porciento_a_Eliminar)
-    {
-
-    //Encontrando total a eliminar
-    $total_tropas = count($tropas_iniciales);
-    $total_a_eliminar = round(($Porciento_a_Eliminar * $total_tropas) / 100);
-
-    //Reordenamiento aleatorio
-    shuffle($tropas_iniciales);
-
-    //Escogiendo las N primeras al azar
-    $lista_tropas_a_eliminar = array_slice($tropas_iniciales, 0, $total_a_eliminar);
-
-    $lista_tropas_a_eliminar_condensada = array();
-
-    //agrupar por id
-    foreach ($lista_tropas_a_eliminar as $una_tropa) {
-
-    $encontrado = false;
-    $indice = 0;
-    $total = 0;
-    foreach ($lista_tropas_a_eliminar_condensada as $una_tropa_condensada) {
-
-    if ($una_tropa_condensada["troops_id"] === $una_tropa["troops_id"]) {
-
-    // $una_tropa_condensada["total"] = $una_tropa_condensada["total"] + 1;
-    // $lista_tropas_a_eliminar_condensada["total"]= $lista_tropas_a_eliminar_condensada["total"]+1;
-    //var_dump($una_tropa_condensada);
-    $total = $una_tropa_condensada["total"] + 1;
-    $encontrado = true;
-    break;
-    }
-    $indice = $indice + 1;
-    }
-
-    if ($encontrado == false) {
-    $una_tropa["total"] = 1;
-    $id = $una_tropa["troops_id"];
-    //Poner nombre de la tropa
-    $tropa = $this->em->getRepository(Troop::class)->find($id);
-    $una_tropa["name"] = $tropa->getUnitType()->getName();
-    $una_tropa["user"] = $tropa->getUser()->getUsername();
-
-    $lista_tropas_a_eliminar_condensada[] = $una_tropa;
-
-    } else {
-    $lista_tropas_a_eliminar_condensada[$indice]["total"] = $total;
-    }
-
-    }
-
-    //devolver arreglo para mostrar al cliente
-    return $lista_tropas_a_eliminar_condensada;
-    }*/
-
-    /*
-    public function modificarBD($tropas_a_eliminar, $edificio)
-    {
-
-    // $this->em = $this->getDoctrine()->getManager();
-
-    foreach ($tropas_a_eliminar as $una_tropa) {
-
-    // var_dump($una_tropa);
-
-    //Total a eliminar
-    $total_eliminar = $una_tropa["total"];
-
-    $troop_id = $una_tropa["troops_id"];
-
-    //Busco la tropa en el edificio
-    $tropa_edificio = $this->em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $edificio]);
-
-    //busco la tropa en Troops
-    $tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
-
-    //-------------------------------------------
-    // Total en el edificio
-    //-------------------------------------------
-    $total_edificio = $tropa_edificio->getTotal();
-
-    //Total final en edificio
-    $total_final_edificio = $total_edificio - $total_eliminar;
-
-    //-------------------------------------------
-    // Total en Troops
-    //-------------------------------------------
-    $total_Troops = $tropa_Troops->getTotal();
-
-    //total final en Troops
-    $total_final_Troops = $total_Troops - $total_eliminar;
-
-    //Modificar BD
-
-    if ($total_final_edificio <= 0) {
-    $total_final_edificio = 0;
-    $this->em->remove($tropa_edificio);
-    $this->em->flush();
-    } else {
-    $tropa_edificio->setTotal($total_final_edificio);
-    $this->em->persist($tropa_edificio);
-    }
-
-    if ($total_final_Troops <= 0) {
-    $total_final_Troops = 0;
-    $this->em->remove($tropa_Troops);
-    $this->em->flush();
-    } else {
-    $tropa_Troops->setTotal($total_final_edificio);
-    $this->em->persist($tropa_Troops);
-    }
-
-    }
-
-    $this->em->flush();
-
-    }*/
-
-    /*
-public function ponerNombreTropas($lista_tropas)
-{
-// $this->em = $this->getDoctrine()->getManager();
-
-$c = 0;
-foreach ($lista_tropas as $una_tropa) {
-
-$troop_id = $una_tropa["troops_id"];
-$tropa_Troops = $this->em->getRepository(Troop::class)->find($troop_id);
-
-$lista_tropas[$c]["name"] = $tropa_Troops->getUnitType()->getName();
-$c = $c + 1;
-
-}
-
-}*/
+   
 
 }
