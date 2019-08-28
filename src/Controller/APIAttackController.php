@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Building;
 use App\Service\Battle;
 use App\Service\GlobalConfig;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,6 +48,18 @@ class APIAttackController extends AbstractController
     private $building_initial_defense = 0;
     private $building_final_defense = 0;
     private $attacker_building_damage_strength = 0;
+
+    private $total_inicial_defensores =0;
+    private $total_final_defensores =0;
+    private $total_inicial_atacantes = 0;
+    private $total_final_atacantes = 0;
+    private $total_a_eliminar_atacante = 0;
+    private $total_a_eliminar_defensor = 0;
+
+    private $building_taked = false;
+    private $attacker_points = 0;
+    private $defender_points =0;
+
 
     //Inyectando el servicio session
     public function __construct( /*SessionInterface $session,*/EntityManagerInterface $entityManager, Battle $battle)
@@ -191,11 +204,20 @@ class APIAttackController extends AbstractController
 
         $danos_a_edificios = $this->battle->getDannos_a_edificios($this->resultado_batalla_attacker, $this->attacker_building_damage_strength);
 
+        
         //Calculo del damage al edificio
         $this->building_final_defense = $this->building_initial_defense - $danos_a_edificios;
         if ($this->building_final_defense < 0) {
             $this->building_final_defense = 0;
         }
+
+        //Escribir en BD el danno al edificio       
+        $attacked_building = $this->em->getRepository(Building::class)->find($attacked_building_id);
+        $attacked_building->setDefenseRemaining( $this->building_final_defense);
+       
+
+
+
 
         //---------------------------------------------------------------------------------------------
         //Calculando Tropas a eliminar
@@ -216,32 +238,23 @@ class APIAttackController extends AbstractController
         //--------------------------------------------------------------------------------------------
         $attacker_troops_a_eliminar = array();
         $defender_troops_a_eliminar = array();
-
-        // var_dump("Atacante " . $this->texto_resultado_attacker . " Tropas Perdidas " . round($porciento_tropas_eliminar_atacante) . " %");
-        // var_dump("Defender " .  $this->texto_resultado_defender . " Tropas Perdidas " . round($porciento_tropas_eliminar_defensor) . " %");
-
-        //var_dump("Attacker ");
-        // var_dump($attacker_troops);
-        $this->battle->getListaTropasAeliminar($attacker_troops, $porciento_tropas_eliminar_atacante, $attacker_troops_a_eliminar, $total_a_eliminar);
-        // var_dump($attacker_troops_a_eliminar);
-
-        //var_dump("Defender ");
-        //var_dump($defender_troops);
-        $this->battle->getListaTropasAeliminar($defender_troops, $porciento_tropas_eliminar_defensor, $defender_troops_a_eliminar, $total_a_eliminar);
-        //var_dump($defender_troops_a_eliminar);
-
+    
+        $this->battle->getListaTropasAeliminar($attacker_troops, $porciento_tropas_eliminar_atacante, $attacker_troops_a_eliminar, $this->total_a_eliminar_atacante,  $this->total_inicial_atacantes, $this->total_final_atacantes);             
+        $this->battle->getListaTropasAeliminar($defender_troops, $porciento_tropas_eliminar_defensor, $defender_troops_a_eliminar, $this->total_a_eliminar_defensor, $this->total_inicial_defensores , $this->total_final_defensores);
+   
+        //Obteniendo lista condensada
         $attacker_lista_condensada_a_eliminar = array();
         $this->battle->getListaCondensada($attacker_troops_a_eliminar, $attacker_lista_condensada_a_eliminar);
 
         $defender_lista_condensada_a_eliminar = array();
         $this->battle->getListaCondensada($defender_troops_a_eliminar, $defender_lista_condensada_a_eliminar);
-        //var_dump( $defender_lista_condensada_a_eliminar);
+   
 
         //--------------------------------------------------------------------------------------------
         // Eliminando tropas, Actualizando BD
         //--------------------------------------------------------------------------------------------
-       // $this->battle->eliminarTroopsFromDB($attacker_lista_condensada_a_eliminar, $id_attacker_castle );
-        $this->battle->eliminarTroopsFromDB($defender_lista_condensada_a_eliminar, $attacked_building_id);
+        // $this->battle->eliminarTroopsFromDB($attacker_lista_condensada_a_eliminar, $id_attacker_castle );
+        // $this->battle->eliminarTroopsFromDB($defender_lista_condensada_a_eliminar, $attacked_building_id);
 
         
 
@@ -250,20 +263,27 @@ class APIAttackController extends AbstractController
         //  TODO: Captura de edificios
         //----------------------------------------------------------------------------------------
         //Determinar si no quedan tropas defensoras
-        //--seleccionar y contar el total de tropas en el edificio en troop_building
-        //Cambiar en building, el building id
+        //Cambiar en building, el kingdom
+        
+        if ($this->total_final_defensores<=0) {           
+            $this->building_taked = true;
+            $attacked_building->setKingdom($user->getKingdom());
+        }
 
-
-
-        //----------------------------------------------------------------------------------------
-        //  TODO: Damage a edificios
-        //----------------------------------------------------------------------------------------
-
-       
+        $this->em->persist($attacked_building);     
 
         //----------------------------------------------------------------------------------------
         //  TODO: Puntos
         //----------------------------------------------------------------------------------------
+        $this->attacker_points = $this->battle->calcularPuntos($this->resultado_batalla_attacker, $this->total_a_eliminar_defensor);
+        $this->defender_points =  $this->battle->calcularPuntos($this->resultado_batalla_defender, $this->total_a_eliminar_atacante);
+
+        $this->battle->EscribirPuntosUsuario($this->attacker_points,$user );
+        $this->battle->EscribirPuntosKingdom($this->attacker_points,$user->getKingdom(),$this->building_taked );
+        
+        $defender_kingdom = $attacked_building->getKingdom();
+        
+        $this->battle->EscribirPuntosKingdom($this->defender_points,$defender_kingdom, $this->building_taked );
 
 
         //----------------------------------------------------------------------------------------
@@ -275,6 +295,7 @@ class APIAttackController extends AbstractController
             'building_final_defense' => $this->building_final_defense,
             'attacker_building_damage_strength' => $this->attacker_building_damage_strength,
             'building_damage' => $danos_a_edificios,
+            'building_taken' => $this->building_taked,
             'texto_resultado_attacker' => $this->texto_resultado_attacker,
             'texto_resultado_defender' => $this->texto_resultado_defender,
             'attacking_force_strenght' => $this->attacking_force_strenght,
@@ -282,9 +303,15 @@ class APIAttackController extends AbstractController
             'attacker_chance_of_victory' => $this->attacker_chance_of_victory,
             'defender_chance_of_victory' => $this->defender_chance_of_victory,
             'stale_chance' => $this->staleChance,
-            'bajas_atacante' => $attacker_lista_condensada_a_eliminar,
-            'bajas_defensor' => $defender_lista_condensada_a_eliminar,
+            'total_bajas_atacante' =>$this->total_a_eliminar_atacante,
+            'total_bajas_defensor'=>$this->total_a_eliminar_defensor,
+            'attacker_points' => $this->attacker_points,
+            'defender_points' => $this->defender_points,
+            'bajas_atacante' => $attacker_lista_condensada_a_eliminar,          
+            'bajas_defensor' => $defender_lista_condensada_a_eliminar                        
         );
+
+       
 
         $respuesta = array(
             'error' => $error,
@@ -297,7 +324,7 @@ class APIAttackController extends AbstractController
         );
 
         if (!$error) {
-            // $this->em->flush();
+             $this->em->flush();
         }
 
         return $this->json($respuesta, Response::HTTP_OK);

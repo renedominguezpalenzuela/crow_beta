@@ -19,6 +19,14 @@ class BuildingTypeRepository extends ServiceEntityRepository
         parent::__construct($registry, BuildingType::class);
     }
 
+
+    public function BorrarAllRecords(){
+        return $this->getEntityManager()
+                            ->createQuery('DELETE App\Entity\BuildingType')                             
+                            ->getResult();
+       }
+
+
     // /**
     //  * @return BuildingType[] Returns an array of BuildingType objects
     //  */

@@ -19,6 +19,13 @@ class TroopRepository extends ServiceEntityRepository
         parent::__construct($registry, Troop::class);
     }
 
+    public function BorrarAllRecords(){
+        return $this->getEntityManager()
+                            ->createQuery('DELETE App\Entity\Troop')                             
+                            ->getResult();
+       }
+
+
     // /**
     //  * @return Troop[] Returns an array of Troop objects
     //  */

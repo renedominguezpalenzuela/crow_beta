@@ -19,6 +19,13 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function BorrarAllRecords(){
+        return $this->getEntityManager()
+                            ->createQuery('DELETE App\Entity\User')                             
+                            ->getResult();
+       }
+
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

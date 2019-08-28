@@ -19,6 +19,13 @@ class TroopBuildingRepository extends ServiceEntityRepository
         parent::__construct($registry, TroopBuilding::class);
     }
 
+    public function BorrarAllRecords(){
+        return $this->getEntityManager()
+                            ->createQuery('DELETE App\Entity\TroopBuilding')                             
+                            ->getResult();
+       }
+
+
     // /**
     //  * @return TroopBuilding[] Returns an array of TroopBuilding objects
     //  */

@@ -6,6 +6,12 @@ use App\Entity\Troop;
 use App\Service\Battle;
 use App\Service\Datos;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Entity\Kingdom;
+
+use Symfony\Bundle\FrameworkBundle\Console\Application as App;
+use Symfony\Component\Console\Tester\CommandTester;
+
 
 class DBTest extends KernelTestCase
 {
@@ -15,6 +21,7 @@ class DBTest extends KernelTestCase
     private $em;
     private $battle;
     private $db;
+    private $encoder;
 
     /**
      * {@inheritDoc}
@@ -23,9 +30,13 @@ class DBTest extends KernelTestCase
     {
         $kernel = self::bootKernel();
         $this->em = $kernel->getContainer()->get('doctrine')->getManager();
-       // $this->battle = new Battle($this->em);
+        $this->encoder = $kernel->getContainer()->get("security.password_encoder");
+        $this->db = new Datos($this->em,  $this->encoder);
 
-       $this->db = new Datos($this->em);
+        exec("php bin/console doctrine:database:create");
+        exec("php bin/console doctrine:schema:update --force");
+        
+
 
         $this->setupInitalBDState();
     }
@@ -40,15 +51,16 @@ class DBTest extends KernelTestCase
         $this->em = null; // avoid memory leaks
     }
 
-
+    //-----------------------------------------------------------------------------------------
+    //borrar todas las tablas, crear todos los datos necesarios
+    //-----------------------------------------------------------------------------------------
     public function setupInitalBDState(){
-      //borrar todas las tablas, crear todos los datos necesarios
       $this->db->borrarDatos();
-
+      $this->db->addAllData();     
     }
+
     public function testInicial()
     {
-       // $troop = $this->em->getRepository(Troop::class)->findAll();
         $this->assertTrue(true, "Probando BD");
     }
 }

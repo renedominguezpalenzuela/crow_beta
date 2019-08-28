@@ -19,6 +19,13 @@ class KingdomRepository extends ServiceEntityRepository
         parent::__construct($registry, Kingdom::class);
     }
 
+    public function BorrarAllRecords(){
+        return $this->getEntityManager()
+                            ->createQuery('DELETE App\Entity\Kingdom')                             
+                            ->getResult();
+
+       }
+
     // /**
     //  * @return Kingdom[] Returns an array of Kingdom objects
     //  */

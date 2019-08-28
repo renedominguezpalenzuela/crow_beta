@@ -205,8 +205,15 @@ class Battle
         $attacker_building_damage_strength = 0;
 
         foreach ($attacker_troops as $unatropa) {
+
+
+           
             $id = $unatropa["troops_id"];
+
+           
             $tropa = $this->em->getRepository(Troop::class)->find($id);
+
+        
             $tipoUnidad = $tropa->getUnitType();
             $total = $unatropa["total"];
 
@@ -557,15 +564,17 @@ class Battle
     //-------------------------------------------------------------------------------------------
     // Eliminar tropas
     //-------------------------------------------------------------------------------------------
-    public function getListaTropasAeliminar($lista_tropas, $porciento_a_eliminar, &$lista_extendidad_tropas_a_eliminar, &$total_a_eliminar)
+    public function getListaTropasAeliminar($lista_tropas, $porciento_a_eliminar, &$lista_extendidad_tropas_a_eliminar, &$total_a_eliminar, &$total_inicial, &$total_final)
     {
 
         $lista_tropas_extendida = array();
+        $total_inicial = 0;
 
         //Crear arreglo con un elemento por cada tropa
         foreach ($lista_tropas as $unatropa) {
 
             $total = $unatropa["total"];
+            $total_inicial = $total_inicial +  $total;
             for ($i = 0; $i < $total; $i++) {
                 $unatropa["total"] = 1;
                 $lista_tropas_extendida[] = $unatropa;
@@ -575,6 +584,11 @@ class Battle
         //Encontrando total a eliminar
         $total_tropas = count($lista_tropas_extendida);
         $total_a_eliminar = round(($porciento_a_eliminar * $total_tropas) / 100);
+
+        $total_final =  $total_inicial - $total_a_eliminar;
+        if ($total_final<0) $total_final=0;
+        
+
         //var_dump("Total tropas " . $total_tropas . " Total a eliminar " . $total_a_eliminar);
 
         //Reordenamiento aleatorio
@@ -582,6 +596,8 @@ class Battle
 
         //Escogiendo las N primeras al azar
         $lista_extendidad_tropas_a_eliminar = array_slice($lista_tropas_extendida, 0, $total_a_eliminar);
+
+
 
     }
 
@@ -614,8 +630,27 @@ class Battle
     }
 
     //Dar lista agrupada por tipo de tropa y por usuario
+
+    /*array (size=2)
+  0 => 
+    array (size=4)
+      'troops_id' => int 5
+      'name' => string 'Archers' (length=7)
+      'total' => int 4
+      'user' => string 'azul' (length=4)
+  1 => 
+    array (size=4)
+      'troops_id' => int 9
+      'name' => string 'Archers' (length=7)
+      'total' => int 2
+      'user' => string 'azul1' (length=5)*/
+
+  
     public function eliminarTroopsFromDB($lista_condensada_tropas_a_eliminar, $edificio)
     {
+
+        //echo "Batle \n";
+        //var_dump($lista_condensada_tropas_a_eliminar);
         //Recorro la lista
 
         //busco la tropa en BUILDINGS -- RESTO EL TOTAL (SI LLEGA A CERO LA ELIMINO)
@@ -625,7 +660,7 @@ class Battle
 
         foreach ($lista_condensada_tropas_a_eliminar as $una_tropa) {
 
-            // var_dump($una_tropa);
+        
 
             //Total a eliminar
             $total_eliminar = $una_tropa["total"];
@@ -683,6 +718,59 @@ class Battle
         }
 
         $this->em->flush();
+
+    }
+
+
+    public function calcularPuntos ($resultado_ataque, $bajas_al_enemigo) {
+
+        $puntos_obtenidos = 0;
+
+         //$porcientos_danos_a_edificios
+         switch ($resultado_ataque) {
+            case self::VICTORY:
+                $puntos_obtenidos = 100 +  $bajas_al_enemigo;
+                break;
+            case self::DEFEAT:
+                $puntos_obtenidos = 0;
+                break;
+            case self::STALEMATE:
+                $puntos_obtenidos = 0;
+                break;
+            default:
+                $puntos_obtenidos = 0;
+        }
+
+        echo "Puntos ".$puntos_obtenidos." ".$resultado_ataque; 
+        
+
+       return $puntos_obtenidos;
+    }
+
+
+    public function EscribirPuntosUsuario ($puntos, $usuario) {
+        if ($puntos<=0) {return;}
+        $puntos_iniciales = $usuario->getUserpoints();
+
+        $usuario->setUserpoints($puntos_iniciales+$puntos);
+        $this->em->persist($usuario);
+        $this->em->flush();
+    }
+
+    public function EscribirPuntosKingdom ($puntos, $kingdom, $building_taken) {
+        if ($puntos<=0) {return;}
+        $puntos_iniciales = $kingdom->getKingdomPoints();
+
+        //definir si el edificio tomado es un castillo o un camp
+        //pasar como parametro el edificio atacado, para determinar el tipo
+        if ($building_taken) {
+           // $puntos = $puntos +  
+        }
+
+        $kingdom->setKingdomPoints($puntos_iniciales+$puntos);
+        $this->em->persist($kingdom);
+        $this->em->flush();
+
 
     }
 

@@ -89,8 +89,6 @@ class BattleTest extends KernelTestCase
                                            $attacker_chance_of_victory, $defender_chance_of_victory, $staleChance);
         $this->assertEquals(Battle::VICTORY, $resultado, "Caso 4");
 
-
-
         //Gana el atacante el 95% de las veces
         $attacker_chance_of_victory = 90;
         $defender_chance_of_victory =5;
@@ -112,10 +110,7 @@ class BattleTest extends KernelTestCase
                                              $attacker_chance_of_victory, $defender_chance_of_victory, $staleChance);
           $this->assertEquals(Battle::DEFEAT, $resultado, "getRamdomBattleResultforAttacker Caso 6");
           
-
-
-             //tablas
-        
+             //tablas      
              $attacker_chance_of_victory = 33;
              $defender_chance_of_victory =33;
              $staleChance = 33;
@@ -123,12 +118,7 @@ class BattleTest extends KernelTestCase
              $resultado = $this->battle->getRamdomBattleResultforAttacker(10,10,
                                                 $attacker_chance_of_victory, $defender_chance_of_victory, $staleChance);
              $this->assertEquals(Battle::STALEMATE, $resultado, "getRamdomBattleResultforAttacker Caso 7");
-             
-   
-
-
-
-       
+                   
     }
 
 
@@ -145,10 +135,7 @@ class BattleTest extends KernelTestCase
         $porciento_tropas_eliminar_defensor =0;
 
         $attacker_building_damage_strength = 3000;
-        $danos_a_edificios = 0;
-
-    
-
+        $danos_a_edificios = 0;    
 
         //Caso 0: attacking_force= 0 AND defending_force = 0 
         //resultados todos 0                
