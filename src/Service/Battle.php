@@ -741,7 +741,7 @@ class Battle
                 $puntos_obtenidos = 0;
         }
 
-        echo "Puntos ".$puntos_obtenidos." ".$resultado_ataque; 
+       // echo "Puntos ".$puntos_obtenidos." ".$resultado_ataque; 
         
 
        return $puntos_obtenidos;
