@@ -19,6 +19,12 @@ class BuildingRepository extends ServiceEntityRepository
         parent::__construct($registry, Building::class);
     }
 
+    public function BorrarAllRecords(){
+        return $this->getEntityManager()
+                            ->createQuery('DELETE App\Entity\Building')                             
+                            ->getResult();
+       }
+
     public function findCastle($userId)
     {
         return $this->createQueryBuilder('b')

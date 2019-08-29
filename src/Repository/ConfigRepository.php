@@ -19,6 +19,14 @@ class ConfigRepository extends ServiceEntityRepository
         parent::__construct($registry, Config::class);
     }
 
+    public function BorrarAllRecords(){
+        return $this->getEntityManager()
+                            ->createQuery('DELETE App\Entity\Config')                             
+                            ->getResult();
+
+       }
+
+
     // /**
     //  * @return Config[] Returns an array of Config objects
     //  */

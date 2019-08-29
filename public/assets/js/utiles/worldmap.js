@@ -2,17 +2,17 @@
 //------------------------------------------------------------------------------------------------------
 // Variables globales a enviar al realizar el ataque
 //------------------------------------------------------------------------------------------------------
-let id_edificio_atacado=null;   //seteado en:  botonIniciarAtaque();
-let lista_tropas_atacantes=[];            //inicializado en:  botonIniciarAtaque(); Seteado en: crearFuncionalidadBotonAddTroopsToAttack();
+let id_edificio_atacado = null;   //seteado en:  botonIniciarAtaque();
+let lista_tropas_atacantes = [];            //inicializado en:  botonIniciarAtaque(); Seteado en: crearFuncionalidadBotonAddTroopsToAttack();
 
 
 $(".cerrar_resultados_ataque").click(
     function (event) {
         event.preventDefault();
-   // console.log("Cerrar");
-    //$('#myModal').modal('hide');
-    $('#ventana_resultado_ataque').removeClass('show');
-    location.reload();
+        // console.log("Cerrar");
+        //$('#myModal').modal('hide');
+        $('#ventana_resultado_ataque').removeClass('show');
+        location.reload();
     }
 
 
@@ -46,7 +46,7 @@ function pintarEdificios(ruta_lista_edificios, ruta_accion, id_lista_edificios, 
 
             id = unedificio.building_name + unedificio.building_id.toString();
 
-          
+
 
             myid = ID();
             //  console.log(unedificio);
@@ -85,12 +85,12 @@ function pintarEdificios(ruta_lista_edificios, ruta_accion, id_lista_edificios, 
                 idFormulario,
                 id_lista_tropas_seleccionadas);
 
-         
-                ventanas_ocultas_html.append(cadena_html);
+
+            ventanas_ocultas_html.append(cadena_html);
 
 
 
-                crearFormularioEscogerTropasAtaque(idFormulario, id_lista_tropas_seleccionadas, castle_troops, imagen_add, imagen_del);
+            crearFormularioEscogerTropasAtaque(idFormulario, id_lista_tropas_seleccionadas, castle_troops, imagen_add, imagen_del);
 
 
         } //fin del ciclo
@@ -118,11 +118,17 @@ function botonIniciarAtaque() {
             event.preventDefault();
 
 
-            var id_edificio = $(this).attr('edificio_atacar');       
-            id_edificio_atacado = id_edificio;    
+            var id_edificio = $(this).attr('edificio_atacar');
+            id_edificio_atacado = id_edificio;
 
             //inicializando la lista de tropas
-            lista_tropas_atacantes=[];
+            lista_tropas_atacantes = [];
+            //inicializar contenido html
+
+            lista_tropas_atacantes_html = $(".execution_troops_attack");
+
+           //lista_tropas_atacantes_html.remove();
+           lista_tropas_atacantes_html.html('');
         }
     );
 
@@ -138,7 +144,7 @@ function unaTropaHtml(troop_name, total) {
 //------------------------------------------------------------------------------------------------------
 // Dibuja un edificio en ventana inicial
 //------------------------------------------------------------------------------------------------------
-function unedificioHTML(  id_edficio_atacar, building_name2, kingdom_name, level, defense_remaining, myid, color_class) {
+function unedificioHTML(id_edficio_atacar, building_name2, kingdom_name, level, defense_remaining, myid, color_class) {
 
 
     if (color_class == "card-header-white") {
@@ -146,67 +152,67 @@ function unedificioHTML(  id_edficio_atacar, building_name2, kingdom_name, level
     }
 
     return '<div class="card">' +
-                '<div class="' + color_class + '">' +
-                    '<h5>' + building_name2 + ', ' + kingdom_name + '</h5>' +
-                '</div>' +
-                '<div class="card-body">' +
-                        // '<p><span class="subrayado">Kingdom</span></p>' +
-                        // '<p>' + kingdom_name + '</p>' +
-                    '<p><span class="subrayado">Stats</span></p>' +
-                        '<p>level: ' + level + '</p>' +
-                        //'<p>Capacity: '+unedificio.filled+'/'+unedificio.capacity+'</p>'+
-                        '<p>defense: ' + defense_remaining + '</p>' +
-                        //Listado de tropas
-                        '<p><span class="subrayado">Troops</span></p>' +
-                        '<table id="tropa' + myid + '">' +
-                        '</table>' +
+        '<div class="' + color_class + '">' +
+        '<h5>' + building_name2 + ', ' + kingdom_name + '</h5>' +
+        '</div>' +
+        '<div class="card-body">' +
+        // '<p><span class="subrayado">Kingdom</span></p>' +
+        // '<p>' + kingdom_name + '</p>' +
+        '<p><span class="subrayado">Stats</span></p>' +
+        '<p>level: ' + level + '</p>' +
+        //'<p>Capacity: '+unedificio.filled+'/'+unedificio.capacity+'</p>'+
+        '<p>defense: ' + defense_remaining + '</p>' +
+        //Listado de tropas
+        '<p><span class="subrayado">Troops</span></p>' +
+        '<table id="tropa' + myid + '">' +
+        '</table>' +
 
-                        //Boton de atacar
-                        '<div class="row ml-2">' +
-                        // '<a href="#" id="' + id + '" class="boton_attack col-sm-4">' +
-                        // '<img src="' + imagen_attack + '" height="30" alt=""> </a>' +              
-                        '<button type="button" class="btn btn-primary boton_iniciar_ataque" data-toggle="modal" data-target="#ventana' + myid + '" edificio_atacar="'+unedificio.building_id+'">' +
-                        'Attack' +
-                        '</button>' +
+        //Boton de atacar
+        '<div class="row ml-2">' +
+        // '<a href="#" id="' + id + '" class="boton_attack col-sm-4">' +
+        // '<img src="' + imagen_attack + '" height="30" alt=""> </a>' +              
+        '<button type="button" class="btn btn-primary boton_iniciar_ataque" data-toggle="modal" data-target="#ventana' + myid + '" edificio_atacar="' + unedificio.building_id + '">' +
+        'Attack' +
+        '</button>' +
 
-                    '</div>' +
-                '</div>' +
-            '</div>';
+        '</div>' +
+        '</div>' +
+        '</div>';
 }
 
 //------------------------------------------------------------------------------------------------------
 // Dibuja ventanas ocultas para seleccionar tropas para el ataque
 //------------------------------------------------------------------------------------------------------
 function ventanaOcultaSeleccionarTropasHTML(myid, building_name2, kingdom_name, idFormulario, id_lista_tropas_seleccionadas) {
-    let cadena_html = 
+    let cadena_html =
         '<div class="modal fade ventana_crear_ataque" id="ventana' + myid + '" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">' +
-           '<div class="modal-dialog modal-dialog-centered" role="document">' +
-                '<div class="modal-content card">' +
-                 
-                    '<div class="modal-header card-header-primary ">' +
-                        '<h5 class="modal-title" id="LongTitle' + myid + '">Attack: ' + unedificio.building_name2 + ', ' + unedificio.kingdom_name + '</h5>' +
-                        '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
-                            '<span aria-hidden="true">&times;</span>' +
-                        '</button>' +
-                    '</div>' +
+        '<div class="modal-dialog modal-dialog-centered" role="document">' +
+        '<div class="modal-content card">' +
 
-                
-                    '<div class="modal-body">' +
-                        '<div id="' + idFormulario + '" class="form_planning_troops"></div>' +
-                            '<p><span class="subrayado">Attacking Squad</span></p>' +
-                            '<form id="' + id_lista_tropas_seleccionadas + '" class="form execution_troops_attack"></form>' +
-                        '</div>' +
-                   
+        '<div class="modal-header card-header-primary ">' +
+        '<h5 class="modal-title" id="LongTitle' + myid + '">Attack: ' + unedificio.building_name2 + ', ' + unedificio.kingdom_name + '</h5>' +
+        '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
+        '<span aria-hidden="true">&times;</span>' +
+        '</button>' +
+        '</div>' +
 
-                        '<div class="modal-footer">' +
-                            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
-                            '<button type="button" class="btn btn-primary boton_attack" id=attack_btn"' + myid + '">Attack</button>' +        
-                        '</div>' +
-                    '</div>' +
 
-                 
-               '</div>' +
-            '</div>' +
+        '<div class="modal-body">' +
+        '<div id="' + idFormulario + '" class="form_planning_troops"></div>' +
+        '<p><span class="subrayado">Attacking Squad</span></p>' +
+        '<form id="' + id_lista_tropas_seleccionadas + '" class="form execution_troops_attack"></form>' +
+        '</div>' +
+
+
+        '<div class="modal-footer">' +
+        '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
+        '<button type="button" class="btn btn-primary boton_attack" id=attack_btn"' + myid + '">Attack</button>' +
+        '</div>' +
+        '</div>' +
+
+
+        '</div>' +
+        '</div>' +
         '</div>';
 
 
@@ -241,16 +247,16 @@ function crearFormularioEscogerTropasAtaque(idFormulario, id_lista_tropas_selecc
         //
         lista_tropas_html.append(
             '<form class="form">' +
-                '<div class="form-row">' +
-                    '<label class="col-form-label col-sm-2" id="tropa_name_' + troop_id + '" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
-                    '<span class="bmd-form-group-sm">' +
+            '<div class="form-row">' +
+            '<label class="col-form-label col-sm-2" id="tropa_name_' + troop_id + '" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
+            '<span class="bmd-form-group-sm">' +
 
-                    '<input type="number" value="' + unatropa.total + '" min="1" max="' + unatropa.total + '"  step="1" pattern="\d+" id="' + total_id + '" class="form-control mb-sm-2" />' +
-                    '</span>' +
+            '<input type="number" value="' + unatropa.total + '" min="1" max="' + unatropa.total + '"  step="1" pattern="\d+" id="' + total_id + '" class="form-control mb-sm-2" />' +
+            '</span>' +
 
-                    '<a href="#" id="' + boton_id + '" tropa_id="' + troop_id + '" class="boton_add_troops_to_attack ml-2">' +
-                    '<img src="' + imagen_add + '" height="30" alt=""> </a>' +
-                '</div>' +
+            '<a href="#" id="' + boton_id + '" tropa_id="' + troop_id + '" class="boton_add_troops_to_attack ml-2">' +
+            '<img src="' + imagen_add + '" height="30" alt=""> </a>' +
+            '</div>' +
             '</form>'
         );
 
@@ -287,7 +293,7 @@ function crearFuncionalidadBotonAddTroopsToAttack(boton_id, id_lista_tropas_sele
 
             event.preventDefault();
 
-           //Obteniendo el id del input que contiene el total de tropas
+            //Obteniendo el id del input que contiene el total de tropas
             var id_tropas = $(this).attr('tropa_id');
             let tropa_label_id = 'tropa_name_' + id_tropas;
 
@@ -307,8 +313,8 @@ function crearFuncionalidadBotonAddTroopsToAttack(boton_id, id_lista_tropas_sele
             //Cadena final es un arreglo [{},{}]
             // let cadena_api = '{ "troops":[{"troops_id":' + id_tropas + ',"total":' + total_tropas + '}]}';
             let cadena_api = '{"troops_id":' + id_tropas +
-                               ',"total":' + total_tropas +
-                               '}';
+                ',"total":' + total_tropas +
+                '}';
 
             //Agregar en variable global, el id de la tropa y el total 
             lista_tropas_atacantes.push(JSON.parse(cadena_api));
@@ -497,14 +503,14 @@ function botonAtacar(ruta_attack) {
             //event.preventDefault();
 
             var id = $(this).attr('id');
-           // console.log("prueba ok" + id);
+            // console.log("prueba ok" + id);
 
             var peticion_all = {};
 
             //Enviar: 
             //Lista de tropas usadas en el ataque  
 
-           
+
             peticion_all.troops = lista_tropas_atacantes;
 
             //id Edificio atacado
@@ -515,29 +521,33 @@ function botonAtacar(ruta_attack) {
 
 
             var datos_enviar = {
-               peticion: JSON.stringify(peticion_all)
-             // peticion: peticion_all
+                peticion: JSON.stringify(peticion_all)
+                // peticion: peticion_all
             }
 
 
-           // console.log(datos_enviar);
+            // console.log(datos_enviar);
 
             $.post(ruta_attack,
                 datos_enviar
 
             ).done(
                 function (data) {
-                    
+
                     //location.reload();
-                    //console.log("datos recibidos");
-                    //console.log(data);
-                    pintarResultadosAtaqueHTML(data);
 
-                    //Ocultar ventana preparar ataque
-                    $('.ventana_crear_ataque').removeClass('show');
+                    console.log("datos recibidos");
+                    console.log(data);
 
-                    //Mostrar ventana resultados del ataque
-                    $('#ventana_resultado_ataque').modal('show'); 
+                    if (data.error != true) {
+                        pintarResultadosAtaqueHTML(data);
+
+                        //Ocultar ventana preparar ataque
+                        $('.ventana_crear_ataque').removeClass('show');
+
+                        //Mostrar ventana resultados del ataque
+                        $('#ventana_resultado_ataque').modal('show');
+                    }
 
                     //$('[href="#squads"]').tab('show');
                     //$("#battle_result").append("<h1>HOLA</h1>");
@@ -550,12 +560,12 @@ function botonAtacar(ruta_attack) {
                 function (data, textStatus, jqXHR) {
                     console.log('error');
                     console.log(textStatus + ' : ' + jqXHR);
-                    
+
                 }
 
             ).always(
                 function () {
-                   // console.log("always");
+                    // console.log("always");
                 }
 
             );
@@ -569,14 +579,14 @@ function botonAtacar(ruta_attack) {
 }
 
 
-function pintarResultadosAtaqueHTML(data){
+function pintarResultadosAtaqueHTML(data) {
     //console.log("resultados");
 
     //Nombre del edificio atacado
     $("#attacked_building").html(data.attacked_building);
 
     //Tropas defensoras
-   
+
     pintarTropasDefensoras(data.troops_defenders);
 
     //Tropas atacantes
@@ -587,17 +597,17 @@ function pintarResultadosAtaqueHTML(data){
     $("#castle_initial_defense").html(data.resultados_ataque.building_initial_defense);
 
     //Texto resultados del ataque
-    
+
     $("#resultado_defender").html(data.resultados_ataque.texto_resultado_defender);
     $("#resultado_attacker").html(data.resultados_ataque.texto_resultado_attacker);
 
 
-//Force Strength
+    //Force Strength
     $("#defending_force_strength").html(data.resultados_ataque.defending_force_strength);
     $("#attacking_force_strenght").html(data.resultados_ataque.attacking_force_strenght);
 
     //Porcientos
-    
+
     $("#victory").html(data.resultados_ataque.defender_chance_of_victory);
     $("#defeat").html(data.resultados_ataque.attacker_chance_of_victory);
     $("#stalemate").html(data.resultados_ataque.stale_chance);
@@ -610,43 +620,43 @@ function pintarResultadosAtaqueHTML(data){
 
 
 
-function pintarBajasHTML(tropas, id_tabla){
+function pintarBajasHTML(tropas, id_tabla) {
 
-   
-    let lista_tropas_html = $("#"+id_tabla);
+
+    let lista_tropas_html = $("#" + id_tabla);
 
     lista_tropas_html.text('');
 
     for (una_tropa of tropas) {
-        lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.name + ": " + una_tropa.total+ ", " +una_tropa.user + "</span></p></td></tr>");
+        lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.name + ": " + una_tropa.total + ", " + una_tropa.user + "</span></p></td></tr>");
     }
 }
 
 
-function pintarTropasDefensoras(tropas){
+function pintarTropasDefensoras(tropas) {
 
     //Condensar las tropas a mostrar
 
-  
+
 
     lista_tropas_condensadas = new Array();
-   for (una_tropa of tropas) {
+    for (una_tropa of tropas) {
 
-       
+
         //buscar
         indice = 0;
         encontrado = false;
         //console.log("Buscando "+una_tropa.name);
-        for (una_tropa_condensada of lista_tropas_condensadas ) {
-           
-           
+        for (una_tropa_condensada of lista_tropas_condensadas) {
+
+
             if (una_tropa.name == una_tropa_condensada.name) {
-               // console.log(indice);
+                // console.log(indice);
                 encontrado = true;
                 //console.log("Encontrado");
             }
 
-            if (encontrado) {break;}
+            if (encontrado) { break; }
 
             indice = indice + 1;
         }
@@ -656,8 +666,8 @@ function pintarTropasDefensoras(tropas){
             //console.log("Agregando "+una_tropa.name);
             lista_tropas_condensadas.push(una_tropa);
         } else {
-            
-            lista_tropas_condensadas [indice].total = lista_tropas_condensadas [indice].total + una_tropa.total; 
+
+            lista_tropas_condensadas[indice].total = lista_tropas_condensadas[indice].total + una_tropa.total;
             /*console.log("Modificando "+una_tropa.name);
             console.log(indice);
             console.log( lista_tropas_condensadas [indice].total);*/
@@ -672,13 +682,13 @@ function pintarTropasDefensoras(tropas){
     lista_tropas_html.text('');
 
     for (una_tropa_condensada of lista_tropas_condensadas) {
-    //for (una_tropa of tropas) {
+        //for (una_tropa of tropas) {
         lista_tropas_html.append("<tr><td><p> <span>" + una_tropa_condensada.name + ": " + una_tropa_condensada.total + "</span></p></td></tr>");
     }
 }
 
 
-function pintarTropasAtacantes(tropas){
+function pintarTropasAtacantes(tropas) {
 
     lista_tropas_html = $("#attacker_squad");
 
@@ -688,8 +698,9 @@ function pintarTropasAtacantes(tropas){
         lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.name + ": " + una_tropa.total + "</span></p></td></tr>");
     }
 
-  
+
 }
+
 
 
 

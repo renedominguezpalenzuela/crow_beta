@@ -19,6 +19,13 @@ class UnitTypeRepository extends ServiceEntityRepository
         parent::__construct($registry, UnitType::class);
     }
 
+    public function BorrarAllRecords(){
+        return $this->getEntityManager()
+                            ->createQuery('DELETE App\Entity\UnitType')                             
+                            ->getResult();
+       }
+
+
     // /**
     //  * @return UnitType[] Returns an array of UnitType objects
     //  */

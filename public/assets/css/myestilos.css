@@ -1,7 +1,11 @@
 /*
 Mis estilos
 */
-
+/*
+mostrar barra vertical de scroll
+html {
+  overflow-y: scroll;
+}*/
 
 .subrayado {
     border-bottom: 2px solid;
