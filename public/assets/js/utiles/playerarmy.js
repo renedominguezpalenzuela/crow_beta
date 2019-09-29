@@ -4,6 +4,7 @@
 // Datos del kingdom y del user
 //-------------------------------------------------------------------------
 function dibujarDatosHTML(team, recursos) {
+
     $('#kingdom_name').html(team.kingdom_name);
     $('#kingdom_points').html(team.kingdom_points);
     $('#user_points').html(recursos.user_points);
@@ -15,6 +16,8 @@ function dibujarDatosHTML(team, recursos) {
 // Datos del Castillo
 //-------------------------------------------------------------------------
 function setCastilloData(datos_castillo) {
+    
+    $('#main_castle').html("Main Castle:"+datos_castillo.castle_id)
     $('#level-castle').html(datos_castillo.level);
     $('#defense-castle').html(datos_castillo.defense_remaining);
     $('#capacity-castle').html(datos_castillo.capacity);
@@ -26,29 +29,31 @@ function dibujarEdificiosenHTML(buildings) {
 
     //limpiar contenido 
 
-    //console.log(buildings);
+    
 
     for (unedificio of buildings) {
+        if (unedificio.building_name != "Barrack") {
 
-        if (unedificio.building_name != "Castle" && unedificio.building_name != "Barrack") {
+
+            // if (unedificio.building_name != "Castle" && unedificio.building_name != "Barrack") {
 
             let id = unedificio.building_name + unedificio.building_id.toString();
+            if (!unedificio.main_castle) {
+              
+                lista_edificios_html.append(
+                    '<div class="card">' +
+                    '<div class="card-header-primary">' +
+                    '<h5>' + unedificio.building_name2 + '</h5>' +
+                    '</div>' +
+                    '<div class="card-body">' +
+                    '<p><span class="subrayado">Troops</span></p>' +
+                    '<table id="' + id + '">' +
 
-            //console.log(id);
-            lista_edificios_html.append(
-                '<div class="card">' +
-                '<div class="card-header-primary">' +
-                '<h5>' + unedificio.building_name2 + '</h5>' +
-                '</div>' +
-                '<div class="card-body">' +
-                '<p><span class="subrayado">Troops</span></p>' +
-                '<table id="' + id + '">' +
-
-                '</table>' +
-                '</div>' +
-                '</div>'
-            );
-
+                    '</table>' +
+                    '</div>' +
+                    '</div>'
+                );
+            }
         }
 
     }
@@ -61,7 +66,7 @@ function dibujarEdificiosenHTML(buildings) {
 //-------------------------------------------------------------------------
 function crearFormularioMoverTropas(troops, buildings, imagen_add, imagen_del) {
 
-    lista_tropas_html = $("#form_planning_troops");
+    lista_tropas_html_formulario = $("#form_planning_troops");
 
     let cadena_buildings_html = '';
 
@@ -70,14 +75,14 @@ function crearFormularioMoverTropas(troops, buildings, imagen_add, imagen_del) {
             '<option value="' + unabuilding.building_id + '">' + unabuilding.building_name2.trim() + '</option>';
     }
 
-   // lista_tropas_html.append
+    // lista_tropas_html.append
     for (unatropa of troops) {
         //let id = unedificio.building_name+unedificio.building_id.toString();
         //console.log(id);
         let troop_id = unatropa.troop_id;
         //unatropa.troop_id
         //unatropa.troop_name
-        lista_tropas_html.append(
+        lista_tropas_html_formulario.append(
             '<form class="form">' +
             '<div class="form-row">' +
             '<label class="col-form-label col-sm-2" id="tropa_name_' + troop_id + '" for="troop_total' + troop_id + '">' + unatropa.troop_name + '</label>' +
@@ -120,10 +125,10 @@ function crearFormularioMoverTropas(troops, buildings, imagen_add, imagen_del) {
 /* Crea listado de tropas para revisa antes de enviar */
 function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
 
-  
+
     $(".boton_plan_troops_movements").click(
         function (event) {
-    
+
 
             event.preventDefault();
 
@@ -161,10 +166,10 @@ function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
             //Cadena final es un arreglo [{},{}]
             // let cadena_api = '{"from":' + from_select + ',"to":' + to_select + ', "troops":[{"troops_id":' + id_tropas + ',"total":' + total_tropas + '}]}';
             let cadena_api = '{"troops_id":' + id_tropas +
-                                ',"total":' + total_tropas +
-                                ',"from":' + from_select +
-                                ',"to":' + to_select + 
-                                '}';
+                ',"total":' + total_tropas +
+                ',"from":' + from_select +
+                ',"to":' + to_select +
+                '}';
 
 
             let id_unico = id_tropas + ID();
@@ -215,13 +220,13 @@ function crearFuncionalidadBotonFormularioPlanMovements(imagen_del) {
 
 function crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico) {
 
-    $("#"+id_boton).click(
+    $("#" + id_boton).click(
         function (event) {
             event.preventDefault();
-            
+
 
             //var id_tropas = $(this).attr('id');
-           // console.log(id_boton);
+            // console.log(id_boton);
             //eliminando
             $('#' + id_unico).remove();
         }
@@ -234,34 +239,46 @@ function crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico) {
 
 function dibujarTropasenHTML(buildings) {
 
-
+console.log(buildings);
     for (unedificio of buildings) {
 
         let lista_tropas_html = null;
-        //si es el castillo
-        if (unedificio.building_name == "Castle") {
-            lista_tropas_html = $("#castle_troops");
-
-        }
-
+        //si es el castillo principal
+        //console.log(unedificio.building_id+' '+unedificio.main_castle);
+        if (unedificio.main_castle) {
+            lista_tropas_html = $("#castle_troops");  
+            //lista_tropas_html.html("AAA" + unedificio.building_id.toString()) ;          
+        } else 
+ 
         //si es la barraca
         if (unedificio.building_name == "Barrack") {
             lista_tropas_html = $("#barrack_troops");
-        }
+        } else 
 
-        if (unedificio.building_name != "Castle" && unedificio.building_name != "Barrack") {
-
+        //if (unedificio.building_name != "Castle" && unedificio.building_name != "Barrack") {
+        if (unedificio.building_name != "Barrack") {
             let id = unedificio.building_name + unedificio.building_id.toString();
             lista_tropas_html = $("#" + id);
         }
 
 
         let tropas = unedificio.troop_location;
-        for (una_tropa of tropas) {
-            if (lista_tropas_html != null) {
-                lista_tropas_html.append("<tr><td><p> <span>" + una_tropa.troop_name + ": " + una_tropa.total + "</span></p></td></tr>");
+        
 
+
+        for (una_tropa of tropas) {
+
+            
+            if (lista_tropas_html != null) {
+
+                lista_tropas_html.append("<tr><td><p> <span>" + 
+                                          una_tropa.troop_name + ": " +
+                                          una_tropa.total +
+                                          "</span></p></td></tr>");
+             
             }
+
+            
         }
 
 
@@ -289,48 +306,48 @@ function crearBotonGo(ruta_move_troops) {
                 cadena = $(this).attr('cadena_api')
 
                 datos.push(cadena);
-              
+
             });
 
             console.log(datos);
-        
 
 
-         
+
+
             //enviarlo al servidor
 
-            var datos_enviar ={
-                peticion : '['+datos.toString()+']'
+            var datos_enviar = {
+                peticion: '[' + datos.toString() + ']'
             }
-          
+
 
             $.post(ruta_move_troops,
                 datos_enviar
 
-            ,
+                ,
                 function (data, textStatus, jqXHR) {
-                  
+
 
                 }
             ).done(
-                function(){
+                function () {
                     //console.log("done");
                     location.reload();
                 }
 
             ).fail(
-                function(data, textStatus,jqXHR ){
-                    console.log(textStatus + ' : '+jqXHR);
+                function (data, textStatus, jqXHR) {
+                    console.log(textStatus + ' : ' + jqXHR);
                 }
 
             ).always(
-                function(){
+                function () {
                     //console.log("always");
                 }
 
             );
 
-              //escribir mensaje de confirmacion al usuario
+            //escribir mensaje de confirmacion al usuario
             // console.log("sss"+ruta_move_troops);
 
 

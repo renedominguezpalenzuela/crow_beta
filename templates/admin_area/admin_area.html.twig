@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AdminArea{% endblock %}
+
+{% block body %}
+
+<div class="row lineaestrecha">
+
+    <div id="col1" class="col-sm-6">
+        <div class="row">
+            <p><span class="subrayado">Users</span></p>
+        </div>
+        <div class="row">
+            <table id="id_user_list" class="table-sm mt-2">
+                {#--- Lista de usuarios ---#}
+            </table>
+        </div>
+    </div>
+
+
+    <div id="col1" class="col-sm">
+
+        <div class="row">
+            <p><span class="subrayado">User</span></p>
+        </div>
+        <div class="row">
+            <p><span id="user_name" class="md-2">-</span></p>
+        </div>
+
+        <div class="row">
+                <p><span class="subrayado">Main Castle</span></p>
+            </div>
+            <div class="row">
+                <p><span id="main_castle" class="md-2">-</span></p>
+            </div>
+
+        <div class="row">
+            <p><span class="subrayado">Troops</span></p>
+        </div>
+
+        <div class="row">
+            <table id="user_troops" class="table-sm mt-2"></table>
+            {#--- Contiene las tropas del castillo ---#}
+            </table>
+        </div>
+
+        <div class="row mt-3">
+            <p><span class="subrayado">Buildings</span></p>
+        </div>
+
+        <div class="row">
+            <table id="user_buildingss" class="table-sm mt-2">
+                {#--- Edificios ---#}
+            </table>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+    {% endblock %}
+    {% block js %}
+
+    {# -- Funciones auxiliares -- #}
+    <script src="{{asset('assets/js/utiles/funcionesglobales.js')}}"></script>
+    <script src="{{asset('assets/js/utiles/userresources.js')}}"></script>
+
+
+    <script>
+
+        let ruta_get_user_resources = "{{path('get_user_resources')}}";
+
+        $.getJSON("{{path('get_user_list')}}", function (data) {
+            let lista_usuarios = data.datos.users;
+            dibujarListaUsuariosHTML(lista_usuarios);
+            CrearOnClickUsuarios(ruta_get_user_resources);
+        });
+
+    </script>
+
+    {% endblock %}

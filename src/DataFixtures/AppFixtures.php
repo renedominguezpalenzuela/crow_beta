@@ -61,6 +61,7 @@ class AppFixtures extends Fixture
             $manager->persist($kingdom);   
         }
 
+        $manager->flush();
 
         //------------------------------------------------------------------------
         //Creando los tipos de edificios

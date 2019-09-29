@@ -8,7 +8,7 @@
 
 <div class="row lineaestrecha">
     <div class="card">
-        <h5 class="card-header-primary">Kingdom: <span id="kingdom_name"> Blue </span></h5>
+        <h5 class="card-header-primary">Kingdom: <span id="kingdom_name">  </span></h5>
         <div class="card-body">
             <table class="table-sm">
                 <tr>
@@ -37,7 +37,7 @@
             {# -- Castle -- #}
             <div class="card">
                 <div class="card-header-primary">
-                    <h5>Castle</h5>
+                    <h5 id="main_castle">Main Castle</h5>
                 </div>
                 <div class="card-body">
                     <table class="table-sm">
@@ -207,6 +207,8 @@
 <script src="{{asset('assets/js/utiles/playerarmy.js')}}"></script>
 
 <script>
+
+   
     // -------------------------------------------------------------------------------
     // Declarando variables globales que contendran todos los datos recibidos
     // -------------------------------------------------------------------------------
@@ -225,7 +227,7 @@
     let imagen_add = "{{ asset('images/iconos/add.png') }}";
     let imagen_del = "{{ asset('images/iconos/delete.png') }}";
 
-
+    
 
     // ------------------------------------------------------------------------------
     // Obtener datos iniciales (se ejecuta al cargar la pagina)
@@ -238,6 +240,9 @@
      }*/
 
     $.getJSON("{{path('list_user_resources')}}", function (data) { // obteniendo los datos recibidos de la peticion
+        
+       
+        
         datos = data.datos;
         buildings = datos.buildings;
         castillo = datos.castle;
@@ -245,7 +250,7 @@
         troops = datos.troops;
         team = datos.team;
         recursos = datos.resources;
-
+        console.log("team "+team);
 
         //Datos del kingdom y del user
         dibujarDatosHTML(team, recursos);
@@ -253,13 +258,13 @@
         //Datos del Castillo
         setCastilloData(castillo);
 
-        //Crear Lista de edificios en html en castle y barrack
+        //Crear Lista de edificios en html 
         dibujarEdificiosenHTML(buildings);
 
         //Preparar Arreglo de Tropas copiarlo en edificios (hacerlo en server?)
         setTroopOnBuildings(buildings, troopLocation)
 
-        //inicializando tropas en todos los edificios que no sean barrack y castle
+        //inicializando tropas en todos los edificios que no sean barrack 
         dibujarTropasenHTML(buildings);
 
         //Crear formulario de mover tropas
