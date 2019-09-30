@@ -5,33 +5,39 @@
 
 <div class="row h-100" id="login_page">
 
-    {#style="background-color: #eee;"#}
-    <div class="col-md-4" style="text-align:center;">
+    {#style="background-color: #eee; "
+    style="text-align:center;"#}
+    <div class="col-md-4">
+
+        {#<div class="fondo_formulario_login_page">#}
+        <div class="container h-100 fondo_formulario_login_page">
+            <div class="row h-100 justify-content-center align-items-center">
+                <form method="POST" action="{{ path('login') }}" class="form-horizontal mt-4">
 
 
-        <form method="POST" action="{{ path('login') }}" class="form-horizontal fondo_formulario_login_page mt-4">
+                    <div class="form-group">
+                         <label class="bmd-label-floating">User Name</label> 
+                        <input type="text" class="form-control color_input" name="_username" id="username" autocomplete="off">
+
+                    </div>
+
+                    <div class="form-group">
+                        <label class="bmd-label-floating">Password</label>
+                        <input type="password" class="form-control" name="_password" id="password">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        <input type="hidden" name="_target_path" value="/player-army" />
+                    </div>
 
 
-            <div class="form-group w-50">
-                <label class="bmd-label-floating">User Name</label>
-                <input type="text" class="form-control" name="_username" id="username" autocomplete="off">
+
+                    <button type="submit" class="btn btn-primary custom-btn">Go!</button>
+                    <a class="btn btn-info" href="{{ path('user_new') }}">Register</a>
+
 
             </div>
-
-            <div class="form-group w-50">
-                <label class="bmd-label-floating">Password</label>
-                <input type="password" class="form-control" name="_password" id="password">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                <input type="hidden" name="_target_path" value="/player-army" />
-            </div>
+        </div>
 
 
-
-            <button type="submit" class="btn btn-primary">Go!</button>
-            <a class="btn btn-info" href="{{ path('user_new') }}">Register</a>
-
-
-        </form>
     </div>
     <div class="col-md">
         <img src="{{ asset('img/crow_title_only_1000w.png') }}" width="100%" />

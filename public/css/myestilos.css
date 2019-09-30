@@ -7,10 +7,21 @@ html {
   overflow-y: scroll;
 }*/
 
+
 body, html {
   height: 100%;
-  width: 100%;
+
+  margin: 0;
+  padding: 0;
+ 
 }
+
+
+/* Colores de input*/
+/*.color_input{
+  background-color:#B6A895;
+    color: rgb(250, 250, 250);
+  }*/
 
 .fondo_login_page {
     position: relative;
@@ -24,12 +35,26 @@ body, html {
 
 
 
+.custom-btn {
+	background-color: #000;
+	border-color: #000;
+}
+
+
+
 /*Imagen de fondo del formulario de la pagina de login*/
 .fondo_formulario_login_page {
-
-  background: url("../img/bar_horizontal_light_with_banner_1050w.png") center ;
+  position: relative;
+  background: url("../img/bar_horizontal_light_with_banner_1050w.png") center center ;
+  width: 100%;
+  height: 100%;
   background-size: contain;
-  height: 400pt;
+  overflow: hidden;
+
+
+  /*
+  background-size: contain;
+  height: 400pt;*/
 
   /*height: 400pt;
   width: 350pt;
@@ -39,8 +64,92 @@ body, html {
 
 }
 
+.menu_superior {
+  background-image: url("../img/HeaderBase.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative; 
+  overflow: hidden; 
+  height: 25%;
+}
 
 
+.menu_superior_texto {
+  background-image: url("../img/menu_noletters_87.png");
+  background-position:  bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative; 
+  overflow: hidden; 
+  height: 40%;
+  width: 100%
+  
+}
+
+
+
+html {
+  font-size: 1rem;
+}
+h1 {
+ font-size: 1.2rem;
+}
+h2 {
+ font-size: 1.1rem;
+}
+
+@media (min-width: 768px) {
+ html {
+   font-size: 1.1rem;
+ }
+ h1 {
+     font-size: 1.3rem;
+ }
+ h2 {
+     font-size: 1.2rem;
+ }
+}
+
+@media (min-width: 991px) {
+   html {
+   font-size: 1.2rem;
+ }
+ h1 {
+     font-size: 1.5rem;
+ }
+ h2 {
+     font-size: 1.4rem;
+ }
+}
+
+@media (min-width: 1200px) {
+ html {
+   font-size: 1.2rem;
+ }
+ h1 {
+     font-size: 1.7rem;
+ }
+ h2 {
+     font-size: 1.6rem;
+ }
+}
+
+
+
+@font-face {
+  font-family: breathe_fire;
+  src:url("../fonts/BREATHE_FIRE.OTF");
+}
+
+.letra_breathe_fire{
+  font-family: breathe_fire;
+}
+
+
+
+
+/*
 .subrayado {
     border-bottom: 2px solid;
     color: whitesmoke;
@@ -54,41 +163,45 @@ body, html {
 h4 {
   border-bottom: 2px solid;
   color: whitesmoke;
-}
+}*/
 
+
+/*
 .dark-edition .table > thead > tr > th, .dark-edition .table > tbody > tr > th, .dark-edition .table > tfoot > tr > th, .dark-edition .table > thead > tr > td, .dark-edition .table > tbody > tr > td, .dark-edition .table > tfoot > tr > td {
   color: #000;
 }
+*/
 
+/*
 .card p{
   text-shadow: 3px 3px 2px #000;
   color: #FFF;
-  /*margin-bottom: 0px;*/
-  /*margin-top: 0px;*/
-}
+  margin-bottom: 0px;
+  margin-top: 0px;
+}*/
 
 
 
 
 
  
-
+/*
 select option{
    background-color:rgb(255, 255, 255) !important;
     color:rgb(255, 0, 0);
-}
+}*/
 
 
-
+/*
 .card-header-white  {
   background: linear-gradient(60deg, #ffffff, #ebebeb);
 }
+*/
 
-
-
+/*
 .text-white {
     color: #575858 !important;
-  }
+  }*/
   
 
 
