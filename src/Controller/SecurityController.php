@@ -3,16 +3,18 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class SecurityController extends AbstractController {
+class SecurityController extends AbstractController
+{
 
     /**
      * @Route("/", name="login")
      */
-    public function index(Request $request, AuthenticationUtils $utils) {
+    public function index(Request $request, AuthenticationUtils $utils)
+    {
         if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('dashboard');
         }
@@ -20,22 +22,24 @@ class SecurityController extends AbstractController {
         $lastUsername = $utils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
-                    'error' => $error,
-                    'last_username' => $lastUsername,
+            'error' => $error,
+            'last_username' => $lastUsername,
         ]);
     }
 
     /**
      * @Route("/logout", name="logout")
      */
-    public function logout() {
-        
+    public function logout()
+    {
+
     }
 
     /**
      * @Route("/admin/check_user_custom", name="check_user_custom")
      */
-    public function customCheckUser() {
+    public function customCheckUser()
+    {
         if (!$this->getUser()->getActive()) {
             $this->addFlash('error', 'This user ' . $this->getUser() . 'is unabled!');
 

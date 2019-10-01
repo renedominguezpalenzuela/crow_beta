@@ -1,10 +1,26 @@
-{% extends 'base.html.twig' %}
+
+{% extends 'menu.html.twig' %}
 
 {% block title %}Kingdom{% endblock %}
 
 {% block body %}
+{{ parent() }} 
+
+
+<h1>HOLA</h1>
 
 {% endblock %}
+
+
+
+
+
+
 {% block js %}
+
+<script>
+  $('#main_body').removeClass('fondo_login_page');
+ // $('#main_body').addClass('fondo_all_pages');
+</script>
 
 {% endblock %}

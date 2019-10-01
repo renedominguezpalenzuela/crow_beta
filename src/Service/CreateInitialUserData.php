@@ -102,13 +102,19 @@ class CreateInitialUserData
             $castillo = new Building();
             $castillo->setUser($user);
             $castillo->setName2($castle_type_lv1->getName());
+          
             $castillo->setBuildingType($castle_type_lv1);
 
             $castillo->setDefenseRemaining($castle_type_lv1->getDefense());
             $castillo->setKingdom($this->kingdom);
 
+          //  $this->em->persist($castillo);
+
+           
             $this->em->persist($castillo);
             $this->em->flush();
+
+         
 
             $this->kingdom->setMainCastleId($castillo->getId());
             $this->kingdom->setIdKingdomBoss($user->getId());
@@ -122,6 +128,10 @@ class CreateInitialUserData
             //setear el boss del castillo
         }
 
+        $castillo->setName2($castle_type_lv1->getName().':'.$castillo->getId());
+        $this->em->persist($castillo);
+        $this->em->flush();
+
     }
 
     public function crearBarrack(User $user)
@@ -133,11 +143,17 @@ class CreateInitialUserData
 
         $barrack->setUser($user);
         $barrack->setBuildingType($barrack_type);
-        $barrack->setName2($barrack_type->getName());
+       
         $barrack->setKingdom($this->kingdom);
+        $barrack->setName2($barrack_type->getName());
 
         $barrack->setDefenseRemaining($barrack_type->getDefense());
 
+        $this->em->persist($barrack);
+        $this->em->flush();
+
+
+        $barrack->setName2($barrack_type->getName().':'.$barrack->getId());
         $this->em->persist($barrack);
         $this->em->flush();
 

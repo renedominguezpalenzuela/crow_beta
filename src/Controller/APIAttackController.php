@@ -263,27 +263,33 @@ class APIAttackController extends AbstractController
         //  TODO: Captura de edificios
         //----------------------------------------------------------------------------------------
         //Determinar si no quedan tropas defensoras
-        //Cambiar en building, el kingdom
+        //Cambiar en building, el kingdom y el user
         
         if ($this->total_final_defensores<=0) {           
             $this->building_taked = true;
+
+            $attacked_building->getKingdom()->setMainCastleId(0);
             $attacked_building->setKingdom($user->getKingdom());
+            $attacked_building->setUser($user);
+           // $attacked_building->setIdKingdomBoss(0);
         }
 
-        $this->em->persist($attacked_building);     
+        $this->em->persist($attacked_building);    
+        
+        //TODO: si el castillo es el principal, entonces eliminarlo de kingdom.main_castle_id
 
         //----------------------------------------------------------------------------------------
-        //  TODO: Puntos
+        //  TODO: Puntos solo al atacante se le asignan
         //----------------------------------------------------------------------------------------
         $this->attacker_points = $this->battle->calcularPuntos($this->resultado_batalla_attacker, $this->total_a_eliminar_defensor);
-        $this->defender_points =  $this->battle->calcularPuntos($this->resultado_batalla_defender, $this->total_a_eliminar_atacante);
+        
 
         $this->battle->EscribirPuntosUsuario($this->attacker_points,$user );
         $this->battle->EscribirPuntosKingdom($this->attacker_points,$user->getKingdom(),$this->building_taked );
         
-        $defender_kingdom = $attacked_building->getKingdom();
+       // $defender_kingdom = $attacked_building->getKingdom();
         
-        $this->battle->EscribirPuntosKingdom($this->defender_points,$defender_kingdom, $this->building_taked );
+      //  $this->battle->EscribirPuntosKingdom($this->defender_points,$defender_kingdom, $this->building_taked );
 
 
         //----------------------------------------------------------------------------------------

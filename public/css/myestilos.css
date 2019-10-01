@@ -1,0 +1,278 @@
+/*
+Mis estilos
+*/
+/*
+mostrar barra vertical de scroll
+html {
+  overflow-y: scroll;
+}*/
+
+
+body, html {
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+ background: #000;
+}
+
+
+/* Colores de input*/
+/*.color_input{
+  background-color:#B6A895;
+    color: rgb(250, 250, 250);
+  }*/
+
+.fondo_login_page {
+    position: relative;
+    background: url("../img/crow_page_no_titles_2304w.jpg")  ;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    overflow: hidden;
+    background-repeat: no-repeat;
+}
+
+.fondo_all_pages {
+  position: relative;
+  background: #000 url("../img/parchemin_low.png")  ;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+
+  background-repeat: no-repeat;
+}
+
+
+
+
+
+
+.custom-btn {
+	background-color: #000;
+	border-color: #000;
+}
+
+
+
+/*Imagen de fondo del formulario de la pagina de login*/
+.fondo_formulario_login_page {
+  position: relative;
+  background: url("../img/RegistrationPannel.png") center center ;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  overflow: hidden;
+
+
+  /*
+  background-size: contain;
+  height: 400pt;*/
+
+  /*height: 400pt;
+  width: 350pt;
+  overflow: hidden;*/
+  background-repeat: no-repeat;
+ 
+
+}
+
+.menu_superior {
+  background-image: url("../img/HeaderBase.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative; 
+  overflow: hidden; 
+  height: 25%;
+}
+
+/*Menu de las paginas */
+.menu_superior_texto {
+  background-image: url("../img/menu_noletters_87.png");
+  background-position:  bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: relative; 
+  overflow: hidden; 
+  height: 35%;
+  width: 100%
+}
+
+
+
+html {
+  font-size: 1rem;
+}
+h1 {
+ font-size: 1.2rem;
+}
+h2 {
+ font-size: 1.1rem;
+}
+
+@media (min-width: 768px) {
+ html {
+   font-size: 1.1rem;
+ }
+ h1 {
+     font-size: 1.3rem;
+ }
+ h2 {
+     font-size: 1.2rem;
+ }
+}
+
+@media (min-width: 991px) {
+   html {
+   font-size: 1.2rem;
+ }
+ h1 {
+     font-size: 1.5rem;
+ }
+ h2 {
+     font-size: 1.4rem;
+ }
+}
+
+@media (min-width: 1200px) {
+ html {
+   font-size: 1.2rem;
+ }
+ h1 {
+     font-size: 1.7rem;
+ }
+ h2 {
+     font-size: 1.6rem;
+ }
+}
+
+
+
+@font-face {
+  font-family: breathe_fire;
+  src:url("../fonts/BREATHE_FIRE.OTF");
+}
+
+.letra_breathe_fire{
+  font-family: breathe_fire;
+}
+
+
+.subrayado {
+    border-bottom: 2px solid;
+    /*color: whitesmoke;*/
+}
+
+
+.lineaestrecha {
+    line-height: 0.4;
+
+}
+
+/*
+h4 {
+  border-bottom: 2px solid;
+  color: whitesmoke;
+}*/
+
+
+
+.dark-edition .table > thead > tr > th, .dark-edition .table > tbody > tr > th, .dark-edition .table > tfoot > tr > th, .dark-edition .table > thead > tr > td, .dark-edition .table > tbody > tr > td, .dark-edition .table > tfoot > tr > td {
+  color: #000;
+}
+
+
+/*
+.card p{
+  text-shadow: 3px 3px 2px #000;
+  color: #FFF;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}*/
+
+
+
+
+
+ 
+
+select option{
+   background-color:rgb(255, 255, 255) !important;
+    color:rgb(255, 0, 0);
+}
+
+
+
+.card-header-white  {
+  background: linear-gradient(60deg, #ffffff, #ebebeb);
+}
+
+
+
+.text-white {
+    color: #575858 !important;
+  }
+  
+
+
+ /* 
+.card .card-header-info .card-icon,
+.card .card-header-info .card-text,
+.card .card-header-info:not(.card-header-icon):not(.card-header-text),
+.card.bg-info,
+.card.card-rotate.bg-info .front,
+.card.card-rotate.bg-info .back {
+  background: linear-gradient(60deg, #26c6da, #00acc1);
+}
+
+.card .card-header-success .card-icon,
+.card .card-header-success .card-text,
+.card .card-header-success:not(.card-header-icon):not(.card-header-text),
+.card.bg-success,
+.card.card-rotate.bg-success .front,
+.card.card-rotate.bg-success .back {
+  background: linear-gradient(60deg, #66bb6a, #43a047);
+}
+
+.card .card-header-warning .card-icon,
+.card .card-header-warning .card-text,
+.card .card-header-warning:not(.card-header-icon):not(.card-header-text),
+.card.bg-warning,
+.card.card-rotate.bg-warning .front,
+.card.card-rotate.bg-warning .back {
+  background: linear-gradient(60deg, #ffa726, #fb8c00);
+}
+
+.card .card-header-danger .card-icon,
+.card .card-header-danger .card-text,
+.card .card-header-danger:not(.card-header-icon):not(.card-header-text),
+.card.bg-danger,
+.card.card-rotate.bg-danger .front,
+.card.card-rotate.bg-danger .back {
+  background: linear-gradient(60deg, #ef5350, #e53935);
+}
+
+.card .card-header-rose .card-icon,
+.card .card-header-rose .card-text,
+.card .card-header-rose:not(.card-header-icon):not(.card-header-text),
+.card.bg-rose,
+.card.card-rotate.bg-rose .front,
+.card.card-rotate.bg-rose .back {
+  background: linear-gradient(60deg, #ec407a, #d81b60);
+}
+*/
+
+  /*
+.dark-edition .table > thead > tr > th, .dark-edition .table > tbody > tr > th, .dark-edition .table > tfoot > tr > th, .dark-edition .table > thead > tr > td, .dark-edition .table > tbody > tr > td, .dark-edition .table > tfoot > tr > td {
+    color: rgb(0, 0, 0);
+}
+
+
+.card p, .form-inline {
+    text-shadow: 3px 3px 2px rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    
+}*/
+
