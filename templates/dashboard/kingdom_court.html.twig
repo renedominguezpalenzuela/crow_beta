@@ -1,9 +1,12 @@
-{% extends "base.html.twig" %}
+{% extends "menu.html.twig" %}
 
 {% block title %}Kindom Court{% endblock %}
 
 {% block body %}
+{{ parent() }} 
+<div class="fondo_all_pages">
     kingdom_court
+</div>
 {% endblock %}
 
 {% block js %}{% endblock %}

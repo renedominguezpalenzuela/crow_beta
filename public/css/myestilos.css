@@ -13,7 +13,8 @@ body, html {
 
   margin: 0;
   padding: 0;
- 
+
+ background: #000;
 }
 
 
@@ -33,6 +34,19 @@ body, html {
     background-repeat: no-repeat;
 }
 
+.fondo_all_pages {
+  position: relative;
+  background: #000 url("../img/parchemin_low.png")  ;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+
+  background-repeat: no-repeat;
+}
+
+
+
+
 
 
 .custom-btn {
@@ -45,7 +59,7 @@ body, html {
 /*Imagen de fondo del formulario de la pagina de login*/
 .fondo_formulario_login_page {
   position: relative;
-  background: url("../img/bar_horizontal_light_with_banner_1050w.png") center center ;
+  background: url("../img/RegistrationPannel.png") center center ;
   width: 100%;
   height: 100%;
   background-size: contain;
@@ -74,7 +88,7 @@ body, html {
   height: 25%;
 }
 
-
+/*Menu de las paginas */
 .menu_superior_texto {
   background-image: url("../img/menu_noletters_87.png");
   background-position:  bottom;
@@ -82,9 +96,8 @@ body, html {
   background-size: 100% 100%;
   position: relative; 
   overflow: hidden; 
-  height: 40%;
+  height: 35%;
   width: 100%
-  
 }
 
 
@@ -147,30 +160,29 @@ h2 {
 }
 
 
-
-
-/*
 .subrayado {
     border-bottom: 2px solid;
-    color: whitesmoke;
+    /*color: whitesmoke;*/
 }
 
 
 .lineaestrecha {
     line-height: 0.4;
+
 }
 
+/*
 h4 {
   border-bottom: 2px solid;
   color: whitesmoke;
 }*/
 
 
-/*
+
 .dark-edition .table > thead > tr > th, .dark-edition .table > tbody > tr > th, .dark-edition .table > tfoot > tr > th, .dark-edition .table > thead > tr > td, .dark-edition .table > tbody > tr > td, .dark-edition .table > tfoot > tr > td {
   color: #000;
 }
-*/
+
 
 /*
 .card p{
@@ -185,23 +197,23 @@ h4 {
 
 
  
-/*
+
 select option{
    background-color:rgb(255, 255, 255) !important;
     color:rgb(255, 0, 0);
-}*/
+}
 
 
-/*
+
 .card-header-white  {
   background: linear-gradient(60deg, #ffffff, #ebebeb);
 }
-*/
 
-/*
+
+
 .text-white {
     color: #575858 !important;
-  }*/
+  }
   
 
 

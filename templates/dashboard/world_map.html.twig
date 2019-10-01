@@ -1,13 +1,14 @@
-{% extends "base.html.twig" %}
+{% extends "menu.html.twig" %}
 
 {% block title %}World Map
 {% endblock %}
 
 
 {% block body %}
+{{ parent() }} 
 
 
-
+<div class="fondo_all_pages">
 
 <div class="lineaestrecha row">
 
@@ -254,7 +255,7 @@
 
 
 
-
+</div>
 
 {% endblock %}
 

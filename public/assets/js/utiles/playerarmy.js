@@ -239,7 +239,7 @@ function crearFuncionalidadBotonDelPlanMovements(id_boton, id_unico) {
 
 function dibujarTropasenHTML(buildings) {
 
-console.log(buildings);
+//console.log(buildings);
     for (unedificio of buildings) {
 
         let lista_tropas_html = null;
