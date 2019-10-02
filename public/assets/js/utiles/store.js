@@ -34,7 +34,7 @@ $(".hire_troops").click(
             function (data) {
                 //console.log("done");
                 console.log(data);
-               // location.reload();
+                location.reload();
             }
 
         ).fail(
