@@ -32,6 +32,19 @@ class Config
      */
     private $test_user='axl';
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $gold_increment;
+
+
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $t_last_clock_check;
+
+
 
     public function getId(): ?int
     {
@@ -78,6 +91,31 @@ class Config
     public function setTest_user($test_user)
     {
         $this->test_user = $test_user;
+
+        return $this;
+    }
+
+    public function getGoldIncrement(): ?int
+    {
+        return $this->gold_increment;
+    }
+
+    public function setGoldIncrement(int $gold_increment): self
+    {
+        $this->gold_increment = $gold_increment;
+
+        return $this;
+    }
+
+
+    public function getTLastClockCheck(): ?\DateTimeInterface
+    {
+        return $this->t_last_clock_check;
+    }
+
+    public function setTLastClockCheck(?\DateTimeInterface $t_last_clock_check): self
+    {
+        $this->t_last_clock_check = $t_last_clock_check;
 
         return $this;
     }

@@ -10,6 +10,10 @@ use App\Entity\UnitType;
 use App\Entity\Config;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\User;
+use App\Entity\EventType;
+use App\Entity\TimeEvent;
+use App\Service\Utiles;
+
 
 
 class AppFixtures extends Fixture
@@ -17,8 +21,10 @@ class AppFixtures extends Fixture
 
 
     private $encoder;
+    private $utiles;
 
-    public function __construct( UserPasswordEncoderInterface $encoder){
+    public function __construct( UserPasswordEncoderInterface $encoder,Utiles $utiles ){
+        $this->utiles = $utiles;
         $this->encoder = $encoder;
     }
 
@@ -36,6 +42,7 @@ class AppFixtures extends Fixture
         $config = new Config();
         $config->setTesting(false);
         $config->setGoldIni(500000);
+        $config->setGoldIncrement(100000);
         $config->setTest_user('axl');
         $manager->persist($config);
 
@@ -115,6 +122,70 @@ class AppFixtures extends Fixture
            
             $manager->persist($unit);   
         }
+
+
+        //------------------------------------------------------------------------
+        // Tipos de Eventos
+        //------------------------------------------------------------------------
+
+        $event_type_data = array(
+            ['id'=>1, 'name'=>'increment_gold', 'periodic'=>true, 't_ejec_d'=>1, 't_ejec_h'=>0, 't_ejec_m'=>0, 't_ejec_s'=>0, 'explanation'=>'Daily increment of gold for all users'],
+            ['id'=>2, 'name'=>'repair_building', 'periodic'=>false, 't_ejec_d'=>0, 't_ejec_h'=>0, 't_ejec_m'=>5, 't_ejec_s'=>0, 'explanation'=>'Repair a building']          
+        );
+
+        foreach ($event_type_data as $uneventtype) {
+            $eventtype = new EventType();
+            $eventtype->setName($uneventtype['name']);
+            $eventtype->setPeriodic($uneventtype['periodic']);
+            $eventtype->setTEjecD($uneventtype['t_ejec_d']);
+            $eventtype->setTEjecH($uneventtype['t_ejec_h']);
+            $eventtype->setTEjecM($uneventtype['t_ejec_m']);
+            $eventtype->setTEjecS($uneventtype['t_ejec_s']);
+            
+           
+            $manager->persist($eventtype);   
+        }
+
+        $manager->flush();
+
+        //------------------------------------------------------------------------
+        // Agregando Eventos Periodicos
+        //------------------------------------------------------------------------
+
+        //Obtener todos los tipos de eventos
+//        $tropa_edificio_old = $em->getRepository(TroopBuilding::class)->findOneBy(['troops' => $troop_id, 'building' => $from]);
+
+        $TiposdeEventos = $manager->getRepository(EventType::class)->findBy(['periodic' => true]);
+
+
+
+
+        $FechaAhora = new \DateTime();
+       // $fecha_ejecucion = new \DateTime();
+
+       
+       
+      // echo "Time zone ". $FechaAhora->getTimezone()->getName();
+
+        foreach ($TiposdeEventos as $uneventtype) {
+
+           $fecha_ejecucion =  $this->utiles->sumaraFecha($FechaAhora,1,1,5,5);
+
+            $eventos = new TimeEvent();
+            $eventos->setEventType($uneventtype);
+            $eventos->setActive(true);
+            $eventos->setTIni($FechaAhora);
+           // $eventos->setTLastCheck($FechaAhora);
+
+          
+            $eventos->setTejec($fecha_ejecucion);
+           
+           
+           
+            $manager->persist($eventos);   
+        }
+
+
 
 
         //------------------------------------------------------------------------
