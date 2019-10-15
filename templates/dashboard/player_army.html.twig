@@ -216,6 +216,35 @@
                 </div>
 
 
+                {# -----------------  Donar dinero -------------- #}
+                <div class="card bg-dark ">
+                    <div class="card-header-primary">
+                        <h5>Donate money to kingdom funds</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-1">
+                                <h3 class="mb-2">$</h3>
+                            </div>
+                            <div class="col-5">
+                                <h3>
+                                    <input type="number" min="0" step="1" pattern="d+" id="money"
+                                        class="form-control mb-2" placeholder="0">
+                                </h3>
+                            </div>
+
+                        </div>
+                        <div class="row justify-content-end">
+                            <div class="col-9">
+                                <DIV class="btn btn-success" id="donate-money"><b>Donate</b> </DIV>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
                 <div class="card">
                     <div class="card-header-primary">
                         <h5>Chat</h5>
@@ -252,6 +281,7 @@
 <script src="{{asset('assets/js/utiles/funcionesglobales.js')}}"></script>
 <script src="{{asset('assets/js/utiles/playerarmy.js')}}"></script>
 <script src="{{asset('assets/js/utiles/store.js')}}"></script>
+<script src="{{asset('assets/js/utiles/donatemoney.js')}}"></script>
 
 <script>
 
@@ -300,7 +330,7 @@
         troops = datos.troops;
         team = datos.team;
         recursos = datos.resources;
-       
+
 
         //Datos del kingdom y del user
         dibujarDatosHTML(team, recursos);
@@ -334,6 +364,9 @@
 
         let ruta_hire_troops = "{{path('hire_troops')}}";
         boton_hire_troops(ruta_hire_troops);
+
+        let donar_funds = "{{path('donate_funds')}}";
+        boton_donate_money(donar_funds);
 
 
     });
