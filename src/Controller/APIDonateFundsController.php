@@ -10,6 +10,9 @@ use App\Service\GlobalConfig;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use App\Entity\User;
+use App\Entity\Kingdom;
+
 
 
 class APIDonateFundsController extends AbstractController
@@ -65,12 +68,43 @@ class APIDonateFundsController extends AbstractController
         //Datos del ataque: arreglo con tropas atacantes, id del edificio a atacar
          $Total_a_Donar = $parametersAsArray["total_a_donar"];
 
+         
+
+
+         //Quitar el dinero del user, y pasarlo al kingdom
+         //1) Comprobar que alcance el dinero
+         $dinero_inicial_usuario =  $user->getGold();
+        
+
+
+         if ($dinero_inicial_usuario>=$Total_a_Donar) {
+              $dinero_inicial_kingdom = $user->getKingdom()->getGold();
+            
+
+              $dinero_final_kingdom =  $dinero_inicial_kingdom + $Total_a_Donar;
+              $dinero_final_usuario =  $dinero_inicial_usuario - $Total_a_Donar;
+
+
+             
+              $user->setGold($dinero_final_usuario);
+              $user->getKingdom()->setGold($dinero_final_kingdom);
+
+              $em->persist($user);
+              $em->flush();
+
+
+
+
+         } else {
+            $error=true; 
+            $mensaje_error="Not enough funds to donate";
+         }
+
 
         
         $respuesta = array(
             'error' => $error,
             'message' => $mensaje_error,
-            'totaladonar' =>$Total_a_Donar
         );
 
      

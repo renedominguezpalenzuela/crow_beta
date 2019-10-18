@@ -1,23 +1,24 @@
 
-function boton_donate_money(ruta){
+function boton_upgrade_castle(ruta){
 
 
 
 
     
-    $("#donate-money").click(
+    $("#upgrade_main_castle").click(
         function (event) {
             event.preventDefault();
           
 
-            var total_a_donar = $("#money").val();
+           // var total_a_donar = $("#money").val();
+          var building_id = $("#upgrade_main_castle").attr('building_id');
            
-            console.log("Hi");
-            console.log(total_a_donar);
+           // console.log("Hi" + building_id);
+           
     
             var peticion_all = {};
     
-            peticion_all.total_a_donar= total_a_donar;
+            peticion_all.building_id= building_id;
     
             var datos_enviar = {
                 peticion: JSON.stringify(peticion_all)
@@ -63,4 +64,3 @@ function boton_donate_money(ruta){
     
     
     }
-

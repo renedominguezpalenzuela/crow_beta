@@ -96,6 +96,11 @@ class Kingdom
      */
     private $main_castle_id=0;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $gold;
+
     public function __construct()
     {
         $this->buildings = new ArrayCollection();
@@ -312,6 +317,18 @@ class Kingdom
     public function setMainCastleId(int $main_castle_id): self
     {
         $this->main_castle_id = $main_castle_id;
+
+        return $this;
+    }
+
+    public function getGold(): ?int
+    {
+        return $this->gold;
+    }
+
+    public function setGold(?int $gold): self
+    {
+        $this->gold = $gold;
 
         return $this;
     }
