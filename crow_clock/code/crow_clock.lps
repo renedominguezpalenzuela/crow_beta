@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="16">
+      <Unit0>
+        <Filename Value="crow_clock.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="13"/>
+        <UsageCount Value="47"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="daemonmapperunit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DaemonMapper1"/>
+        <HasResources Value="True"/>
+        <UnitName Value="DaemonMapperUnit1"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="11"/>
+        <CursorPos X="32" Y="15"/>
+        <UsageCount Value="47"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="daemonunit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Daemon1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="DaemonUnit1"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="63" Y="8"/>
+        <UsageCount Value="47"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="librerias/ulog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uLog"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="58"/>
+        <CursorPos Y="95"/>
+        <UsageCount Value="47"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="librerias/uhiloprincipal.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UHiloPrincipal"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="21"/>
+        <CursorPos X="73" Y="43"/>
+        <UsageCount Value="47"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="librerias/uconfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uConfig"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="13"/>
+        <UsageCount Value="42"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uCheckEvents"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="43"/>
+        <CursorPos X="97" Y="65"/>
+        <UsageCount Value="38"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="librerias/ueventostable.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uEventosTable"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="79"/>
+        <CursorPos X="42" Y="8"/>
+        <UsageCount Value="38"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="librerias/ulistaeventos.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UListaEventos"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="84"/>
+        <CursorPos Y="85"/>
+        <UsageCount Value="36"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="librerias/uevent_incrementargold.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="52"/>
+        <CursorPos X="12" Y="19"/>
+        <UsageCount Value="33"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="librerias/uconexionbd.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uconexionBD"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="25"/>
+        <CursorPos X="41" Y="8"/>
+        <UsageCount Value="33"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="librerias/unit1.pas"/>
+        <UnitName Value="Unit1"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="54" Y="6"/>
+        <UsageCount Value="19"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="librerias/uhiloprincipalpas.pas"/>
+        <UnitName Value="UHiloPrincipalpas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="23"/>
+        <UsageCount Value="19"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="../../comp/zeosdbo-7.2.4-stable/src/component/ZAbstractRODataset.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3567"/>
+        <CursorPos Y="3577"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="../../comp/zeosdbo-7.2.4-stable/src/dbc/ZDbcMySqlUtils.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="286"/>
+        <CursorPos Y="296"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="librerias/utiles.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="16"/>
+        <CursorPos X="4" Y="26"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit15>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="28" Column="29" TopLine="7"/>
+      </Position1>
+      <Position2>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="39" Column="50" TopLine="29"/>
+      </Position2>
+      <Position3>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="54" Column="57" TopLine="37"/>
+      </Position3>
+      <Position4>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="26" Column="27" TopLine="7"/>
+      </Position4>
+      <Position5>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="47" Column="149" TopLine="33"/>
+      </Position5>
+      <Position6>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="12" Column="151"/>
+      </Position6>
+      <Position7>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="27" Column="52" TopLine="8"/>
+      </Position7>
+      <Position8>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="33" Column="46" TopLine="10"/>
+      </Position8>
+      <Position9>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="62" Column="14" TopLine="25"/>
+      </Position9>
+      <Position10>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="27" TopLine="24"/>
+      </Position10>
+      <Position11>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="28" TopLine="24"/>
+      </Position11>
+      <Position12>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="29" TopLine="24"/>
+      </Position12>
+      <Position13>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="30" TopLine="24"/>
+      </Position13>
+      <Position14>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="31" TopLine="24"/>
+      </Position14>
+      <Position15>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="32" TopLine="24"/>
+      </Position15>
+      <Position16>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="33" TopLine="24"/>
+      </Position16>
+      <Position17>
+        <Filename Value="librerias/utiles.pas"/>
+        <Caret Line="28" TopLine="23"/>
+      </Position17>
+      <Position18>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="76" TopLine="66"/>
+      </Position18>
+      <Position19>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="22" Column="93" TopLine="10"/>
+      </Position19>
+      <Position20>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="76" Column="35" TopLine="65"/>
+      </Position20>
+      <Position21>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="74" TopLine="63"/>
+      </Position21>
+      <Position22>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="76" Column="77" TopLine="68"/>
+      </Position22>
+      <Position23>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="74" TopLine="68"/>
+      </Position23>
+      <Position24>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="76" TopLine="68"/>
+      </Position24>
+      <Position25>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="78" Column="39" TopLine="68"/>
+      </Position25>
+      <Position26>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="74" TopLine="68"/>
+      </Position26>
+      <Position27>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="76" TopLine="68"/>
+      </Position27>
+      <Position28>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="78" TopLine="68"/>
+      </Position28>
+      <Position29>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="70" TopLine="66"/>
+      </Position29>
+      <Position30>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <Caret Line="107" TopLine="97"/>
+      </Position30>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>

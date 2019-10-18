@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="9"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="Daemon application"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <VersionInfo>
+      <StringTable ProductVersion=""/>
+    </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <CommandLineParams Value="-r"/>
+      </local>
+    </RunParams>
+    <RequiredPackages Count="4">
+      <Item1>
+        <PackageName Value="zcomponent"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="LazDaemon"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="LCL"/>
+      </Item3>
+      <Item4>
+        <PackageName Value="FCL"/>
+      </Item4>
+    </RequiredPackages>
+    <Units Count="12">
+      <Unit0>
+        <Filename Value="crow_clock.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="daemonmapperunit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DaemonMapper1"/>
+        <HasResources Value="True"/>
+        <UnitName Value="DaemonMapperUnit1"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="daemonunit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Daemon1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="DaemonUnit1"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="librerias/ulog.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uLog"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="librerias/uhiloprincipal.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UHiloPrincipal"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="librerias/uconfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uConfig"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="librerias/ucheckevents.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uCheckEvents"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="librerias/ueventostable.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uEventosTable"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="librerias/ulistaeventos.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UListaEventos"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="librerias/uevent_incrementargold.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="librerias/uconexionbd.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uconexionBD"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="librerias/utiles.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="crow_clock"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="/usr/lib/lazarus/1.6.2/components/daemon/;librerias"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

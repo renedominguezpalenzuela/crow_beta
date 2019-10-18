@@ -1,0 +1,16 @@
+object Daemon1: TDaemon1
+  OldCreateOrder = False
+  OnStart = DataModuleStart
+  OnShutDown = DataModuleShutDown
+  Height = 150
+  HorizontalOffset = 141
+  VerticalOffset = 176
+  Width = 150
+  object ZConnection1: TZConnection
+    ControlsCodePage = cCP_UTF8
+    AutoEncodeStrings = False
+    Port = 0
+    left = 94
+    top = 57
+  end
+end

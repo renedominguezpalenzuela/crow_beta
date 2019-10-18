@@ -1,0 +1,105 @@
+unit uEventosTable;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, ZConnection,ZDataset, uConfig, UListaEventos, uconexionBD;
+
+Type
+  TEventosTable = Class
+
+    ZQuery1: TZQuery;
+    ListaEventos:TListaEventos;
+    procedure  getAllEventosFromDB();
+    Constructor create(conn:TConexionBD);
+    Destructor destroy;override;
+  end;
+
+
+implementation
+ uses
+   ulog;
+
+ Constructor TEventosTable.create(conn:TConexionBD);
+ begin
+
+
+   ZQuery1:=TZQuery.Create(nil);
+   Zquery1.Connection:=conn.mConexxion;
+   Zquery1.SQL.Add('Select * from time_event');
+
+   ListaEventos:=TListaEventos.Create();
+
+
+  end;
+
+ Destructor TEventosTable.destroy;
+ begin
+
+//   ListaEventos.Limpiar();
+   ListaEventos.Free();
+
+
+   ZQuery1.Close;
+   ZQuery1.Connection:=nil;
+   ZQuery1.Free;
+
+
+ end;
+
+
+ procedure  TEventosTable.getAllEventosFromDB();
+ var
+   i:integer;
+   unEvento:TunEvento;
+   vlog:Tlog;
+ begin
+
+   vlog:=Tlog.create('mylogs.log','/usr/sbin/crow/',false);
+
+
+   Zquery1.open;
+
+   vlog.info('Total de records '+Inttostr(Zquery1.RecordCount));
+
+
+
+   ListaEventos.Limpiar();
+
+   //For i:=0 to Zquery1.RecordCount-1 do begin
+   While(not ZQuery1.eof) do begin
+      unEvento.active:=Zquery1.FieldByName('active').AsBoolean;
+      unEvento.event_type_id:=Zquery1.FieldByName('event_type_id').AsInteger;
+      unEvento.extra_data:=Zquery1.FieldByName('extra_data').AsString;
+      unEvento.t_ejec:=Zquery1.FieldByName('t_ejec').AsDateTime;
+      unEvento.t_ini:=Zquery1.FieldByName('t_ini').AsDateTime;
+
+        vLog.info('Evento');
+             vlog.info('Activos '+BoolToStr(unEvento.active, 'T', 'F'));
+             vlog.info('fec_ini '+DateTimeToStr(unEvento.t_ini));
+              vlog.info('fec_ejec '+DateTimeToStr(unEvento.t_ejec));
+
+
+
+      ListaEventos.addEvento(unEvento);
+      Zquery1.Next;
+  end;
+
+
+
+
+
+
+
+
+   Zquery1.close;
+
+   vlog.free;
+
+ end;
+
+
+end.
+

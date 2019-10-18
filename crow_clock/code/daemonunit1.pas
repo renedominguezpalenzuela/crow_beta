@@ -1,0 +1,82 @@
+unit DaemonUnit1;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils, FileUtil, DaemonApp, ulog, uHiloPrincipal;
+
+type
+
+  { TDaemon1 }
+
+  TDaemon1 = class(TDaemon)
+    procedure DataModuleShutDown(Sender: TCustomDaemon);
+
+
+
+
+
+
+    procedure DataModuleStart(Sender: TCustomDaemon; var OK: Boolean);
+
+  private
+    { private declarations }
+
+
+     vHilo:THiloPrincipal;
+     procedure Terminar();
+  public
+    { public declarations }
+  end;
+
+var
+  Daemon1: TDaemon1;
+
+
+implementation
+
+
+
+procedure RegisterDaemon;
+begin
+  RegisterDaemonClass(TDaemon1)
+end;
+
+{$R *.lfm}
+
+{ TDaemon1 }
+
+
+procedure TDaemon1.DataModuleShutDown(Sender: TCustomDaemon);
+begin
+ Terminar();
+end;
+
+procedure TDaemon1.DataModuleStart(Sender: TCustomDaemon; var OK: Boolean);
+begin
+  vHilo:=THiloPrincipal.Create(False);
+  vHilo.FreeOnTerminate:=true;
+  vHilo.Resume;   //inicio
+end;
+
+
+procedure TDaemon1.Terminar();
+var
+   xlog:Tlog;
+begin
+
+xlog:=Tlog.create('mylogsfin.log','/usr/sbin/crow/',true);
+xlog.info('Terminando Hilo principal');
+xlog.free;
+
+end;
+
+
+
+
+initialization
+  RegisterDaemon;
+end.
+
