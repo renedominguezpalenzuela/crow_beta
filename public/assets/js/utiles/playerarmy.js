@@ -5,10 +5,56 @@
 //-------------------------------------------------------------------------
 function dibujarDatosHTML(team, recursos) {
 
+    var fondos_kingdom =team.kingdom_gold;
+
+    if (fondos_kingdom==null) {
+        fondos_kingdom=0;
+    }
+     
+   //console.log(team);
+
+
+
+
     $('#kingdom_name').html(team.kingdom_name);
     $('#kingdom_points').html(team.kingdom_points);
+
+
+
     $('#user_points').html(recursos.user_points);
     $('#user_gold').html(recursos.gold);
+    $('#kingdom_gold').html(fondos_kingdom);
+
+
+    var fondos_necesarios_upgrade =10; //1000000;
+    var fondos_necesarios_repair = 1000;
+
+
+   //Setear id del castillo en los botones
+   
+   $('#upgrade_main_castle').attr("building_id", team.main_castle_id);
+   $('#repair_main_castle').attr("building_id", team.main_castle_id);
+
+    //Activar Botones en funcion de los fondos
+
+     //Boton Upgrade
+    if (fondos_kingdom>=fondos_necesarios_upgrade ) {
+        $('#upgrade_main_castle').removeClass('disabled');   
+       
+    } else {
+        $('#upgrade_main_castle').addClass('disabled');        
+         
+    }
+
+    //Boton Repair
+    if (fondos_kingdom>=fondos_necesarios_repair) {
+        $('#repair_main_castle').removeClass('disabled');        
+    } else {
+        $('#repair_main_castle').addClass('disabled');        
+         
+    }
+
+         
 }
 
 
@@ -17,10 +63,15 @@ function dibujarDatosHTML(team, recursos) {
 //-------------------------------------------------------------------------
 function setCastilloData(datos_castillo) {
     
+  
+      
     $('#main_castle').html("Main Castle:"+datos_castillo.castle_id)
     $('#level-castle').html(datos_castillo.level);
     $('#defense-castle').html(datos_castillo.defense_remaining);
     $('#capacity-castle').html(datos_castillo.capacity);
+
+
+   
 };
 
 

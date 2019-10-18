@@ -98,10 +98,14 @@ class APIListUserResourcesController extends AbstractController
         $kingdom = $user->getKingdom();
         // var_dump( $kingdom->getName());
 
+
+       // echo "Kingdom gold ".$kingdom->getGold();
+
         $arreglo_final['team'] = array(
             'team_id' => $kingdom->getID(),
             'kingdom_name' => $kingdom->getName(),
             'kingdom_points' => $kingdom->getKingdomPoints(),
+            'kingdom_gold'=>$kingdom->getGold(),
             'main_castle_id' => $kingdom->getMainCastleId(),
         );
 

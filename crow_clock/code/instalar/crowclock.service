@@ -1,0 +1,14 @@
+[Unit]
+Description=CROW WORLD CLOCK
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/crow/crow_clock -r
+WorkingDirectory=/usr/sbin/crow/
+StandardOutput=syslog
+StandardError=syslog
+TimeoutSec=25
+
+[Install]
+WantedBy=multi-user.target

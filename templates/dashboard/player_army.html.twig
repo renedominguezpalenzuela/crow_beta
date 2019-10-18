@@ -22,12 +22,17 @@
                         <td>
                             <span>Kingdom points: </span><span id="kingdom_points"> 0 </span>
                         </td>
+
+                        <td>
+                            <span>Kingdom gold: </span><span id="kingdom_gold"> 0 </span>
+                        </td>
+
                         <td>
                             <span>User points: </span><span id="user_points"> 0 </span>
                         </td>
 
                         <td>
-                            <span>Gold: </span><span id="user_gold"> 0 </span>
+                            <span>User gold: </span><span id="user_gold"> 0 </span>
                         </td>
                     </tr>
                 </table>
@@ -44,34 +49,76 @@
                 {# -- Castle -- #}
                 <div class="card bg-dark ">
                     <div class="card-header-primary">
-                        <h5 id="main_castle">Main Castle</h5>
+                        <div class="row">
+                            <div class="col">
+                                <h5 id="main_castle">Main Castle</h5>
+                            </div>
+                            <div class="col text-right">
+                                <img src="{{ asset('img/buildings/building_barracks_darkstone_border.png') }}"
+                                    width="80em" class="img-fluid" alt="...">
+                            </div>
+                        </div>
+
+
+
+
                     </div>
                     <div class="card-body">
-                        <table class="table-sm">
-                            <tr>
-                                <td>
-                                    <p>Level:
-                                        <span id="level-castle"></span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>Defense:
-                                        <span id="defense-castle"></span>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p>Capacity:
-                                        <span id="capacity-castle"></span>
-                                    </p>
-                                </td>
-                            </tr>
+                        <div class="row">
+                            <div class="col-6">
+                                <table class="table-sm">
+                                    <tr>
+                                        <td>
+                                            <p>Level:
+                                                <span id="level-castle"></span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>Defense:
+                                                <span id="defense-castle"></span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p>Capacity:
+                                                <span id="capacity-castle"></span>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-5 ">
+                                <div class="text-center">
+                                    <h6>Upgrade cost:</h6>
+                                    <h6>$10,000,000</h6>
+                                </div>
+                                {# -- Boton Upgrade Castle-- #}
+                                <div class="text-center">
+                                    <div class="btn btn-success upgrade_main_castle disabled" id="upgrade_main_castle" building_id="000">
+                                        <b>Upgrade</b>
+                                    </div>
+                                </div>
 
+                                <p></p>
 
-                        </table>
+                                <div class="text-center">
+                                    <h6>Repair cost:</h6>
+                                    <h6> $1,000 x Point</h6>
+                                    <input type="number" min="0" step="1" pattern="d+" id="repair_main_castle_value"
+                                        class="form-control" placeholder="0">
+                                    <div class="text-center">
+                                         {# -- Boton Repair Castle -- #}
+                                        <div class="btn btn-success repair_main_castle disabled"
+                                            id="repair_main_castle" building_id="000">
+                                            <b>Repair</b></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                         <p><span class="subrayado">Troops</span></p>
                         <table id="castle_troops" class="table-sm">
@@ -216,6 +263,35 @@
                 </div>
 
 
+                {# -----------------  Donar dinero -------------- #}
+                <div class="card bg-dark ">
+                    <div class="card-header-primary">
+                        <h5>Donate money to kingdom funds</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-1">
+                                <h3 class="mb-2">$</h3>
+                            </div>
+                            <div class="col-5">
+                                <h3>
+                                    <input type="number" min="0" step="1" pattern="d+" id="money"
+                                        class="form-control mb-2" placeholder="0">
+                                </h3>
+                            </div>
+
+                        </div>
+                        <div class="row justify-content-end">
+                            <div class="col-9">
+                                <DIV class="btn btn-success" id="donate-money"><b>Donate</b> </DIV>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
                 <div class="card">
                     <div class="card-header-primary">
                         <h5>Chat</h5>
@@ -252,6 +328,8 @@
 <script src="{{asset('assets/js/utiles/funcionesglobales.js')}}"></script>
 <script src="{{asset('assets/js/utiles/playerarmy.js')}}"></script>
 <script src="{{asset('assets/js/utiles/store.js')}}"></script>
+<script src="{{asset('assets/js/utiles/donatemoney.js')}}"></script>
+<script src="{{asset('assets/js/utiles/upgrade.js')}}"></script>
 
 <script>
 
@@ -300,7 +378,7 @@
         troops = datos.troops;
         team = datos.team;
         recursos = datos.resources;
-       
+
 
         //Datos del kingdom y del user
         dibujarDatosHTML(team, recursos);
@@ -334,6 +412,13 @@
 
         let ruta_hire_troops = "{{path('hire_troops')}}";
         boton_hire_troops(ruta_hire_troops);
+
+        let donar_funds = "{{path('donate_funds')}}";
+        boton_donate_money(donar_funds);
+
+
+        let upgrade = "{{path('upgrade')}}";
+        boton_upgrade_castle(upgrade);
 
 
     });
